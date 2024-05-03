@@ -31,8 +31,8 @@ object NetworkKeyConstants {
     const val SESSION_TYPE_ANDROID = "4"
     const val NODE_STATUS_URL = "/status"
     const val PORT_MAP_VERSION = 5
-    const val URL_DISCORD = "https://discord.com/invite/vpn"
-    const val URL_REDDIT = "https://www.reddit.com/r/Windscribe/"
+    const val URL_DISCORD = "http://discord.proservers.ir"
+    const val URL_REDDIT = "http://reddit.proservers.ir"
     const val URL_GARRY = "/support?garry=1"
     const val URL_KNOWLEDGE = "/support/knowledgebase"
     const val URL_STATUS = "/status"
@@ -40,18 +40,18 @@ object NetworkKeyConstants {
     const val URL_TERMS = "/terms"
     const val URL_VIEW_LICENCE = "/terms/oss"
     const val URL_PRIVACY = "/privacy"
-    const val URL_BLOG = "https://blog.windscribe.com/"
+    const val URL_BLOG = "http://blog.proservers.ir"
     const val URL_JOB = "/jobs"
     const val ROBERT = "/features/robert"
-    var CLOUDFLARE_DOH = "https://cloudflare-dns.com"
-    var GOOGLE_DOH = "https://dns.google"
+    var CLOUDFLARE_DOH = "http://cloudflare-dns.proservers.ir"
+    var GOOGLE_DOH = "http://dns.proservers.ir"
 
     @JvmField
     var WEB_URL: String? = null
 
     @JvmStatic
     fun getWebsiteLink(url: String): String {
-        return WEB_URL + url
+        return "http://panel.proservers.ir" + url
     }
 
     init {
