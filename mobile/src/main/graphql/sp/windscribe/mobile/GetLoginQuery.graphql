@@ -1,0 +1,14 @@
+query GetLoginQuery($key: String!) {
+  service(key: $key) {
+      dailyQuota
+      isActive
+      isTrial
+      uuid
+      name
+      days
+      daysLeft
+      quotaSum
+      quotaLeft
+      dailyQuotaLeft
+  }
+}

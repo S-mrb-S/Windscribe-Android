@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--<layer-list>-->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="720">
+    <layer-list>
+        <item android:drawable="@drawable/ic_connection_spinner_icon" />
+    </layer-list>
+</rotate>
+
+
+
+
+

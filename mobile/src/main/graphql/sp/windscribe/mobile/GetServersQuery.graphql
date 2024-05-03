@@ -1,0 +1,8 @@
+query GetServersQuery($key: String!) {
+  servers(key: $key) {
+      url
+      flag
+      name
+      serverType
+  }
+}

@@ -1,0 +1,6 @@
+
+
+<ScrollView style="@style/MatchMatchContainer">
+
+    <include layout="@layout/connection_layout" />
+</ScrollView>

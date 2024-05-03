@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--<layer-list>-->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="0">
+    <layer-list>
+        <item android:drawable="@drawable/ic_protocolfailed" />
+    </layer-list>
+</rotate>
+
+
+
+
+

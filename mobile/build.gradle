@@ -1,0 +1,156 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id("com.apollographql.apollo3").version("3.7.3")
+}
+
+apply from: "$rootDir/config/config.gradle"
+apply from: "$rootDir/depedencycheck.gradle"
+
+// Versions
+def appVersionCode = 1331
+def appVersionName = "4.0.1"
+
+android {
+    namespace 'sp.windscribe.mobile'
+    ndkVersion '27.0.11718014 rc1'
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+    compileSdk rootProject.appCompiledSdk
+    defaultConfig {
+        applicationId rootProject.AppId
+        minSdkVersion rootProject.appMinSdk
+        targetSdkVersion rootProject.appTargetSdk
+        versionName appVersionName
+        versionCode appVersionCode
+        vectorDrawables.useSupportLibrary = true
+
+        //testInstrumentationRunner "sp.windscribe.vpn.CustomRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            ndk.abiFilters 'x86', 'x86_64', 'armeabi', 'arm64-v8a'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi', 'arm64-v8a' //select ABIs to build APKs for
+            universalApk true //generate an additional APK that contains all the ABIs
+        }
+    }
+
+    // map for the version code
+    project.ext.versionCodes = ['armeabi': 1, 'arm64-v8a': 2, 'x86': 3, 'x86_64': 4]
+
+    android.applicationVariants.configureEach { variant ->
+        // assign different version code for each output
+        variant.outputs.each { output ->
+            output.outputFileName = "Windscribe" + variant.versionName + "_" + output.getFilter(com.android.build.OutputFile.ABI) + ".apk"
+
+            output.versionCodeOverride =
+                    project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) *
+                            1000000 + android.defaultConfig.versionCode
+        }
+    }
+
+    flavorDimensions = ['dim']
+    productFlavors {
+        fdroid {
+            dimension 'dim'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled = true
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+        disable 'NonConstantResourceId', 'ContentDescription', 'VectorRaster'
+    }
+    packagingOptions {
+        jniLibs {
+            excludes += ['lib/arm64-v8a/libwg-quick.so', 'lib/armeabi-v7a/libwg-quick.so', 'lib/x86/libwg-quick.so', 'lib/x86_64/libwg-quick.so'
+            ]
+            useLegacyPackaging = false
+        }
+    }
+    installation {
+        installOptions '-g'
+    }
+}
+
+dependencies {
+    //Android
+    implementation "androidx.appcompat:appcompat:$appCompat"
+    implementation "com.google.android.material:material:$material"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycle"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_std_lib"
+    implementation "androidx.core:core-ktx:$ktx_core"
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdk"
+    //Core Module
+    implementation project(path: ':base')
+    //Kapt
+    kapt "com.github.bumptech.glide:compiler:$glide"
+    kapt "com.jakewharton:butterknife-compiler:$butterknife"
+    kapt "androidx.room:room-compiler:$room"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
+    kaptAndroidTest("com.google.dagger:dagger-compiler:$dagger")
+
+    // new
+    implementation 'com.tencent:mmkv-static:1.3.3'
+
+    // optional: if you want to use the normalized cache
+    implementation "com.apollographql.apollo3:apollo-normalized-cache-sqlite:3.7.3"
+    // optional: if you just want the generated models and parsers and write your own HTTP code/cache code, you can remove apollo-runtime
+    implementation "com.apollographql.apollo3:apollo-runtime:3.7.3"
+    // and use apollo-api instead
+    implementation "com.apollographql.apollo3:apollo-api:3.7.3"
+    
+    //Shared test module
+    //androidTestImplementation project(path: ':test')
+    androidTestImplementation "androidx.work:work-testing:$work_manager"
+    implementation "androidx.test.espresso:espresso-intents:3.5.1"
+    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    implementation "androidx.core:core-splashscreen:1.0.1"
+}
+
+apollo {
+    service("service") {
+        packageName.set("sp.windscribe.mobile")
+        //generateOptionalOperationVariables.set(false)
+
+        introspection {
+            endpointUrl.set("http://panel.proservers.ir/graphql")
+            //schemaFile.set(file("src/main/graphql/schema.json"))
+        }
+    }
+}

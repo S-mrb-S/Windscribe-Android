@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_under_construction"
+        android:left="@dimen/reg_24dp"
+        android:right="@dimen/reg_24dp" />
+</layer-list>
