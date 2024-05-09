@@ -4,12 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.apollographql.apollo3.api.Error
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import org.slf4j.LoggerFactory
+import sp.windscribe.mobile.GetLoginQuery
+import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.mobile.ui.api.GetLoginWithKeyQuery
+import sp.windscribe.mobile.ui.api.GetServersWithKeyQuery
 
 import sp.windscribe.vpn.qq.MmkvManager
 
@@ -29,11 +39,29 @@ class SplashActivity: AppCompatActivity() {
 
         logger.info("OnCreate: Splash Activity")
 
-//        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
-            navigateToHome()
-//        }else{
-//            navigateToLogin()
-//        }
+        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
+            setup()
+        }else{
+            navigateToLogin()
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun setup(){
+        GlobalScope.launch {
+                GetServersWithKeyQuery().performWork("username",
+                    object : GetServersWithKeyQuery.GetServersCallback {
+                        override fun onSuccess(data: GetServersQuery.Data?) {
+                            navigateToHome()
+                        }
+
+                        override fun onFailure(errors: List<Error>?) {
+                            Toast.makeText(this@SplashActivity, "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید", Toast.LENGTH_LONG).show()
+                            navigateToLogin()
+                        }
+
+                    })
+        }
     }
 
     fun navigateToHome() {
