@@ -30,12 +30,11 @@ import sp.windscribe.mobile.robert.RobertSettingsActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
-import sp.windscribe.vpn.BuildConfig.BUILD_TYPE
-import sp.windscribe.vpn.BuildConfig.DEV
 import sp.windscribe.vpn.alert.showAlertDialog
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.qq.MmkvManager
 import javax.inject.Inject
 
 class MainMenuActivity : BaseActivity(), MainMenuView {
@@ -155,7 +154,14 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
         }
         logoutView.onClick {
             performHapticFeedback(it)
-            presenter.onSignOutClicked()
+           // presenter.onSignOutClicked()
+            MmkvManager.getLoginStorage().encode("is_login", false)
+
+            logger.info("Navigating to login activity...")
+            val loginIntent = Intent(this, WelcomeActivity::class.java)
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(loginIntent)
+            finishAffinity()
         }
         referForDataView.onClick {
             performHapticFeedback(it)
@@ -258,7 +264,8 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
 
     @OnClick(R.id.data_upgrade_label)
     fun onUpgradeClicked() {
-        presenter.onUpgradeClicked()
+        //presenter.onUpgradeClicked()
+//        openURLInBrowser("http://upgrade.proservers.ir")
     }
 
     override fun openConfirmEmailActivity() {

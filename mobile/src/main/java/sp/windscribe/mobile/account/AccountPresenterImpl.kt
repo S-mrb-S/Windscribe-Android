@@ -21,7 +21,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.ui.util.MmkvManager
+import sp.windscribe.vpn.qq.MmkvManager
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat

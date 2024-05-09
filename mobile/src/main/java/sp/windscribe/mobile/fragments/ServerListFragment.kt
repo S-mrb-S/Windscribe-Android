@@ -205,7 +205,8 @@ class ServerListFragment : Fragment() {
     @OnClick(R.id.data_upgrade_label)
     fun onUpgradeViewClick() {
         if (fragmentClickListener != null) {
-            fragmentClickListener?.onUpgradeClicked()
+//            fragmentClickListener?.onUpgradeClicked()
+//            openURLInBrowser("http://upgrade.proservers.ir")
         }
     }
 

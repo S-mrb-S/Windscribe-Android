@@ -34,6 +34,8 @@
         <activity android:name=".confirmemail.ConfirmActivity" />
         <activity
             android:name=".welcome.WelcomeActivity"
+            android:taskAffinity=""
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".gpsspoofing.GpsSpoofingSettingsActivity"

@@ -79,6 +79,7 @@
             android:layout_marginStart="@dimen/reg_16dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cl_connection" />
@@ -87,6 +88,7 @@
             android:id="@+id/cl_robert"
             android:layout_width="match_parent"
             android:layout_height="@dimen/reg_50dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_connection"

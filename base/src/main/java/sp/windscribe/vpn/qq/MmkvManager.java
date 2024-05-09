@@ -1,4 +1,4 @@
-package sp.windscribe.mobile.ui.util;
+package sp.windscribe.vpn.qq;
 
 import com.tencent.mmkv.MMKV;
 
