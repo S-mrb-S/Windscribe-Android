@@ -178,94 +178,16 @@ class WelcomePresenterImpl @Inject constructor(
         if (validateLoginInputs(username, password, "", true)) {
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
-//            val loginMap = createLoginMap(username, password, twoFa)
-//            interactor.getCompositeDisposable().add(
-//                interactor.getApiCallManager().logUserIn(loginMap)
-//                    .doOnSubscribe { welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.signing_in)) }
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribeWith(
-//                        object :
-//                            DisposableSingleObserver<GenericResponseClass<UserLoginResponse?, ApiErrorResponse?>>() {
-//                            override fun onError(e: Throwable) {
-//                                if (e is Exception) {
-//                                    logger.debug(
-//                                        "Login Error: " + WindError.instance.rxErrorToString(
-//                                            e,
-//                                        )
-//                                    )
-//                                }
-//                                onLoginFailedWithNoError()
-//                            }
-//
-//                            override fun onSuccess(
-//                                genericLoginResponse: GenericResponseClass<UserLoginResponse?, ApiErrorResponse?>
-//                            ) {
-//                                when (val result =
-//                                    genericLoginResponse.callResult<UserLoginResponse>()) {
-//                                    is CallResult.Error -> {
-//                                        if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-//                                            onLoginFailedWithNoError()
-//                                        } else {
-//                                            logger.info("Login error..." + genericLoginResponse.errorClass)
-//                                            onLoginResponseError(result.code, result.errorMessage)
-//                                        }
-//                                    }
-//                                    is CallResult.Success -> {
-//                                        logger.info("Logged user in successfully...")
-//                                        welcomeView.updateCurrentProcess("Login successful...")
-//                                        interactor.getAppPreferenceInterface().sessionHash =
-//                                            result.data.sessionAuthHash
-//                                        interactor.getFireBaseManager().getFirebaseToken { session ->
-//                                            prepareLoginRegistrationDashboard(session)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        })
-//            )
-
-
             GlobalScope.launch {
                 try{
                     GetLoginWithKeyQuery().performWork(username,
                         object : GetLoginWithKeyQuery.GetLoginCallback {
 
                             override fun onSuccess(data: GetLoginQuery.Data?) {
-                                // برخورد با موفقیت
-//                                Log.d("Success", data.toString())
-//                                Log.d("Queryyyyyy suc","Hero.name=${data?.service?.name}")
-
                                 MmkvManager.getLoginStorage().putString("user_name", data?.service?.name)
                                 MmkvManager.getLoginStorage().putString("reset_data",
                                     data?.service?.days.toString()
                                 )
-
-//                                try{
-//                                    interactor.getWorkManager().onAppStart()
-//                                    interactor.getWorkManager().onAppMovedToForeground()
-//                                    interactor.getWorkManager().updateNodeLatencies()
-//                                    welcomeView.gotoHomeActivity(false)
-//                                }catch (e: Exception){
-//                                   // Log.d("EEERRR", "ERROR WHEN L: " + e.toString())
-//                                }finally {
-//                                    MmkvManager.getLoginStorage().encode("is_login", true)
-//                                   // interactor.getServerListUpdater().update()
-//                                }
-
-                                try{
-                                    Log.d("MRBT", "Step 0")
-
-                                    interactor.getServerListUpdater().update()
-
-                                    Log.d("MRBT", "Step 1")
-
-                                }catch (e: Exception){
-                                    Log.d("ERR 1", e.toString())
-                                    Log.d("MRBT", "Step 1 catch!")
-                                }finally {
-                                    interactor.getPreferenceChangeObserver().postCityServerChange()
-                                    Log.d("MRBT", "Step 2")
 
                                     try{
                                         interactor.getWorkManager().onAppStart()
@@ -277,10 +199,7 @@ class WelcomePresenterImpl @Inject constructor(
                                         Log.d("ERR 1", e.toString())
                                         Log.d("MRBT", "Step 3 catch!")
                                     }
-
 //                                    MmkvManager.getLoginStorage().encode("is_login", true)
-
-                                }
 
                             }
 
@@ -299,7 +218,6 @@ class WelcomePresenterImpl @Inject constructor(
                     welcomeView.prepareUiForApiCallFinished()
                 }
             }
-            Log.d("LOGIN", "ONCLICK")
         }
     }
 

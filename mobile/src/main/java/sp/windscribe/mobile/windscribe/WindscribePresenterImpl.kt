@@ -375,44 +375,9 @@ class WindscribePresenterImpl @Inject constructor(
     override suspend fun observeAllLocations() {
         interactor.getServerListUpdater().regions.collectLatest {
             if (it.isNotEmpty()) {
-                Log.d("MRBT", "Step 1 load server list")
                 loadServerList(it.toMutableList())
             }else{
-                Log.d("MRBT", "Step 1 serverlist does not load 0")
-                interactor.getServerListUpdater().load()
-//                interactor.getServerListUpdater().loadStatic()
-//                Log.d("MRBT", "Step 1 serverlist does not load 1")
-//
-//                if(Data.regsion.isNotEmpty()){
-//                    Log.d("SALAM", Data.cities.size.toString()) // 5
-//                    Log.d("SALAM 1", Data.regsion.size.toString()) // 1
-//
-//                    val reg: MutableList<RegionAndCities> = ArrayList()
-//
-//                    val reg2: RegionAndCities = RegionAndCities()
-//
-//                    reg2.cities = Data.cities
-//                    reg2.region = Data.regsion[0]
-//
-//
-//                    reg.addAll(listOf(reg2))
-//
-////                    reg.let { list1 -> mutableList2?.let(list1::addAll) }
-////                    reg.addAll(Data.regsion)
-//
-//                    // Populate normal and streaming regions
-////                    for (regionAndCity in Data.regsion) {
-////                        if (regionAndCity.name != null) {
-////
-////                        }
-////                    }
-//
-//
-//
-//                    loadServerList(reg.toMutableList())
-//                }else{
-//                    Log.d("MRBT", "Step 1 empty :(")
-//                }
+                interactor.getServerListUpdater().load() // update data in splash
             }
         }
     }
