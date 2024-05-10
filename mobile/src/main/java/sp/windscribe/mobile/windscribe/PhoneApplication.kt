@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.tencent.mmkv.MMKV
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.connectionmode.*
-import sp.windscribe.mobile.ui.SplashActivity
+import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.Windscribe
