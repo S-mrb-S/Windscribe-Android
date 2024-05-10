@@ -16,7 +16,7 @@ import sp.windscribe.mobile.networksecurity.NetworkSecurityActivity
 import sp.windscribe.mobile.networksecurity.networkdetails.NetworkDetailsActivity
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.robert.RobertSettingsActivity
-import sp.windscribe.mobile.ui.SplashActivity
+import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.splittunneling.SplitTunnelingActivity
 import sp.windscribe.mobile.ticket.SendTicketActivity
 import sp.windscribe.mobile.welcome.WelcomeActivity

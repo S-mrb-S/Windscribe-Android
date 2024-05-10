@@ -53,7 +53,7 @@
             android:name=".debug.DebugViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:exported="true"
             android:theme="@style/AppTheme.WindLauncher">
             <intent-filter>
