@@ -18,4 +18,6 @@ object Data {
     var staticRegion: List<RegionAndCities>? = null
     var cities: List<City> = ArrayList()
     var regsion: List<Region> = ArrayList()
+
+    var dataString = ""
 }// HI
