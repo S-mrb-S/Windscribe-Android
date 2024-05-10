@@ -194,12 +194,12 @@ class WelcomePresenterImpl @Inject constructor(
                                         interactor.getWorkManager().onAppMovedToForeground()
                                         interactor.getWorkManager().updateNodeLatencies()
                                         welcomeView.gotoHomeActivity(true)
-                                        Log.d("MRBT", "Step 3")
                                     }catch (e: Exception){
                                         Log.d("ERR 1", e.toString())
                                         Log.d("MRBT", "Step 3 catch!")
+                                    }finally {
+                                        MmkvManager.getLoginStorage().encode("is_login", true)
                                     }
-//                                    MmkvManager.getLoginStorage().encode("is_login", true)
 
                             }
 
