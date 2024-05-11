@@ -12,19 +12,19 @@ import com.apollographql.apollo3.api.Error
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.mobile.base.BaseActivity
-import sp.windscribe.mobile.di.ActivityModule
-import sp.windscribe.mobile.di.DaggerActivityComponent
-import sp.windscribe.mobile.ui.api.GetServersWithKeyQuery
-import sp.windscribe.vpn.Windscribe.Companion.appContext
+import sp.windscribe.mobile.mrb.api.GetServersWithKeyQuery
+import sp.windscribe.mobile.mrb.util.createExample
+import sp.windscribe.mobile.mrb.util.getAllServers
+import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.vpn.qq.Data
 
 import sp.windscribe.vpn.qq.MmkvManager
-import javax.inject.Inject
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -41,55 +41,38 @@ class SplashActivity : AppCompatActivity() {
 
         logger.info("OnCreate: Splash Activity")
 
-//        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
-//            this.setup()
-//        }else{
-//            this.navigateToLogin()
-//        }
-        this.navigateToHome()
+        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
+            setup()
+        }else{
+            this.navigateToLogin()
+        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun setup(){
+    private fun setup(){
+        val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
+
         GlobalScope.launch {
-            try{
-                val key = MmkvManager.getLoginStorage().decodeString("key_login", null)
-
-                GetServersWithKeyQuery().performWork(
-                    key!!,
-                    object : GetServersWithKeyQuery.GetServersCallback {
-                        override fun onSuccess(data: GetServersQuery.Data?) {
-                            try{
-//                                presenter.setDataAndLoad(data)
-                            }catch (e:Exception){
-                                Log.d("MRT", "ERR catch2: " + e.toString())
-                                failGetServers()
-                            }
-                        }
-
-                        override fun onFailure(errors: List<Error>?) {
-                            Log.d("MRT", "ERR failer" + errors.toString())
-                            failGetServers()
-                        }
-
-                    })
-            }catch (e: Exception){
-                Log.d("MRT", "ERR catch: " + e.toString())
+            getAllServers(
+                keyStr!!,
+                ::setDataAndLoad
+            ) {
                 failGetServers()
             }
         }
-
     }
 
-    fun failGetServers(){
+    private fun setDataAndLoad(data: GetServersQuery.Data?) {
+        saveDataAndFinish(data, ::navigateToHome) {
+            failGetServers()
+        }
+    }
+
+    private fun failGetServers(){
         runOnUiThread {
             Toast.makeText(this@SplashActivity, "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید", Toast.LENGTH_LONG).show()
             navigateToLogin()
         }
-    }
-
-     fun navigateToAccountSetUp() {
-        TODO("Not yet implemented")
     }
 
      fun navigateToHome() {
