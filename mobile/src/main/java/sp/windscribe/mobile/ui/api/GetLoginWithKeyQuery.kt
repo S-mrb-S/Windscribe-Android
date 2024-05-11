@@ -4,8 +4,8 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Error
 import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetLoginQuery
-import sp.windscribe.mobile.ui.Data
-import sp.windscribe.mobile.ui.util.MmkvManager
+import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.qq.MmkvManager
 
 class GetLoginWithKeyQuery {
 

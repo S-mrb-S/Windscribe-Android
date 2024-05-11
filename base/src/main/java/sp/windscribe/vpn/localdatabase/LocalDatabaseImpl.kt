@@ -1,5 +1,6 @@
 package sp.windscribe.vpn.localdatabase
 
+import android.util.Log
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.localdatabase.tables.*
 import sp.windscribe.vpn.serverlist.dao.*
@@ -8,6 +9,8 @@ import sp.windscribe.vpn.state.PreferenceChangeObserver
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 import javax.inject.Singleton
 

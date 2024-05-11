@@ -7,18 +7,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.base.BaseActivity
-import sp.windscribe.mobile.di.ActivityModule
-import sp.windscribe.mobile.di.DaggerActivityComponent
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
-import sp.windscribe.vpn.Windscribe.Companion.appContext
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.splash.SplashPresenter
-import sp.windscribe.mobile.splash.SplashView
-import javax.inject.Inject
 
-import sp.windscribe.mobile.ui.util.MmkvManager
+import sp.windscribe.vpn.qq.MmkvManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity: AppCompatActivity() {
@@ -36,11 +29,11 @@ class SplashActivity: AppCompatActivity() {
 
         logger.info("OnCreate: Splash Activity")
 
-        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
+//        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
             navigateToHome()
-        }else{
-            navigateToLogin()
-        }
+//        }else{
+//            navigateToLogin()
+//        }
     }
 
     fun navigateToHome() {

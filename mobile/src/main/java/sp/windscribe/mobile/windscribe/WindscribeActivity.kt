@@ -54,7 +54,7 @@ import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
-import sp.windscribe.mobile.ui.Data
+import sp.windscribe.vpn.qq.Data
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.vpn.backend.utils.WindVpnController
@@ -423,6 +423,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         presenter.checkForWgIpChange()
         presenter.checkPendingAccountUpgrades()
+
+        // نمایش سرور ها در اینجا
+        onReloadClick()
     }
 
     override fun onStop() {

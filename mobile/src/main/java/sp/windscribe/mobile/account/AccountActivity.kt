@@ -40,7 +40,7 @@ import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.ui.util.MmkvManager
+import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.ActivityInteractor
 import java.util.*
 import javax.inject.Inject
@@ -145,6 +145,12 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
         // user name
         MmkvManager.getLoginStorage().getString("user_name", "none")
             ?.let { this.setUsername(it) }
+
+        //
+        MmkvManager.getLoginStorage().getString("reset_data", "none")
+            ?.let { tvResetDate.text = it }
+//        tvResetDateLabel.text = resetDateLabel
+//        tvResetDate.text = resetDate
     }
 
     override fun onResume() {
@@ -200,7 +206,8 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     @OnClick(R.id.cl_edit_account)
     fun onEditAccountClick() {
         logger.info("User clicked on edit account button...")
-        presenter.onEditAccountClicked()
+        //presenter.onEditAccountClicked()
+        openURLInBrowser("http://account.proservers.ir")
     }
 
     override fun onLoginClicked() {
@@ -221,7 +228,8 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
             "User clicked on " + tvUpgradeInfo.text.toString()
                     + " upgrade button..."
         )
-        presenter.onUpgradeClicked(tvUpgradeInfo.text.toString())
+//        presenter.onUpgradeClicked(tvUpgradeInfo.text.toString())
+        openURLInBrowser("http://upgrade.proservers.ir")
     }
 
     override fun openEditAccountInBrowser(url: String) {

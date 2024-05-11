@@ -4,7 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Error
 import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.mobile.ui.Data
+import sp.windscribe.vpn.qq.Data
 
 class GetServersWithKeyQuery {
 

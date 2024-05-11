@@ -3,6 +3,7 @@ package sp.windscribe.mobile.windscribe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +13,37 @@ import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.CharStreams
+import inet.ipaddr.AddressStringException
+import inet.ipaddr.IPAddressString
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableCompletableObserver
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subscribers.DisposableSubscriber
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.adapter.*
-import sp.windscribe.mobile.connectionui.*
+import sp.windscribe.mobile.adapter.ConfigAdapter
+import sp.windscribe.mobile.adapter.FavouriteAdapter
+import sp.windscribe.mobile.adapter.RegionsAdapter
+import sp.windscribe.mobile.adapter.StaticRegionAdapter
+import sp.windscribe.mobile.adapter.StreamingNodeAdapter
+import sp.windscribe.mobile.connectionui.ConnectedAnimationState
+import sp.windscribe.mobile.connectionui.ConnectedState
+import sp.windscribe.mobile.connectionui.ConnectingAnimationState
+import sp.windscribe.mobile.connectionui.ConnectingState
+import sp.windscribe.mobile.connectionui.ConnectionOptions
+import sp.windscribe.mobile.connectionui.ConnectionOptionsBuilder
+import sp.windscribe.mobile.connectionui.DisconnectedState
+import sp.windscribe.mobile.connectionui.FailedProtocol
+import sp.windscribe.mobile.connectionui.UnsecuredProtocol
 import sp.windscribe.mobile.listeners.ProtocolClickListener
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
@@ -22,7 +51,8 @@ import sp.windscribe.mobile.windscribe.WindscribeActivity.NetworkLayoutState
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.ActivityInteractorImpl.PortMapLoadCallback
 import sp.windscribe.vpn.Windscribe.Companion.appContext
-import sp.windscribe.vpn.api.response.*
+import sp.windscribe.vpn.api.response.PortMapResponse
+import sp.windscribe.vpn.api.response.PushNotificationAction
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.backend.Util
 import sp.windscribe.vpn.backend.Util.getSavedLocation
@@ -53,35 +83,33 @@ import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.repository.LatencyRepository
-import sp.windscribe.vpn.serverlist.entity.*
+import sp.windscribe.vpn.serverlist.entity.City
+import sp.windscribe.vpn.serverlist.entity.CityAndRegion
+import sp.windscribe.vpn.serverlist.entity.ConfigFile
+import sp.windscribe.vpn.serverlist.entity.Favourite
+import sp.windscribe.vpn.serverlist.entity.Group
+import sp.windscribe.vpn.serverlist.entity.PingTime
+import sp.windscribe.vpn.serverlist.entity.RegionAndCities
+import sp.windscribe.vpn.serverlist.entity.ServerListData
+import sp.windscribe.vpn.serverlist.entity.StaticRegion
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener
-import sp.windscribe.vpn.serverlist.sort.*
+import sp.windscribe.vpn.serverlist.sort.ByCityName
+import sp.windscribe.vpn.serverlist.sort.ByConfigName
+import sp.windscribe.vpn.serverlist.sort.ByLatency
+import sp.windscribe.vpn.serverlist.sort.ByRegionName
+import sp.windscribe.vpn.serverlist.sort.ByStaticRegionName
 import sp.windscribe.vpn.services.DeviceStateService.Companion.enqueueWork
 import sp.windscribe.vpn.state.NetworkInfoListener
-import inet.ipaddr.AddressStringException
-import inet.ipaddr.IPAddressString
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableCompletableObserver
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.DisposableSubscriber
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStreamReader
-import java.util.*
+import java.lang.reflect.Field
+import java.util.Collections
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Consumer
 import javax.inject.Inject
+
 
 class WindscribePresenterImpl @Inject constructor(
         private var windscribeView: WindscribeView,
@@ -371,7 +399,44 @@ class WindscribePresenterImpl @Inject constructor(
     override suspend fun observeAllLocations() {
         interactor.getServerListUpdater().regions.collectLatest {
             if (it.isNotEmpty()) {
+                Log.d("MRBT", "Step 1 load server list")
                 loadServerList(it.toMutableList())
+            }else{
+                Log.d("MRBT", "Step 1 serverlist does not load 0")
+                interactor.getServerListUpdater().load()
+//                interactor.getServerListUpdater().loadStatic()
+//                Log.d("MRBT", "Step 1 serverlist does not load 1")
+//
+//                if(Data.regsion.isNotEmpty()){
+//                    Log.d("SALAM", Data.cities.size.toString()) // 5
+//                    Log.d("SALAM 1", Data.regsion.size.toString()) // 1
+//
+//                    val reg: MutableList<RegionAndCities> = ArrayList()
+//
+//                    val reg2: RegionAndCities = RegionAndCities()
+//
+//                    reg2.cities = Data.cities
+//                    reg2.region = Data.regsion[0]
+//
+//
+//                    reg.addAll(listOf(reg2))
+//
+////                    reg.let { list1 -> mutableList2?.let(list1::addAll) }
+////                    reg.addAll(Data.regsion)
+//
+//                    // Populate normal and streaming regions
+////                    for (regionAndCity in Data.regsion) {
+////                        if (regionAndCity.name != null) {
+////
+////                        }
+////                    }
+//
+//
+//
+//                    loadServerList(reg.toMutableList())
+//                }else{
+//                    Log.d("MRBT", "Step 1 empty :(")
+//                }
             }
         }
     }
@@ -398,25 +463,44 @@ class WindscribePresenterImpl @Inject constructor(
 
     private fun loadServerList(regions: MutableList<RegionAndCities>) {
         Log.d("MEHRAB", "GETALL")
-        Toast.makeText(appContext, "GETED", Toast.LENGTH_SHORT).show()
+        Log.d("MRBT", "Step 1 load get")
 
         logger.info("Loading server list from disk.")
+        Toast.makeText(appContext, "geter", Toast.LENGTH_SHORT).show()
         windscribeView.showRecyclerViewProgressBar()
         val serverListData = ServerListData()
         val oneTimeCompositeDisposable = CompositeDisposable()
         oneTimeCompositeDisposable.add(
                 interactor.getAllPings().onErrorReturnItem(ArrayList()).flatMap {
-                    serverListData.pingTimes = it
-                    logger.info("Loaded Latency data.")
+                    try{
+                        serverListData.pingTimes = it
+                        logger.info("Loaded Latency data.")
+                        Log.d("MRBT", "Step 1 load get On Err + ")
+                        if(it[0].pingTime != null){
+                            Log.d("MRBT", "Step 1 load get On Err + " + it[0].pingTime)
+                        }else{
+                            Log.d("MRBT", "Step 1 load get On Err + null")
+                        }
+                    }catch (e: Exception){
+
+                    }
                     interactor.getFavourites()
                 }.onErrorReturnItem(ArrayList()).flatMap {
-                    logger.info("Loaded favourites data.")
-                    serverListData.favourites = it
+                    try{
+                        logger.info("Loaded favourites data.")
+                        Log.d("MRBT", "Step 1 load get On Err ++")
+                        serverListData.favourites = it
+                    }catch (e: Exception){
+
+                    }
                     interactor.getLocationProvider().bestLocation
                 }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(object : DisposableSingleObserver<CityAndRegion?>() {
                             override fun onError(e: Throwable) {
                                 windscribeView.hideRecyclerViewProgressBar()
+                                Log.d("MRBT", "Step 1 load get On Err +++")
+//                                Log.d("MRBT",  cityAndRegion.city.nodeName)
+
                                 val error =
                                         if (e is WindScribeException) e.message else "Unknown error loading while loading server list."
                                 logger.debug(error)
@@ -450,6 +534,7 @@ class WindscribePresenterImpl @Inject constructor(
                                 serverListData.isProUser =
                                         interactor.getAppPreferenceInterface().userStatus == 1
                                 logger.debug(if (serverListData.isProUser) "Setting server list for pro user" else "Setting server list for free user")
+                                Log.d("MRBT", "Step 1 load get 5")
                                 setAllServerView(regions, serverListData)
                                 setFavouriteServerView(serverListData)
                                 if (!oneTimeCompositeDisposable.isDisposed) {
@@ -1009,12 +1094,12 @@ class WindscribePresenterImpl @Inject constructor(
      */
     override fun onReloadClick() {
         logger.debug("User clicked on reload server list.")
+        Log.d("MRBT", "RELOADED")
         windscribeView.showRecyclerViewProgressBar()
         interactor.getMainScope().launch { interactor.getVPNController().disconnectAsync() }
         interactor.getAppPreferenceInterface().setUserAccountUpdateRequired(true)
         interactor.getCompositeDisposable().add(
-                interactor.getConnectionDataUpdater().update()
-                        .andThen(interactor.getServerListUpdater().update())
+                interactor.getServerListUpdater().update()
                         .andThen(Completable.fromAction { interactor.getUserRepository().reload() })
                         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(object : DisposableCompletableObserver() {
@@ -1935,6 +2020,7 @@ class WindscribePresenterImpl @Inject constructor(
     private fun setAllServerView(
             regionAndCities: List<RegionAndCities>, serverListData: ServerListData
     ) {
+        Log.d("MRBT", "Step 1 load get 55")
         logger.debug("Setting server list adapters.")
         // All Server list
         val normalGroups: MutableList<Group> = ArrayList()
@@ -1976,6 +2062,7 @@ class WindscribePresenterImpl @Inject constructor(
         normalGroups.add(0, Group("Best Location", null, null, 0))
 
         // Normal region adapter
+        Log.d("MRBT", "normal region setted")
         adapter = RegionsAdapter(normalGroups, serverListData, this)
         windscribeView.setAdapter(adapter!!)
         // Streaming Adapter

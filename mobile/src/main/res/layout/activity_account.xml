@@ -42,6 +42,7 @@
                 style="@style/MenuItemTitle"
                 android:layout_marginStart="@dimen/margin_32"
                 android:layout_marginTop="@dimen/margin_16"
+                android:visibility="gone"
                 android:text="@string/other"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cl_edit_account" />
@@ -51,6 +52,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/x_press_login_title"
                 android:id="@+id/cl_account_lazy_login"
+                android:visibility="gone"
                 app:Title="@string/xpress_login"
                 app:RightMargin="18"
                 android:layout_marginTop="@dimen/reg_16dp"

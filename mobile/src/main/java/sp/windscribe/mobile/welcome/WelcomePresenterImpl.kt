@@ -1,6 +1,5 @@
 package sp.windscribe.mobile.welcome
 
-import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
@@ -11,7 +10,6 @@ import sp.windscribe.vpn.commonutils.CommonPasswordChecker
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
 import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
-import sp.windscribe.vpn.api.CreateHashMap.createLoginMap
 import sp.windscribe.vpn.api.CreateHashMap.createRegistrationMap
 import sp.windscribe.vpn.api.response.*
 import sp.windscribe.vpn.constants.NetworkErrorCodes
@@ -34,8 +32,7 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.mobile.ui.api.GetLoginWithKeyQuery
-import sp.windscribe.mobile.ui.util.MmkvManager
-import sp.windscribe.mobile.windscribe.WindscribeActivity
+import sp.windscribe.vpn.qq.MmkvManager
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -236,21 +233,53 @@ class WelcomePresenterImpl @Inject constructor(
 
                             override fun onSuccess(data: GetLoginQuery.Data?) {
                                 // برخورد با موفقیت
-                                Log.d("Success", data.toString())
-                                Log.d("Queryyyyyy suc","Hero.name=${data?.service?.name}")
+//                                Log.d("Success", data.toString())
+//                                Log.d("Queryyyyyy suc","Hero.name=${data?.service?.name}")
 
                                 MmkvManager.getLoginStorage().putString("user_name", data?.service?.name)
+                                MmkvManager.getLoginStorage().putString("reset_data",
+                                    data?.service?.days.toString()
+                                )
+
+//                                try{
+//                                    interactor.getWorkManager().onAppStart()
+//                                    interactor.getWorkManager().onAppMovedToForeground()
+//                                    interactor.getWorkManager().updateNodeLatencies()
+//                                    welcomeView.gotoHomeActivity(false)
+//                                }catch (e: Exception){
+//                                   // Log.d("EEERRR", "ERROR WHEN L: " + e.toString())
+//                                }finally {
+//                                    MmkvManager.getLoginStorage().encode("is_login", true)
+//                                   // interactor.getServerListUpdater().update()
+//                                }
 
                                 try{
-                                    interactor.getWorkManager().onAppStart()
-                                    interactor.getWorkManager().onAppMovedToForeground()
-                                    interactor.getWorkManager().updateNodeLatencies()
-                                    welcomeView.gotoHomeActivity(false)
-                                }catch (e: Exception){
-                                    Log.d("EEERRR", "ERROR WHEN L: " + e.toString())
-                                }finally {
-                                    MmkvManager.getLoginStorage().encode("is_login", true)
+                                    Log.d("MRBT", "Step 0")
+
                                     interactor.getServerListUpdater().update()
+
+                                    Log.d("MRBT", "Step 1")
+
+                                }catch (e: Exception){
+                                    Log.d("ERR 1", e.toString())
+                                    Log.d("MRBT", "Step 1 catch!")
+                                }finally {
+                                    interactor.getPreferenceChangeObserver().postCityServerChange()
+                                    Log.d("MRBT", "Step 2")
+
+                                    try{
+                                        interactor.getWorkManager().onAppStart()
+                                        interactor.getWorkManager().onAppMovedToForeground()
+                                        interactor.getWorkManager().updateNodeLatencies()
+                                        welcomeView.gotoHomeActivity(true)
+                                        Log.d("MRBT", "Step 3")
+                                    }catch (e: Exception){
+                                        Log.d("ERR 1", e.toString())
+                                        Log.d("MRBT", "Step 3 catch!")
+                                    }
+
+//                                    MmkvManager.getLoginStorage().encode("is_login", true)
+
                                 }
 
                             }
