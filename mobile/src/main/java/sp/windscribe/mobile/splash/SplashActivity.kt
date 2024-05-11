@@ -1,73 +1,95 @@
-// package sp.windscribe.mobile.splash
+package sp.windscribe.mobile.splash
 
-// import android.annotation.SuppressLint
-// import android.content.Intent
-// import android.os.Build
-// import android.os.Bundle
-// import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-// import sp.windscribe.mobile.R
-// import sp.windscribe.mobile.base.BaseActivity
-// import sp.windscribe.mobile.di.ActivityModule
-// import sp.windscribe.mobile.di.DaggerActivityComponent
-// import sp.windscribe.mobile.welcome.WelcomeActivity
-// import sp.windscribe.mobile.windscribe.WindscribeActivity
-// import sp.windscribe.vpn.Windscribe.Companion.appContext
-// import org.slf4j.LoggerFactory
-// import javax.inject.Inject
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.apollographql.apollo3.api.Error
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
+import sp.windscribe.mobile.R
+import sp.windscribe.mobile.welcome.WelcomeActivity
+import sp.windscribe.mobile.windscribe.WindscribeActivity
+import org.slf4j.LoggerFactory
+import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.mobile.mrb.api.GetServersWithKeyQuery
+import sp.windscribe.mobile.mrb.util.createExample
+import sp.windscribe.mobile.mrb.util.getAllServers
+import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.vpn.qq.Data
 
-// @SuppressLint("CustomSplashScreen")
-// class SplashActivity : BaseActivity(), SplashView {
+import sp.windscribe.vpn.qq.MmkvManager
 
-//     @Inject
-//     lateinit var presenter: SplashPresenter
+@SuppressLint("CustomSplashScreen")
+class SplashActivity : AppCompatActivity() {
+    private val logger = LoggerFactory.getLogger("splash_a")
 
-//     private val logger = LoggerFactory.getLogger("splash_a")
-//     override fun onCreate(savedInstanceState: Bundle?) {
-//         val splashScreen = installSplashScreen()
-//         super.onCreate(savedInstanceState)
-//         DaggerActivityComponent.builder().activityModule(ActivityModule(this, this))
-//                 .applicationComponent(
-//                         appContext
-//                                 .applicationComponent
-//                 ).build().inject(this)
-//         if (Build.VERSION.SDK_INT >= 23) {
-//             splashScreen.setKeepOnScreenCondition { true }
-//         } else {
-//             setContentView(R.layout.activity_splash)
-//         }
-//         logger.info("OnCreate: Splash Activity")
-//         presenter.checkNewMigration()
-//     }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= 23) {
+            splashScreen.setKeepOnScreenCondition { true }
+        } else {
+            setContentView(R.layout.activity_splash)
+        }
 
-//     override fun onDestroy() {
-//         presenter.onDestroy()
-//         super.onDestroy()
-//     }
+        logger.info("OnCreate: Splash Activity")
 
-//     override fun navigateToAccountSetUp() {
-//         logger.info("Navigating to account set up activity...")
-//         val intent = Intent(this, WelcomeActivity::class.java)
-//         intent.putExtra("startFragmentName", "AccountSetUp")
-//         intent.putExtra("skipToHome", true)
-//         startActivity(intent)
-//         finish()
-//     }
+        if(MmkvManager.getLoginStorage().decodeBool("is_login", false)){
+            setup()
+        }else{
+            this.navigateToLogin()
+        }
+    }
 
-//     override fun navigateToHome() {
-//         logger.info("Navigating to home activity...")
-//         val homeIntent = Intent(this, WindscribeActivity::class.java)
-//         if (intent.extras != null) {
-//             logger.debug("Forwarding intent extras home activity.")
-//             homeIntent.putExtras(intent.extras!!)
-//         }
-//         startActivity(homeIntent)
-//         finish()
-//     }
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun setup(){
+        val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
 
-//     override fun navigateToLogin() {
-//         logger.info("Navigating to login activity...")
-//         val loginIntent = Intent(this, WelcomeActivity::class.java)
-//         startActivity(loginIntent)
-//         finish()
-//     }
-// }
+        GlobalScope.launch {
+            getAllServers(
+                keyStr!!,
+                ::setDataAndLoad
+            ) {
+                failGetServers()
+            }
+        }
+    }
+
+    private fun setDataAndLoad(data: GetServersQuery.Data?) {
+        saveDataAndFinish(data, ::navigateToHome) {
+            failGetServers()
+        }
+    }
+
+    private fun failGetServers(){
+        runOnUiThread {
+            Toast.makeText(this@SplashActivity, "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید", Toast.LENGTH_LONG).show()
+            navigateToLogin()
+        }
+    }
+
+     fun navigateToHome() {
+        logger.info("Navigating to home activity...")
+        val homeIntent = Intent(this, WindscribeActivity::class.java)
+        if (intent.extras != null) {
+            logger.debug("Forwarding intent extras home activity.")
+            homeIntent.putExtras(intent.extras!!)
+        }
+        startActivity(homeIntent)
+        finish()
+    }
+
+     fun navigateToLogin() {
+        logger.info("Navigating to login activity...")
+        val loginIntent = Intent(this, WelcomeActivity::class.java)
+        startActivity(loginIntent)
+        finish()
+    }
+}

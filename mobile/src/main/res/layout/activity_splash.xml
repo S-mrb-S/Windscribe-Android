@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@color/colorDeepBlue"
-    tools:context="sp.windscribe.mobile.ui.SplashActivity">
+    tools:context="sp.windscribe.mobile.splash.SplashActivity">
 
     <ImageView
         android:id="@+id/splash_logo"

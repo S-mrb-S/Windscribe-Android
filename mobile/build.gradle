@@ -146,7 +146,7 @@ apollo {
         //generateOptionalOperationVariables.set(false)
 
         introspection {
-            endpointUrl.set("http://panel.proservers.ir/graphql")
+            endpointUrl.set("http://sub.iprostable.enterprises/graphql")
             //schemaFile.set(file("src/main/graphql/schema.json"))
         }
     }

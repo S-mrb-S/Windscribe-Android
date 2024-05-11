@@ -12,6 +12,8 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
+import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.vpn.qq.Data
 import javax.inject.Inject
 
 class SplashPresenterImpl @Inject constructor(

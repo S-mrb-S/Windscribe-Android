@@ -1,4 +1,4 @@
-package sp.windscribe.mobile.ui.api
+package sp.windscribe.mobile.mrb.api
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Error
