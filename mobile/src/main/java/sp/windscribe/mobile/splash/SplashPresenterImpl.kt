@@ -1,7 +1,5 @@
 package sp.windscribe.mobile.splash
 
-import android.util.Log
-import android.widget.Toast
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.ApiErrorResponse
 import sp.windscribe.vpn.api.response.GenericResponseClass
@@ -13,14 +11,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.mobile.ui.api.DataToString
-import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.qq.Data
 import javax.inject.Inject
 
@@ -49,23 +41,6 @@ class SplashPresenterImpl @Inject constructor(
             interactor.getCompositeDisposable().dispose()
         }
         logger.info("Setting view and interactor to null...")
-    }
-
-//    @OptIn(DelicateCoroutinesApi::class)
-    override fun setDataAndLoad(data: GetServersQuery.Data?) {
-//        GlobalScope.launch {
-//            Data.dataString = DataToString().create(data)
-//            interactor.getServerListUpdater().regions.collectLatest {
-//                try{
-////                    interactor.getServerListUpdater().update()
-////                    interactor.getServerListUpdater().load() // update data in splash
-//                }catch (e: Exception){
-//                    Log.d("CATTCH", e.toString())
-//                }finally {
-                    view.navigateToHome()
-//                }
-//            }
-//        }
     }
 
     fun checkApplicationInstanceAndDecideActivity() {
