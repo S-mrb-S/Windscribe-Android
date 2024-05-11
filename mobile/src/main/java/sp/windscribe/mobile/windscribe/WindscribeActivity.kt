@@ -20,15 +20,26 @@ import android.os.Handler
 import android.os.Looper
 import android.transition.AutoTransition
 import android.transition.Slide
-import android.view.*
+import android.view.Gravity
+import android.view.HapticFeedbackConstants
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.*
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.viewpager.widget.ViewPager.VISIBLE
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnItemSelected
@@ -42,19 +53,38 @@ import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.adapter.*
+import sp.windscribe.mobile.adapter.ConfigAdapter
+import sp.windscribe.mobile.adapter.FavouriteAdapter
+import sp.windscribe.mobile.adapter.RegionsAdapter
+import sp.windscribe.mobile.adapter.ServerListFragmentPager
+import sp.windscribe.mobile.adapter.StaticRegionAdapter
+import sp.windscribe.mobile.adapter.StreamingNodeAdapter
 import sp.windscribe.mobile.base.BaseActivity
 import sp.windscribe.mobile.connectionsettings.ConnectionSettingsActivity
-import sp.windscribe.mobile.connectionui.*
+import sp.windscribe.mobile.connectionui.ConnectedAnimationState
+import sp.windscribe.mobile.connectionui.ConnectedState
+import sp.windscribe.mobile.connectionui.ConnectingAnimationState
+import sp.windscribe.mobile.connectionui.ConnectingState
+import sp.windscribe.mobile.connectionui.ConnectionUiState
+import sp.windscribe.mobile.connectionui.DisconnectedState
 import sp.windscribe.mobile.custom_view.CustomDialog
 import sp.windscribe.mobile.custom_view.CustomDrawableCrossFadeFactory
 import sp.windscribe.mobile.di.ActivityModule
-import sp.windscribe.mobile.dialogs.*
+import sp.windscribe.mobile.dialogs.AccountStatusDialog
+import sp.windscribe.mobile.dialogs.AccountStatusDialogCallback
+import sp.windscribe.mobile.dialogs.AccountStatusDialogData
+import sp.windscribe.mobile.dialogs.EditConfigFileDialog
+import sp.windscribe.mobile.dialogs.EditConfigFileDialogCallback
+import sp.windscribe.mobile.dialogs.NodeStatusDialog
+import sp.windscribe.mobile.dialogs.NodeStatusDialogCallback
+import sp.windscribe.mobile.dialogs.RateAppDialog
+import sp.windscribe.mobile.dialogs.RateAppDialogCallback
+import sp.windscribe.mobile.dialogs.ShareAppLinkDialog
+import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
-import sp.windscribe.vpn.qq.Data
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.vpn.backend.utils.WindVpnController
@@ -68,6 +98,7 @@ import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
+import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.serverlist.entity.ServerListData
@@ -79,8 +110,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
-        RateAppDialogCallback, EditConfigFileDialogCallback, FragmentClickListener, DeviceStateListener, NodeStatusDialogCallback,
-        AccountStatusDialogCallback {
+    RateAppDialogCallback, EditConfigFileDialogCallback, FragmentClickListener, DeviceStateListener,
+    NodeStatusDialogCallback,
+    AccountStatusDialogCallback {
     enum class NetworkLayoutState {
         CLOSED, OPEN_1, OPEN_2, OPEN_3
     }
@@ -358,7 +390,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         private set
     private var lastCustomBackgroundPath: String? = null
     private val drawableCrossFadeFactory =
-            CustomDrawableCrossFadeFactory.Builder(1500).setCrossFadeEnabled(true).build()
+        CustomDrawableCrossFadeFactory.Builder(1500).setCrossFadeEnabled(true).build()
     override var isBannedLayoutShown = false
         private set
     override var networkLayoutState = NetworkLayoutState.CLOSED
@@ -562,7 +594,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     @OnClick(R.id.img_hamburger_menu)
     fun onMenuClicked() {
         logger.info("User clicked menu...")
-         presenter.onMenuButtonClicked()
+        presenter.onMenuButtonClicked()
     }
 
     @OnClick(R.id.network_icon)
@@ -810,8 +842,8 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         if (presenter.isHapticFeedbackEnabled) {
             hamburgerIcon?.isHapticFeedbackEnabled = true
             hamburgerIcon?.performHapticFeedback(
-                    HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
         }
     }
@@ -821,8 +853,8 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             if (presenter.isHapticFeedbackEnabled) {
                 onOffButton?.isHapticFeedbackEnabled = true
                 onOffButton?.performHapticFeedback(
-                        HapticFeedbackConstants.VIRTUAL_KEY,
-                        HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                    HapticFeedbackConstants.VIRTUAL_KEY,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
                 )
             }
         }
@@ -832,8 +864,8 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         if (presenter.isHapticFeedbackEnabled) {
             view?.isHapticFeedbackEnabled = true
             view?.performHapticFeedback(
-                    HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                HapticFeedbackConstants.VIRTUAL_KEY,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
         }
     }
@@ -942,37 +974,37 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         constraintSetMain.clone(constraintLayoutMain)
         if (customBackground) {
             constraintSetMain.connect(
-                    R.id.connection_gradient,
-                    ConstraintSet.BOTTOM,
-                    R.id.toolbar_windscribe,
-                    ConstraintSet.BOTTOM
+                R.id.connection_gradient,
+                ConstraintSet.BOTTOM,
+                R.id.toolbar_windscribe,
+                ConstraintSet.BOTTOM
             )
         } else {
             constraintSetMain.connect(
-                    R.id.connection_gradient,
-                    ConstraintSet.BOTTOM,
-                    R.id.cl_preferred_protocol,
-                    ConstraintSet.TOP
+                R.id.connection_gradient,
+                ConstraintSet.BOTTOM,
+                R.id.cl_preferred_protocol,
+                ConstraintSet.TOP
             )
         }
         constraintSetMain.setVisibility(
-                R.id.top_gradient,
-                if (customBackground) ConstraintSet.INVISIBLE else ConstraintSet.VISIBLE
+            R.id.top_gradient,
+            if (customBackground) ConstraintSet.INVISIBLE else ConstraintSet.VISIBLE
         )
         topGradient?.visibility = if (customBackground) View.INVISIBLE else View.VISIBLE
         constraintSetMain.setVisibility(
-                R.id.top_gradient_custom,
-                if (customBackground) ConstraintSet.VISIBLE else ConstraintSet.INVISIBLE
+            R.id.top_gradient_custom,
+            if (customBackground) ConstraintSet.VISIBLE else ConstraintSet.INVISIBLE
         )
         findViewById<View>(R.id.top_gradient_custom).visibility =
-                if (customBackground) View.VISIBLE else View.INVISIBLE
+            if (customBackground) View.VISIBLE else View.INVISIBLE
         constraintSetMain.setVerticalBias(R.id.cl_flag, if (customBackground) 0.0f else 1.0f)
         constraintSetMain.applyTo(constraintLayoutMain)
         constraintSetServerList.clone(constraintLayoutServerList)
     }
 
     override fun setNetworkLayout(
-            info: NetworkInfo?, state: NetworkLayoutState?, resetAdapter: Boolean
+        info: NetworkInfo?, state: NetworkLayoutState?, resetAdapter: Boolean
     ) {
         if (clPreferredProtocol?.layoutTransition?.isRunning == true) {
             return
@@ -993,22 +1025,22 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     private fun setNetworkLayoutCollapsed(networkInfo: NetworkInfo?) {
         if (networkInfo != null) {
             networkIcon?.setImageDrawable(
-                    if (networkInfo.isAutoSecureOn) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
-                            R.drawable.ic_wifi_unsecure
-                    )
+                if (networkInfo.isAutoSecureOn) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
+                    R.drawable.ic_wifi_unsecure
+                )
             )
             textViewConnectedNetworkName?.text = networkInfo.networkName
         } else {
             networkIcon?.setImageDrawable(getDrawableFromTheme(R.drawable.ic_wifi_secure))
             textViewConnectedNetworkName?.text =
-                    if (WindUtilities.isOnline()) "Unknown Network" else getString(R.string.no_internet)
+                if (WindUtilities.isOnline()) "Unknown Network" else getString(R.string.no_internet)
         }
         val checkForReconnect =
-                (networkLayoutState == NetworkLayoutState.OPEN_3 || networkLayoutState == NetworkLayoutState.OPEN_2)
+            (networkLayoutState == NetworkLayoutState.OPEN_3 || networkLayoutState == NetworkLayoutState.OPEN_2)
         networkLayoutState = NetworkLayoutState.CLOSED
         animateBottomGradient(true)
         collapseExpandExpandIcon?.animate()?.rotation(0f)?.alpha(0.5f)?.setDuration(300)
-                ?.withEndAction { presenter.onNetworkLayoutCollapsed(checkForReconnect) }?.start()
+            ?.withEndAction { presenter.onNetworkLayoutCollapsed(checkForReconnect) }?.start()
         networkIcon?.alpha = 0.5f
         lockIcon?.alpha = 1.0f
         textViewIpAddress?.alpha = 0.5f
@@ -1028,19 +1060,19 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         animateBottomGradient(false)
         collapseExpandExpandIcon?.animate()?.rotation(-180f)?.alpha(1.0f)?.setDuration(300)?.start()
         autoSecureToggle?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         preferredProtocolToggle?.setImageDrawable(
-                if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         networkIcon?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
-                        R.drawable.ic_wifi_unsecure
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
+                R.drawable.ic_wifi_unsecure
+            )
         )
         textViewConnectedNetworkName?.text = networkInfo?.networkName
         networkIcon?.alpha = 1.0f
@@ -1049,15 +1081,15 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         textViewConnectedNetworkName?.alpha = 1.0f
         clAutoSecure?.visibility = View.VISIBLE
         autoSecureDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clPreferred?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clProtocol?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         clPort?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         portProtocolDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         portAdapter = null
         protocolAdapter = null
     }
@@ -1067,19 +1099,19 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         animateBottomGradient(false)
         collapseExpandExpandIcon?.animate()?.rotation(-180f)?.alpha(1.0f)?.setDuration(300)?.start()
         autoSecureToggle?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         preferredProtocolToggle?.setImageDrawable(
-                if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         networkIcon?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
-                        R.drawable.ic_wifi_unsecure
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
+                R.drawable.ic_wifi_unsecure
+            )
         )
         textViewConnectedNetworkName?.text = networkInfo?.networkName
         networkIcon?.alpha = 1.0f
@@ -1088,15 +1120,15 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         textViewConnectedNetworkName?.alpha = 1.0f
         clAutoSecure?.visibility = View.VISIBLE
         autoSecureDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clPreferred?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clProtocol?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         clPort?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         portProtocolDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
     }
 
     private fun setNetworkLayoutExpandedLevel3(networkInfo: NetworkInfo?) {
@@ -1113,19 +1145,19 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         animateBottomGradient(false)
         collapseExpandExpandIcon?.animate()?.rotation(-180f)?.alpha(1.0f)?.setDuration(300)?.start()
         autoSecureToggle?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         preferredProtocolToggle?.setImageDrawable(
-                if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
-                        R.drawable.ic_toggle_button_off_dark
-                )
+            if (networkInfo?.isPreferredOn == true) getDrawableFromTheme(R.drawable.ic_toggle_button_on) else getDrawableFromTheme(
+                R.drawable.ic_toggle_button_off_dark
+            )
         )
         networkIcon?.setImageDrawable(
-                if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
-                        R.drawable.ic_wifi_unsecure
-                )
+            if (networkInfo?.isAutoSecureOn == true) getDrawableFromTheme(R.drawable.ic_wifi_secure) else getDrawableFromTheme(
+                R.drawable.ic_wifi_unsecure
+            )
         )
         textViewConnectedNetworkName?.text = networkInfo?.networkName
         networkIcon?.alpha = 1.0f
@@ -1134,15 +1166,15 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         textViewConnectedNetworkName?.alpha = 1.0f
         clAutoSecure?.visibility = View.VISIBLE
         autoSecureDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clPreferred?.visibility =
-                if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true) View.VISIBLE else View.GONE
         clProtocol?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         clPort?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
         portProtocolDivider?.visibility =
-                if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
+            if (networkInfo?.isAutoSecureOn == true && networkInfo.isPreferredOn) View.VISIBLE else View.GONE
     }
 
     override fun setPortAndProtocol(protocol: String, port: String) {
@@ -1200,14 +1232,14 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun setupAccountStatusBanned() {
         AccountStatusDialogData(
-                title = resources.getString(R.string.you_ve_been_banned),
-                icon = R.drawable.garry_angry,
-                description = resources.getString(R.string.you_ve_violated_our_terms),
-                showSkipButton = false,
-                skipText = "",
-                showUpgradeButton = true,
-                upgradeText = resources.getString(R.string.ok),
-                bannedLayout = true
+            title = resources.getString(R.string.you_ve_been_banned),
+            icon = R.drawable.garry_angry,
+            description = resources.getString(R.string.you_ve_violated_our_terms),
+            showSkipButton = false,
+            skipText = "",
+            showUpgradeButton = true,
+            upgradeText = resources.getString(R.string.ok),
+            bannedLayout = true
         ).let {
             AccountStatusDialog.show(this, it)
         }
@@ -1215,13 +1247,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun setupAccountStatusExpired() {
         AccountStatusDialogData(
-                title = resources.getString(R.string.you_re_out_of_data),
-                icon = R.drawable.garry_nodata,
-                description = resources.getString(R.string.upgrade_to_stay_protected),
-                showSkipButton = true,
-                skipText = resources.getString(R.string.upgrade_later),
-                showUpgradeButton = true,
-                upgradeText = resources.getString(R.string.upgrade),
+            title = resources.getString(R.string.you_re_out_of_data),
+            icon = R.drawable.garry_nodata,
+            description = resources.getString(R.string.upgrade_to_stay_protected),
+            showSkipButton = true,
+            skipText = resources.getString(R.string.upgrade_later),
+            showUpgradeButton = true,
+            upgradeText = resources.getString(R.string.upgrade),
         ).let {
             AccountStatusDialog.show(this, it)
         }
@@ -1276,7 +1308,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun setupLayoutDisconnecting(
-            connectionState: String, connectionStateTextColor: Int
+        connectionState: String, connectionStateTextColor: Int
     ) {
         runOnUiThread {
             setConnectionStateText(connectionState)
@@ -1290,45 +1322,45 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         lastCustomBackgroundPath = path
         Glide.with(this).load(path).skipMemoryCache(true)
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
+            .listener(object : RequestListener<Drawable?> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any,
+                    target: Target<Drawable?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
 
-                    override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                    ): Boolean {
-                        if (resource != null) {
-                            flagView?.layoutParams?.height = flagDimensionsGuideView?.measuredHeight
-                            flagView?.scaleType = ImageView.ScaleType.FIT_XY
-                        }
-                        constraintSetMain.setVisibility(R.id.top_gradient, ConstraintSet.INVISIBLE)
-                        findViewById<View>(R.id.top_gradient).visibility = View.INVISIBLE
-                        constraintSetMain.setVisibility(
-                                R.id.top_gradient_custom, ConstraintSet.VISIBLE
-                        )
-                        findViewById<View>(R.id.top_gradient_custom).visibility = View.VISIBLE
-                        constraintSetMain.setVerticalBias(R.id.cl_flag, 0.0f)
-                        constraintSetMain.connect(
-                                R.id.connection_gradient,
-                                ConstraintSet.BOTTOM,
-                                R.id.toolbar_windscribe,
-                                ConstraintSet.BOTTOM
-                        )
-                        constraintSetMain.applyTo(constraintLayoutMain)
-                        return false
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any,
+                    target: Target<Drawable?>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    if (resource != null) {
+                        flagView?.layoutParams?.height = flagDimensionsGuideView?.measuredHeight
+                        flagView?.scaleType = ImageView.ScaleType.FIT_XY
                     }
-                }).diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transition(DrawableTransitionOptions.with(drawableCrossFadeFactory)).into(flagView!!)
+                    constraintSetMain.setVisibility(R.id.top_gradient, ConstraintSet.INVISIBLE)
+                    findViewById<View>(R.id.top_gradient).visibility = View.INVISIBLE
+                    constraintSetMain.setVisibility(
+                        R.id.top_gradient_custom, ConstraintSet.VISIBLE
+                    )
+                    findViewById<View>(R.id.top_gradient_custom).visibility = View.VISIBLE
+                    constraintSetMain.setVerticalBias(R.id.cl_flag, 0.0f)
+                    constraintSetMain.connect(
+                        R.id.connection_gradient,
+                        ConstraintSet.BOTTOM,
+                        R.id.toolbar_windscribe,
+                        ConstraintSet.BOTTOM
+                    )
+                    constraintSetMain.applyTo(constraintLayoutMain)
+                    return false
+                }
+            }).diskCacheStrategy(DiskCacheStrategy.ALL)
+            .transition(DrawableTransitionOptions.with(drawableCrossFadeFactory)).into(flagView!!)
         setTextShadows()
     }
 
@@ -1382,7 +1414,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun setupProtocolAdapter(savedProtocol: String, protocols: Array<String>) {
         protocolAdapter =
-                ArrayAdapter(this, R.layout.drop_down_layout, R.id.tv_drop_down, protocols)
+            ArrayAdapter(this, R.layout.drop_down_layout, R.id.tv_drop_down, protocols)
         protocolAdapter?.let {
             protocolSpinner?.adapter = protocolAdapter
             protocolSpinner?.isSelected = false
@@ -1392,9 +1424,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun setupSearchLayout(
-            groups: List<ExpandableGroup<*>>,
-            serverListData: ServerListData,
-            listViewClickListener: ListViewClickListener
+        groups: List<ExpandableGroup<*>>,
+        serverListData: ServerListData,
+        listViewClickListener: ListViewClickListener
     ) {
         val fragment = supportFragmentManager.findFragmentById(R.id.cl_windscribe_main)
         if (fragment is SearchFragment) {
@@ -1402,10 +1434,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         try {
             val searchFragment =
-                    SearchFragment.newInstance(groups, serverListData, listViewClickListener)
+                SearchFragment.newInstance(groups, serverListData, listViewClickListener)
             searchFragment.enterTransition = Slide(Gravity.BOTTOM).addTarget(R.id.search_layout)
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.cl_windscribe_main, searchFragment).addToBackStack(null).commit()
+                .replace(R.id.cl_windscribe_main, searchFragment).addToBackStack(null).commit()
         } catch (e: IllegalStateException) {
             logger.info("Illegal state to add search layout.")
         }
@@ -1421,9 +1453,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun showDialog(message: String) {
         val alertDialog = AlertDialog.Builder(this, R.style.alert_dialog_theme).setCancelable(true)
-                .setMessage(message)
-                .setPositiveButton(getString(R.string.ok)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .create()
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.ok)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .create()
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         alertDialog.show()
     }
@@ -1440,62 +1472,62 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         logger.info("In server list menu selection transition...")
         runOnUiThread {
             constraintSetServerList.connect(
-                    R.id.img_server_list_selection_mask,
-                    ConstraintSet.START,
-                    resourceSelected,
-                    ConstraintSet.START
+                R.id.img_server_list_selection_mask,
+                ConstraintSet.START,
+                resourceSelected,
+                ConstraintSet.START
             )
             constraintSetServerList.connect(
-                    R.id.img_server_list_selection_mask,
-                    ConstraintSet.END,
-                    resourceSelected,
-                    ConstraintSet.END
+                R.id.img_server_list_selection_mask,
+                ConstraintSet.END,
+                resourceSelected,
+                ConstraintSet.END
             )
             when (resourceSelected) {
                 R.id.img_server_list_all -> setBarSelected(
-                        serverAll = true,
-                        favNav = false,
-                        flixLoc = false,
-                        staticIp = false,
-                        configLoc = false
+                    serverAll = true,
+                    favNav = false,
+                    flixLoc = false,
+                    staticIp = false,
+                    configLoc = false
                 )
 
                 R.id.img_server_list_favorites -> setBarSelected(
-                        serverAll = false,
-                        favNav = true,
-                        flixLoc = false,
-                        staticIp = false,
-                        configLoc = false
+                    serverAll = false,
+                    favNav = true,
+                    flixLoc = false,
+                    staticIp = false,
+                    configLoc = false
                 )
 
                 R.id.img_server_list_flix -> setBarSelected(
-                        serverAll = false,
-                        favNav = false,
-                        flixLoc = true,
-                        staticIp = false,
-                        configLoc = false
+                    serverAll = false,
+                    favNav = false,
+                    flixLoc = true,
+                    staticIp = false,
+                    configLoc = false
                 )
 
                 R.id.img_static_ip_list -> setBarSelected(
-                        serverAll = false,
-                        favNav = false,
-                        flixLoc = false,
-                        staticIp = true,
-                        configLoc = false
+                    serverAll = false,
+                    favNav = false,
+                    flixLoc = false,
+                    staticIp = true,
+                    configLoc = false
                 )
 
                 R.id.img_config_loc_list -> setBarSelected(
-                        serverAll = false,
-                        favNav = false,
-                        flixLoc = false,
-                        staticIp = false,
-                        configLoc = true
+                    serverAll = false,
+                    favNav = false,
+                    flixLoc = false,
+                    staticIp = false,
+                    configLoc = true
                 )
             }
             transition = AutoTransition()
             transition?.duration = AnimConstants.CONNECTION_MODE_ANIM_DURATION
             android.transition.TransitionManager.beginDelayedTransition(
-                    constraintLayoutServerList, transition
+                constraintLayoutServerList, transition
             )
             constraintSetServerList.applyTo(constraintLayoutServerList)
         }
@@ -1520,7 +1552,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             progressBarRecyclerView?.visibility = View.VISIBLE
             val color = getColorFromTheme(R.attr.progressBarColor, R.color.colorWhite40)
             progressBarRecyclerView?.indeterminateDrawable?.colorFilter =
-                    PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+                PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
         }
     }
 
@@ -1535,7 +1567,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun showStaticIpAdapterLoadError(
-            errorText: String, buttonText: String, deviceName: String
+        errorText: String, buttonText: String, deviceName: String
     ) {
         serverListFragments.let {
             if (it[3].recyclerView != null) {
@@ -1566,17 +1598,17 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
             valueAnimator.addUpdateListener {
                 val gradientColor = argbEvaluator.evaluate(
-                        valueAnimator.animatedFraction,
-                        state.flagGradientStartColor,
-                        state.flagGradientEndColor
+                    valueAnimator.animatedFraction,
+                    state.flagGradientStartColor,
+                    state.flagGradientEndColor
                 ) as Int
                 setToolBarColors(gradientColor)
                 connectionState?.setTextColor(
-                        (argbEvaluator.evaluate(
-                                valueAnimator.animatedFraction,
-                                state.connectionStateStatusStartColor,
-                                state.connectionStateStatusEndColor
-                        ) as Int)
+                    (argbEvaluator.evaluate(
+                        valueAnimator.animatedFraction,
+                        state.connectionStateStatusStartColor,
+                        state.connectionStateStatusEndColor
+                    ) as Int)
                 )
             }
             valueAnimator.addListener(object : Animator.AnimatorListener {
@@ -1622,17 +1654,17 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             connectingAnimation?.let { valueAnimator ->
                 valueAnimator.addUpdateListener {
                     val gradientColor = argbEvaluator.evaluate(
-                            valueAnimator.animatedFraction,
-                            state.flagGradientStartColor,
-                            state.flagGradientEndColor
+                        valueAnimator.animatedFraction,
+                        state.flagGradientStartColor,
+                        state.flagGradientEndColor
                     ) as Int
                     setToolBarColors(gradientColor)
                     connectionState?.setTextColor(
-                            (argbEvaluator.evaluate(
-                                    valueAnimator.animatedFraction,
-                                    state.connectionStateStatusStartColor,
-                                    state.connectionStateStatusEndColor
-                            ) as Int)
+                        (argbEvaluator.evaluate(
+                            valueAnimator.animatedFraction,
+                            state.connectionStateStatusStartColor,
+                            state.connectionStateStatusEndColor
+                        ) as Int)
                     )
                 }
                 valueAnimator.addListener(object : Animator.AnimatorListener {
@@ -1707,23 +1739,23 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             lastFlag = state.flag
             flagView?.let {
                 it.animate().translationYBy(VPN_CONNECTING_ANIMATION_DELAY.toFloat())
-                        .setInterpolator(AccelerateInterpolator())
-                        .setDuration(AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD).withEndAction {
-                            it.setImageResource(state.flag)
-                            it.animate().translationYBy((-1 * VPN_CONNECTING_ANIMATION_DELAY).toFloat())
-                                    .setInterpolator(AccelerateInterpolator()).duration =
-                                    AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD
-                        }
+                    .setInterpolator(AccelerateInterpolator())
+                    .setDuration(AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD).withEndAction {
+                        it.setImageResource(state.flag)
+                        it.animate().translationYBy((-1 * VPN_CONNECTING_ANIMATION_DELAY).toFloat())
+                            .setInterpolator(AccelerateInterpolator()).duration =
+                            AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD
+                    }
             }
 
             topGradient?.let {
                 it.animate().translationYBy(VPN_CONNECTING_ANIMATION_DELAY.toFloat())
-                        .setInterpolator(AccelerateInterpolator())
-                        .setDuration(AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD).withEndAction {
-                            it.animate().translationYBy((-1 * VPN_CONNECTING_ANIMATION_DELAY).toFloat())
-                                    .setInterpolator(AccelerateInterpolator()).duration =
-                                    AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD
-                        }
+                    .setInterpolator(AccelerateInterpolator())
+                    .setDuration(AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD).withEndAction {
+                        it.animate().translationYBy((-1 * VPN_CONNECTING_ANIMATION_DELAY).toFloat())
+                            .setInterpolator(AccelerateInterpolator()).duration =
+                            AnimConstants.FLAG_IMAGE_ANIMATION_PERIOD
+                    }
             }
         } else {
             flagView?.setImageResource(state.flag)
@@ -1749,7 +1781,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     private fun clearTextShadows() {
         val shadowViews = arrayOf(
-                textViewConnectedNetworkName, protocol, port, textViewLocationName, textViewLocationNick
+            textViewConnectedNetworkName, protocol, port, textViewLocationName, textViewLocationNick
         )
         for (view in shadowViews) {
             view?.setShadowLayer(0f, 0f, 0f, resources.getColor(R.color.colorDeepBlue25))
@@ -1762,13 +1794,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     private fun registerDataChangeObserver() {
         preferenceChangeObserver.addConfigListObserver(
-                this
+            this
         ) { presenter.loadConfigLocations() }
         preferenceChangeObserver.addLanguageChangeObserver(
-                this
+            this
         ) { presenter.onLanguageChanged() }
         preferenceChangeObserver.addShowLocationHealthChangeObserver(
-                this
+            this
         ) { presenter.onShowLocationHealthChanged() }
         preferenceChangeObserver.addLocationSettingsChangeObserver(this) {
             presenter.onLocationSettingsChanged()
@@ -1779,7 +1811,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     private fun setBarSelected(
-            serverAll: Boolean, favNav: Boolean, flixLoc: Boolean, staticIp: Boolean, configLoc: Boolean
+        serverAll: Boolean, favNav: Boolean, flixLoc: Boolean, staticIp: Boolean, configLoc: Boolean
     ) {
         imgServerListAll?.isSelected = serverAll
         imgServerListFavorites?.isSelected = favNav
@@ -1829,7 +1861,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     private fun setProgressBarDrawable(progressBar: ProgressBar?, drawable: Drawable?) {
         progressBar?.let {
             val bounds =
-                    progressBar.indeterminateDrawable.bounds // re-use bounds from current drawable
+                progressBar.indeterminateDrawable.bounds // re-use bounds from current drawable
             progressBar.indeterminateDrawable = drawable // set new drawable
             progressBar.indeterminateDrawable.bounds = bounds
         }
@@ -1838,7 +1870,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     private fun setServerListView(reload: Boolean) {
         Toast.makeText(this, "Set list", Toast.LENGTH_SHORT).show()
         val pagerAdapter = ServerListFragmentPager(
-                supportFragmentManager, serverListFragments
+            supportFragmentManager, serverListFragments
         )
         locationFragmentViewPager?.offscreenPageLimit = 4
         locationFragmentViewPager?.adapter = pagerAdapter
@@ -1851,7 +1883,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         setLastServerTabSelected()
         constraintLayoutMain?.let {
             it.viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
+                ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     it.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     if (!reload) {
@@ -1867,7 +1899,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     private fun setTextShadows() {
         val shadowViews = arrayOf(
-                textViewConnectedNetworkName, protocol, port, textViewLocationName, textViewLocationNick
+            textViewConnectedNetworkName, protocol, port, textViewLocationName, textViewLocationNick
         )
         for (view in shadowViews) {
             view?.setShadowLayer(0.01f, 0f, 6f, resources.getColor(R.color.colorDeepBlue25))
@@ -1878,7 +1910,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         connectionGradient?.let {
             val drawable = it.drawable as GradientDrawable
             drawable.colors =
-                    intArrayOf(resources.getColor(android.R.color.transparent), gradientColor)
+                intArrayOf(resources.getColor(android.R.color.transparent), gradientColor)
         }
     }
 
@@ -1889,10 +1921,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             it.scaleType = ImageView.ScaleType.FIT_CENTER
         }
         constraintSetMain.connect(
-                R.id.connection_gradient,
-                ConstraintSet.BOTTOM,
-                R.id.cl_preferred_protocol,
-                ConstraintSet.TOP
+            R.id.connection_gradient,
+            ConstraintSet.BOTTOM,
+            R.id.cl_preferred_protocol,
+            ConstraintSet.TOP
         )
         constraintSetMain.setVisibility(R.id.top_gradient_custom, ConstraintSet.INVISIBLE)
         findViewById<View>(R.id.top_gradient_custom).visibility = View.INVISIBLE

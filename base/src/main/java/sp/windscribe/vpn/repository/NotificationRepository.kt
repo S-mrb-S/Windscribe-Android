@@ -1,13 +1,13 @@
 package sp.windscribe.vpn.repository
 
+import io.reactivex.Completable
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.constants.ApiConstants.PCP_ID
 import sp.windscribe.vpn.localdatabase.LocalDbInterface
 import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
-import io.reactivex.Completable
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -9,8 +9,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Build.VERSION
 import android.os.SystemClock
-import java.lang.Exception
-import java.lang.NullPointerException
 
 class MockLocationProvider constructor(private val providerName: String, ctx: Context) {
 
@@ -68,7 +66,18 @@ class MockLocationProvider constructor(private val providerName: String, ctx: Co
     init {
         removeTesProviders()
         try {
-            locationManager.addTestProvider(providerName, false, false, false, false, true, true, true, 1, 1)
+            locationManager.addTestProvider(
+                providerName,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                1,
+                1
+            )
             locationManager.setTestProviderStatus(providerName, 2, null, System.currentTimeMillis())
             locationManager.setTestProviderEnabled(providerName, true)
         } catch (exception: NullPointerException) {
@@ -78,4 +87,5 @@ class MockLocationProvider constructor(private val providerName: String, ctx: Co
         }
     }
 }
+
 class MockLocationPermissionException : Throwable()

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.vpn.commonutils.ThemeUtils;
 import sp.windscribe.vpn.constants.AnimConstants;
@@ -180,7 +181,7 @@ public class RegionViewHolder extends GroupViewHolder {
     }
 
     private void scaleLineAnimation(final View viewToScale, float fromScale,
-            float toScale, final int visible) {
+                                    float toScale, final int visible) {
         final ScaleAnimation scaleAnimation = new ScaleAnimation(fromScale, toScale, 1, 1,
                 Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1);
         scaleAnimation.setFillAfter(true);

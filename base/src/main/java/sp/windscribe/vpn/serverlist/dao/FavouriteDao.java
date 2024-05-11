@@ -11,11 +11,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.serverlist.entity.Favourite;
-
 import java.util.List;
 
 import io.reactivex.Single;
+import sp.windscribe.vpn.serverlist.entity.Favourite;
 
 @Dao
 public interface FavouriteDao {

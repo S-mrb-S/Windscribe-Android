@@ -16,14 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import sp.windscribe.mobile.R;
-import sp.windscribe.mobile.gpsspoofing.GpsSpoofingFragmentListener;
-
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import sp.windscribe.mobile.R;
+import sp.windscribe.mobile.gpsspoofing.GpsSpoofingFragmentListener;
 
 
 public class GpsSpoofingMockSettings extends Fragment {

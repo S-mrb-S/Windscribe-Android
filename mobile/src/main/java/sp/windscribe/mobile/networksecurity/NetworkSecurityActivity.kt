@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.NetworkListAdapter
 import sp.windscribe.mobile.base.BaseActivity
@@ -23,7 +24,6 @@ import sp.windscribe.mobile.networksecurity.viewholder.NetworkAdapterActionListe
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NetworkSecurityActivity : BaseActivity(), NetworkSecurityView, NetworkAdapterActionListener {
@@ -115,7 +115,7 @@ class NetworkSecurityActivity : BaseActivity(), NetworkSecurityView, NetworkAdap
         currentNetworkProtection.text = protectionStatus
     }
 
-    override fun hideCurrentNetwork(){
+    override fun hideCurrentNetwork() {
         clCurrentNetwork.visibility = View.GONE
         currentNetworkProtection.visibility = View.GONE
     }

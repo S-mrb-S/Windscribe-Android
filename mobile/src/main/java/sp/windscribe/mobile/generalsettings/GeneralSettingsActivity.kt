@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import butterknife.BindView
 import butterknife.OnClick
+import org.apache.commons.io.IOUtils
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.base.BaseActivity
 import sp.windscribe.mobile.custom_view.CustomDialog
@@ -22,8 +24,6 @@ import sp.windscribe.mobile.di.ActivityModule
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.state.PreferenceChangeObserver
-import org.apache.commons.io.IOUtils
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

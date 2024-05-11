@@ -91,7 +91,7 @@ public class Region {
     private String tzOffSet;
 
     public Region(int id, String name, String countryCode, int status, int premium, String shortName, int p2p,
-            String tz, String tzOffSet, String locationType, int forceExpand, String dnsHostName) {
+                  String tz, String tzOffSet, String locationType, int forceExpand, String dnsHostName) {
         this.id = id;
         this.name = name;
         this.countryCode = countryCode;

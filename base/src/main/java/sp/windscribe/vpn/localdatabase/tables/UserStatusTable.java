@@ -27,7 +27,7 @@ public class UserStatusTable {
 
 
     public UserStatusTable(@NonNull String userName, Integer isPremium,
-            Integer accountStatus) {
+                           Integer accountStatus) {
         this.userName = userName;
         this.isPremium = isPremium;
         this.accountStatus = accountStatus;

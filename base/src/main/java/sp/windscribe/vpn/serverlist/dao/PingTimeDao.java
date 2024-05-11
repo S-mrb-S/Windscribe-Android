@@ -10,13 +10,12 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.Windscribe;
-import sp.windscribe.vpn.serverlist.entity.PingTime;
-
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import sp.windscribe.vpn.Windscribe;
+import sp.windscribe.vpn.serverlist.entity.PingTime;
 
 @Dao
 abstract public class PingTimeDao {

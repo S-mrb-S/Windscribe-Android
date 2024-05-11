@@ -4,12 +4,6 @@
 
 package sp.windscribe.vpn.backend
 
-import sp.windscribe.vpn.ServiceInteractor
-import sp.windscribe.vpn.autoconnection.ProtocolInformation
-import sp.windscribe.vpn.backend.wireguard.WireguardBackend
-import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import sp.windscribe.vpn.state.NetworkInfoManager
-import sp.windscribe.vpn.state.VPNConnectionStateManager
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +13,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
+import sp.windscribe.vpn.ServiceInteractor
+import sp.windscribe.vpn.autoconnection.ProtocolInformation
+import sp.windscribe.vpn.backend.wireguard.WireguardBackend
+import sp.windscribe.vpn.constants.PreferencesKeyConstants
+import sp.windscribe.vpn.state.NetworkInfoManager
+import sp.windscribe.vpn.state.VPNConnectionStateManager
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -58,7 +58,8 @@ abstract class VpnBackend(
         val preferredProtocolOn = networkInfoManager.networkInfo?.isPreferredOn ?: false
         if (preferredProtocolOn.not() && vpnServiceInteractor.preferenceHelper.getResponseString(
                 PreferencesKeyConstants.CONNECTION_MODE_KEY
-            ) != PreferencesKeyConstants.CONNECTION_MODE_AUTO) {
+            ) != PreferencesKeyConstants.CONNECTION_MODE_AUTO
+        ) {
             vpnLogger.debug("Manual connection mode selected without preferred protocol.")
             return
         }
@@ -95,32 +96,33 @@ abstract class VpnBackend(
         connectivityTestJob.add(
             vpnServiceInteractor.apiManager
                 .getConnectedIp().delay(500, TimeUnit.MILLISECONDS)
-                        .retry(3)
-                        .timeout(20, TimeUnit.SECONDS)
-                        .delaySubscription(500, TimeUnit.MILLISECONDS)
-                        .observeOn(Schedulers.io())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(
-                                { ip ->
-                                    ip.dataClass?.let { it ->
-                                        if (Util.validIpAddress(it)) {
-                                            val ipAddress: String = Util.getModifiedIpAddress(it.trim { it <= ' ' })
-                                            vpnServiceInteractor.preferenceHelper.saveResponseStringData(
-                                                    PreferencesKeyConstants.USER_IP,
-                                                    ipAddress
-                                            )
-                                            connectivityTestPassed(it)
-                                        } else {
-                                            failedConnectivityTest()
-                                        }
-                                    } ?: kotlin.run {
-                                        failedConnectivityTest()
-                                    }
-                                },
-                                {
-                                    failedConnectivityTest()
-                                }
-                        )
+                .retry(3)
+                .timeout(20, TimeUnit.SECONDS)
+                .delaySubscription(500, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    { ip ->
+                        ip.dataClass?.let { it ->
+                            if (Util.validIpAddress(it)) {
+                                val ipAddress: String =
+                                    Util.getModifiedIpAddress(it.trim { it <= ' ' })
+                                vpnServiceInteractor.preferenceHelper.saveResponseStringData(
+                                    PreferencesKeyConstants.USER_IP,
+                                    ipAddress
+                                )
+                                connectivityTestPassed(it)
+                            } else {
+                                failedConnectivityTest()
+                            }
+                        } ?: kotlin.run {
+                            failedConnectivityTest()
+                        }
+                    },
+                    {
+                        failedConnectivityTest()
+                    }
+                )
         )
     }
 

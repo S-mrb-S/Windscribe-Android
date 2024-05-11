@@ -1,6 +1,11 @@
 package sp.windscribe.mobile.networksecurity.networkdetails
 
 import android.content.Context
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.ActivityInteractorImpl.PortMapLoadCallback
@@ -11,11 +16,6 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_IKev2
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.services.DeviceStateService
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NetworkDetailPresenterImp @Inject constructor(
@@ -31,7 +31,7 @@ class NetworkDetailPresenterImp @Inject constructor(
         }
     }
 
-    override fun init(){
+    override fun init() {
         networkView.setActivityTitle(interactor.getResourceString(R.string.network_options))
     }
 
@@ -88,11 +88,12 @@ class NetworkDetailPresenterImp @Inject constructor(
 
     override fun removeNetwork(name: String) {
         interactor.getCompositeDisposable()
-            .add(interactor.removeNetwork(name)
-                .flatMap {
-                    interactor.getNetworkInfoManager().reload(true)
-                    return@flatMap Single.just(it)
-                }.subscribeOn(Schedulers.io())
+            .add(
+                interactor.removeNetwork(name)
+                    .flatMap {
+                        interactor.getNetworkInfoManager().reload(true)
+                        return@flatMap Single.just(it)
+                    }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(object : DisposableSingleObserver<Int?>() {
                         override fun onError(ignored: Throwable) {

@@ -2,6 +2,11 @@ package sp.windscribe.mobile.mainmenu
 
 import android.content.Context
 import android.view.View
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
 import sp.windscribe.vpn.ActivityInteractor
@@ -11,11 +16,6 @@ import sp.windscribe.vpn.api.response.UserSessionResponse
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.model.User
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class MainMenuPresenterImpl @Inject constructor(

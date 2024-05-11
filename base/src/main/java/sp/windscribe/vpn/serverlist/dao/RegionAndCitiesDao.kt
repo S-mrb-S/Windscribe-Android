@@ -3,8 +3,8 @@ package sp.windscribe.vpn.serverlist.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import sp.windscribe.vpn.serverlist.entity.RegionAndCities
 import io.reactivex.Single
+import sp.windscribe.vpn.serverlist.entity.RegionAndCities
 
 @Dao
 interface RegionAndCitiesDao {

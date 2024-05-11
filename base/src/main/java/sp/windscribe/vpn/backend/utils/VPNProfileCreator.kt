@@ -9,6 +9,18 @@ import android.net.DhcpInfo
 import android.net.wifi.WifiManager
 import android.util.Base64
 import com.google.gson.Gson
+import com.wireguard.config.Attribute
+import com.wireguard.config.Config
+import com.wireguard.config.Interface
+import com.wireguard.config.Interface.Builder
+import com.wireguard.config.Peer
+import de.blinkt.openvpn.core.ConfigParser
+import org.slf4j.LoggerFactory
+import org.strongswan.android.data.VpnProfile
+import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_DISABLE
+import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_EXCLUDE
+import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_ONLY
+import org.strongswan.android.data.VpnType
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.response.ServerCredentialsResponse
 import sp.windscribe.vpn.apppreference.PreferencesHelper
@@ -32,18 +44,6 @@ import sp.windscribe.vpn.repository.CallResult
 import sp.windscribe.vpn.repository.WgConfigRepository
 import sp.windscribe.vpn.repository.WgRemoteParams
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
-import com.wireguard.config.Attribute
-import com.wireguard.config.Config
-import com.wireguard.config.Interface
-import com.wireguard.config.Interface.Builder
-import com.wireguard.config.Peer
-import de.blinkt.openvpn.core.ConfigParser
-import org.slf4j.LoggerFactory
-import org.strongswan.android.data.VpnProfile
-import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_DISABLE
-import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_EXCLUDE
-import org.strongswan.android.data.VpnProfile.SelectedAppsHandling.SELECTED_APPS_ONLY
-import org.strongswan.android.data.VpnType
 import java.io.BufferedReader
 import java.io.Reader
 import java.io.StringReader
@@ -53,34 +53,61 @@ import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.nio.ByteOrder
-import java.util.*
+import java.util.SortedSet
+import java.util.TreeSet
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class VPNProfileCreator @Inject constructor(
-        private val preferencesHelper: PreferencesHelper,
-        private val wgConfigRepository: WgConfigRepository,
-        private val proxyTunnelManager: ProxyTunnelManager
+    private val preferencesHelper: PreferencesHelper,
+    private val wgConfigRepository: WgConfigRepository,
+    private val proxyTunnelManager: ProxyTunnelManager
 ) {
 
     private val logger = LoggerFactory.getLogger("profile_creator")
     var wgForceInit = AtomicBoolean(false)
     private val publicIpV4Array = arrayOf(
-            "0.0.0.0/5", "8.0.0.0/7", "11.0.0.0/8", "12.0.0.0/6",
-            "16.0.0.0/4", "32.0.0.0/3",
-            "64.0.0.0/2", "128.0.0.0/3", "160.0.0.0/5", "168.0.0.0/6", "172.0.0.0/12",
-            "172.32.0.0/11", "172.64.0.0/10", "172.128.0.0/9", "173.0.0.0/8", "174.0.0.0/7",
-            "176.0.0.0/4", "192.0.0.0/9", "192.128.0.0/11", "192.160.0.0/13", "192.169.0.0/16",
-            "192.170.0.0/15", "192.172.0.0/14", "192.176.0.0/12", "192.192.0.0/10",
-            "193.0.0.0/8", "194.0.0.0/7", "196.0.0.0/6", "200.0.0.0/5", "208.0.0.0/4", "10.255.255.0/24","::0/0"
+        "0.0.0.0/5",
+        "8.0.0.0/7",
+        "11.0.0.0/8",
+        "12.0.0.0/6",
+        "16.0.0.0/4",
+        "32.0.0.0/3",
+        "64.0.0.0/2",
+        "128.0.0.0/3",
+        "160.0.0.0/5",
+        "168.0.0.0/6",
+        "172.0.0.0/12",
+        "172.32.0.0/11",
+        "172.64.0.0/10",
+        "172.128.0.0/9",
+        "173.0.0.0/8",
+        "174.0.0.0/7",
+        "176.0.0.0/4",
+        "192.0.0.0/9",
+        "192.128.0.0/11",
+        "192.160.0.0/13",
+        "192.169.0.0/16",
+        "192.170.0.0/15",
+        "192.172.0.0/14",
+        "192.176.0.0/12",
+        "192.192.0.0/10",
+        "193.0.0.0/8",
+        "194.0.0.0/7",
+        "196.0.0.0/6",
+        "200.0.0.0/5",
+        "208.0.0.0/4",
+        "10.255.255.0/24",
+        "::0/0"
     )
 
     fun createIkEV2Profile(
-            location: LastSelectedLocation,
-            vpnParameters: VPNParameters,
-            config: ProtocolInformation
+        location: LastSelectedLocation,
+        vpnParameters: VPNParameters,
+        config: ProtocolInformation
     ): String {
         logger.info("creating IKEv2 Profile.")
         // Vpn profile
@@ -118,7 +145,7 @@ class VPNProfileCreator @Inject constructor(
             subNetBuilder.append("255.255.255.255/32 ")
             subNetBuilder.append("224.0.0.0/24 ")
             val manager = appContext.applicationContext
-                    .getSystemService(Context.WIFI_SERVICE) as WifiManager
+                .getSystemService(Context.WIFI_SERVICE) as WifiManager
             val wifInfo = manager.dhcpInfo
             val gatewayAddress = gatewayAddressAsString(wifInfo)
             val mask = subnetMask
@@ -146,9 +173,9 @@ class VPNProfileCreator @Inject constructor(
     }
 
     fun createOpenVpnProfile(
-            lastSelectedLocation: LastSelectedLocation,
-            vpnParameters: VPNParameters,
-            protocolInformation: ProtocolInformation
+        lastSelectedLocation: LastSelectedLocation,
+        vpnParameters: VPNParameters,
+        protocolInformation: ProtocolInformation
     ): String {
         logger.info("Creating open vpn profile.")
         // Create a new profile
@@ -210,10 +237,12 @@ class VPNProfileCreator @Inject constructor(
                 serverConfig = preferencesHelper.getOpenVPNServerConfig()
                 // Append additional anti-censorship options
                 if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
-                    serverConfig = String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
+                    serverConfig =
+                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
                     serverConfig += "\nudp-stuffing"
                     serverConfig += "\ntcp-split-reset"
-                    serverConfig = String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
+                    serverConfig =
+                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
                 }
                 port = protocolInformation.port
                 proxyIp = null
@@ -224,26 +253,33 @@ class VPNProfileCreator @Inject constructor(
                 serverConfig = preferencesHelper.getOpenVPNServerConfig()
                 // Append additional anti-censorship options
                 if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
-                    serverConfig = String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
+                    serverConfig =
+                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
                     serverConfig += "\nudp-stuffing"
                     serverConfig += "\ntcp-split-reset"
-                    serverConfig = String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
+                    serverConfig =
+                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
                 }
                 port = protocolInformation.port
                 proxyIp = null
             }
             if (serverConfig != null) {
                 profile.writeConfigFile(
-                        appContext,
-                        serverConfig,
-                        ip,
-                        protocol,
-                        port,
-                        proxyIp,
-                        vpnParameters.ovpnX509
+                    appContext,
+                    serverConfig,
+                    ip,
+                    protocol,
+                    port,
+                    proxyIp,
+                    vpnParameters.ovpnX509
                 )
             } else {
-                throw InvalidVPNConfigException(CallResult.Error(ERROR_VALID_CONFIG_NOT_FOUND, "OpenVPN Server config not found."))
+                throw InvalidVPNConfigException(
+                    CallResult.Error(
+                        ERROR_VALID_CONFIG_NOT_FOUND,
+                        "OpenVPN Server config not found."
+                    )
+                )
             }
         } catch (e: Exception) {
             logger.debug(e.toString())
@@ -262,9 +298,9 @@ class VPNProfileCreator @Inject constructor(
             preferencesHelper.selectedPort = protocolInformation.port
             if (proxyIp != null) {
                 proxyTunnelManager.startProxyTunnel(
-                        proxyIp,
-                        protocolInformation.port,
-                        false
+                    proxyIp,
+                    protocolInformation.port,
+                    false
                 )
             }
             // Old stunnel setup
@@ -294,13 +330,13 @@ class VPNProfileCreator @Inject constructor(
         val content = configFile.content
         return if (WindUtilities.getConfigType(content) == WIRE_GUARD) {
             Pair(
-                    createVpnProfileFromWireGuardConfig(configFile),
-                    Util.getProtocolInformationFromWireguardConfig(configFile.content)
+                createVpnProfileFromWireGuardConfig(configFile),
+                Util.getProtocolInformationFromWireguardConfig(configFile.content)
             )
         } else {
             Pair(
-                    createVpnProfileFromOpenVpnConfig(configFile),
-                    Util.getProtocolInformationFromOpenVPNConfig(configFile.content)
+                createVpnProfileFromOpenVpnConfig(configFile),
+                Util.getProtocolInformationFromOpenVPNConfig(configFile.content)
             )
         }
     }
@@ -342,7 +378,7 @@ class VPNProfileCreator @Inject constructor(
         }
         logger.info("Adding location meta data to profile.")
         val lastSelectedLocation =
-                LastSelectedLocation(configFile.getPrimaryKey(), nickName = configFile.name)
+            LastSelectedLocation(configFile.getPrimaryKey(), nickName = configFile.name)
         saveSelectedLocation(lastSelectedLocation)
         profile.writeConfigFile(appContext)
         profile.mAllowedAppsVpn = HashSet(preferencesHelper.installedApps())
@@ -376,11 +412,11 @@ class VPNProfileCreator @Inject constructor(
             interFaceBuilder.setMtu(mPreferencesHelper.packetSize)
         }
         val configWithSettings = Config.Builder()
-                .addPeers(config.peers)
-                .setInterface(interFaceBuilder.build())
-                .build()
+            .addPeers(config.peers)
+            .setInterface(interFaceBuilder.build())
+            .build()
         val lastSelectedLocation =
-                LastSelectedLocation(configFile.getPrimaryKey(), nickName = configFile.name)
+            LastSelectedLocation(configFile.getPrimaryKey(), nickName = configFile.name)
         saveSelectedLocation(lastSelectedLocation)
         saveProfile(WireGuardVpnProfile(configWithSettings.toWgQuickString()))
         return "Custom Config: ${configWithSettings.toWgQuickString()}"
@@ -393,7 +429,12 @@ class VPNProfileCreator @Inject constructor(
         val ip = config.peers[0].endpoint.get().host
         val port = config.peers[0].endpoint.get().port.toString()
         logger.debug("Requesting wg remote params.")
-        when (val remoteParamsResponse = wgConfigRepository.getWgParams(hostName, serverPublicKey, wgForceInit.getAndSet(false), true)) {
+        when (val remoteParamsResponse = wgConfigRepository.getWgParams(
+            hostName,
+            serverPublicKey,
+            wgForceInit.getAndSet(false),
+            true
+        )) {
             is CallResult.Success<WgRemoteParams> -> {
                 logger.debug("Wg remote params successful.")
                 val anInterface = createWireGuardInterface(remoteParamsResponse.data)
@@ -405,8 +446,8 @@ class VPNProfileCreator @Inject constructor(
                 val stringBuilder = StringBuilder()
                 for (logLine in profileLines) {
                     if (!logLine.startsWith("PrivateKey") && !logLine.startsWith("PreSharedKey") && !logLine.startsWith(
-                                    "PublicKey"
-                            )
+                            "PublicKey"
+                        )
                     ) {
                         stringBuilder.append(logLine).append(" ")
                     }
@@ -424,16 +465,24 @@ class VPNProfileCreator @Inject constructor(
     }
 
     suspend fun createVpnProfileFromWireGuardProfile(
-            lastSelectedLocation: LastSelectedLocation,
-            vpnParameters: VPNParameters,
-            config: ProtocolInformation
+        lastSelectedLocation: LastSelectedLocation,
+        vpnParameters: VPNParameters,
+        config: ProtocolInformation
     ): String {
         val builder = Config.Builder()
-        when (val remoteParamsResponse = wgConfigRepository.getWgParams(vpnParameters.hostName, vpnParameters.publicKey, wgForceInit.getAndSet(false))) {
+        when (val remoteParamsResponse = wgConfigRepository.getWgParams(
+            vpnParameters.hostName,
+            vpnParameters.publicKey,
+            wgForceInit.getAndSet(false)
+        )) {
             is CallResult.Success<WgRemoteParams> -> {
                 val anInterface = createWireGuardInterface(remoteParamsResponse.data)
                 builder.setInterface(anInterface)
-                val peer = createWireGuardPeer(remoteParamsResponse.data, vpnParameters.stealthIp, config.port)
+                val peer = createWireGuardPeer(
+                    remoteParamsResponse.data,
+                    vpnParameters.stealthIp,
+                    config.port
+                )
                 builder.addPeer(peer)
 
                 val content = builder.build().toWgQuickString()
@@ -441,8 +490,8 @@ class VPNProfileCreator @Inject constructor(
                 val stringBuilder = StringBuilder()
                 for (logLine in profileLines) {
                     if (!logLine.startsWith("PrivateKey") && !logLine.startsWith("PreSharedKey") && !logLine.startsWith(
-                                    "PublicKey"
-                            )
+                            "PublicKey"
+                        )
                     ) {
                         stringBuilder.append(logLine).append(" ")
                     }
@@ -498,16 +547,20 @@ class VPNProfileCreator @Inject constructor(
         return builder.build()
     }
 
-    private fun createWireGuardPeer(wgRemoteParams: WgRemoteParams, endpoint: String, port: String): Peer {
+    private fun createWireGuardPeer(
+        wgRemoteParams: WgRemoteParams,
+        endpoint: String,
+        port: String
+    ): Peer {
         val builder = Peer.Builder()
         builder.parsePublicKey(wgRemoteParams.serverPublicKey)
         val lanByPass = preferencesHelper.lanByPass
         val modifiedAllowedIps = modifyAllowedIps(
-                wgRemoteParams.allowedIPs,
-                wgRemoteParams.dns
+            wgRemoteParams.allowedIPs,
+            wgRemoteParams.dns
         )
         builder.parseAllowedIPs(
-                if (lanByPass) modifiedAllowedIps else wgRemoteParams.allowedIPs
+            if (lanByPass) modifiedAllowedIps else wgRemoteParams.allowedIPs
         )
         val sb = endpoint +
                 ":" +
@@ -527,12 +580,12 @@ class VPNProfileCreator @Inject constructor(
             mPassword = serverCredentials.passwordEncoded
         } else {
             mUsername = String(
-                    Base64
-                            .decode(serverCredentials.userNameEncoded, Base64.DEFAULT)
+                Base64
+                    .decode(serverCredentials.userNameEncoded, Base64.DEFAULT)
             )
             mPassword = String(
-                    Base64
-                            .decode(serverCredentials.passwordEncoded, Base64.DEFAULT)
+                Base64
+                    .decode(serverCredentials.passwordEncoded, Base64.DEFAULT)
             )
         }
         return Pair(mUsername, mPassword)
@@ -570,7 +623,13 @@ class VPNProfileCreator @Inject constructor(
             if (isPrivateIPAddress(ipByteArray)) {
                 return InetAddress.getByAddress(ipByteArray).hostAddress
             } else {
-                logger.info("Non Rfc-1918 local address found: ${InetAddress.getByAddress(ipByteArray).hostAddress}")
+                logger.info(
+                    "Non Rfc-1918 local address found: ${
+                        InetAddress.getByAddress(
+                            ipByteArray
+                        ).hostAddress
+                    }"
+                )
                 return null
             }
         } catch (e: Exception) {
@@ -590,7 +649,7 @@ class VPNProfileCreator @Inject constructor(
     }
 
     private fun getServerCredentials(
-            ikEV2: Boolean
+        ikEV2: Boolean
     ): ServerCredentialsResponse {
         return when {
             preferencesHelper.isConnectingToStaticIp -> {
@@ -599,17 +658,22 @@ class VPNProfileCreator @Inject constructor(
 
             ikEV2 -> {
                 preferencesHelper.getCredentials(PreferencesKeyConstants.IKEV2_CREDENTIALS)
-                        ?: kotlin.run {
-                            preferencesHelper.setUserAccountUpdateRequired(true)
-                            null
-                        }
+                    ?: kotlin.run {
+                        preferencesHelper.setUserAccountUpdateRequired(true)
+                        null
+                    }
             }
 
             else -> {
                 preferencesHelper.getCredentials(PreferencesKeyConstants.OPEN_VPN_CREDENTIALS)
             }
         }
-                ?: throw InvalidVPNConfigException(CallResult.Error(ERROR_VALID_CONFIG_NOT_FOUND, "valid server credential not found."))
+            ?: throw InvalidVPNConfigException(
+                CallResult.Error(
+                    ERROR_VALID_CONFIG_NOT_FOUND,
+                    "valid server credential not found."
+                )
+            )
     }
 
     private val subnetMask: String?
@@ -622,8 +686,8 @@ class VPNProfileCreator @Inject constructor(
                         continue
                     }
                     logger.info(
-                            "Interface Name:" + networkInterface.displayName + "  Addresses: " + networkInterface
-                                    .interfaceAddresses.toString()
+                        "Interface Name:" + networkInterface.displayName + "  Addresses: " + networkInterface
+                            .interfaceAddresses.toString()
                     )
                     for (interfaceAddress in networkInterface.interfaceAddresses) {
                         val broadcast = interfaceAddress.broadcast
@@ -696,13 +760,13 @@ class VPNProfileCreator @Inject constructor(
         vpnProfile.mUsername = openVPNConnectionInfo.username
         vpnProfile.mPassword = openVPNConnectionInfo.password
         vpnProfile.writeConfigFile(
-                appContext,
-                openVPNConnectionInfo.base64EncodedServerConfig,
-                openVPNConnectionInfo.ip,
-                openVPNConnectionInfo.protocol,
-                openVPNConnectionInfo.port,
-                null,
-                null
+            appContext,
+            openVPNConnectionInfo.base64EncodedServerConfig,
+            openVPNConnectionInfo.ip,
+            openVPNConnectionInfo.protocol,
+            openVPNConnectionInfo.port,
+            null,
+            null
         )
         saveProfile(vpnProfile)
     }

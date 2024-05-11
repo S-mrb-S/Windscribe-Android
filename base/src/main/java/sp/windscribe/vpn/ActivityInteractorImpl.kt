@@ -10,6 +10,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Single
+import io.reactivex.SingleSource
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.R.*
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.IApiCallManager
@@ -34,21 +44,11 @@ import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.repository.*
 import sp.windscribe.vpn.serverlist.entity.*
 import sp.windscribe.vpn.services.FirebaseManager
+import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import org.slf4j.LoggerFactory
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 /**
  * Implementation of ActivityInteractor
  * @see ActivityInteractor
-*/
+ */
 class ActivityInteractorImpl(
     private val activityScope: LifecycleCoroutineScope,
     private val mainScope: CoroutineScope,
@@ -98,6 +98,7 @@ class ActivityInteractorImpl(
     override fun getWorkManager(): WindScribeWorkManager {
         return windScribeWorkManager
     }
+
     override fun getUserRepository(): UserRepository {
         return userRepository
     }
@@ -228,7 +229,7 @@ class ActivityInteractorImpl(
     override fun getDebugFilePath(): String {
         val advanceParams = WindUtilities.toKeyValuePairs(preferenceHelper.advanceParamText)
         val ikev2Log = advanceParams.containsKey(AdvanceParamKeys.SHOW_IKEV2_LOG)
-        if (ikev2Log && advanceParams[AdvanceParamKeys.SHOW_IKEV2_LOG] == "true"){
+        if (ikev2Log && advanceParams[AdvanceParamKeys.SHOW_IKEV2_LOG] == "true") {
             return "${appContext.filesDir}/charon.log"
         }
         return appContext.cacheDir.path + PreferencesKeyConstants.DEBUG_LOG_FILE_NAME
@@ -275,7 +276,8 @@ class ActivityInteractorImpl(
     }
 
     override fun getLastTimeUpdated(): String {
-        return this.preferenceHelper.getResponseString(RateDialogConstants.LAST_UPDATE_TIME) ?: Date().time.toString()
+        return this.preferenceHelper.getResponseString(RateDialogConstants.LAST_UPDATE_TIME)
+            ?: Date().time.toString()
     }
 
     override fun getAllConfigs(): Single<List<ConfigFile>> {
@@ -301,7 +303,8 @@ class ActivityInteractorImpl(
                 logger.debug("Outdated port map version.")
                 throw WindScribeException("Port map version outdated")
             }
-            val jsonString: String? = this.preferenceHelper.getResponseString(PreferencesKeyConstants.PORT_MAP)
+            val jsonString: String? =
+                this.preferenceHelper.getResponseString(PreferencesKeyConstants.PORT_MAP)
             Gson().fromJson(jsonString, PortMapResponse::class.java)
         }.onErrorResumeNext {
             if (WindUtilities.isOnline()) {
@@ -340,9 +343,9 @@ class ActivityInteractorImpl(
 
     override fun getRateAppPreference(): Int {
         return this.preferenceHelper.getResponseInt(
-                RateDialogConstants.CURRENT_STATUS_KEY,
-                RateDialogConstants.STATUS_DEFAULT
-            )
+            RateDialogConstants.CURRENT_STATUS_KEY,
+            RateDialogConstants.STATUS_DEFAULT
+        )
     }
 
     override fun getResourceString(resourceId: Int): String {
@@ -398,10 +401,10 @@ class ActivityInteractorImpl(
             logger
                 .debug(
                     "Rate dialog check: IsPremiumUser:" + isPremiumUser() + ", Data Used:" + dataUsed + "GB" +
-                        " Dialog data limit:" + RateDialogConstants.MINIMUM_DATA_LIMIT + "GB," +
-                        " Registration(days):" + days + " Dialog days limit:" +
-                        RateDialogConstants.MINIMUM_DAYS_TO_START + ", Last choice:" + getLastChoiceLog() +
-                        " Last shown:" + logDate
+                            " Dialog data limit:" + RateDialogConstants.MINIMUM_DATA_LIMIT + "GB," +
+                            " Registration(days):" + days + " Dialog days limit:" +
+                            RateDialogConstants.MINIMUM_DAYS_TO_START + ", Last choice:" + getLastChoiceLog() +
+                            " Last shown:" + logDate
                 )
             return true
         }
@@ -435,7 +438,10 @@ class ActivityInteractorImpl(
     }
 
     override fun setRateDialogUpdateTime() {
-        this.preferenceHelper.saveResponseStringData(RateDialogConstants.LAST_UPDATE_TIME, Date().time.toString())
+        this.preferenceHelper.saveResponseStringData(
+            RateDialogConstants.LAST_UPDATE_TIME,
+            Date().time.toString()
+        )
     }
 
     override fun getCityAndRegionByID(cityId: Int): Single<CityAndRegion> {
@@ -596,7 +602,12 @@ class ActivityInteractorImpl(
     override fun updateServerList(): Single<Boolean> {
         return Single.fromCallable {
             val username: String = preferenceHelper.userName
-            localDbInterface.insertOrUpdateServerUpdateStatusTable(ServerStatusUpdateTable(username, 1))
+            localDbInterface.insertOrUpdateServerUpdateStatusTable(
+                ServerStatusUpdateTable(
+                    username,
+                    1
+                )
+            )
             true
         }
     }
@@ -655,7 +666,12 @@ class ActivityInteractorImpl(
     }
 
     override fun updateServerList(serverStatus: Int): Completable {
-        return localDbInterface.insertOrUpdateStatus(ServerStatusUpdateTable(preferenceHelper.userName, serverStatus))
+        return localDbInterface.insertOrUpdateStatus(
+            ServerStatusUpdateTable(
+                preferenceHelper.userName,
+                serverStatus
+            )
+        )
     }
 
     override fun getPartialLog(): List<String> {
@@ -693,7 +709,10 @@ class ActivityInteractorImpl(
     }
 
     private fun getFavoriteServers(jsonString: String?): List<ServerNodeListOverLoaded> {
-        return Gson().fromJson(jsonString, object : TypeToken<List<ServerNodeListOverLoaded>>() {}.type)
+        return Gson().fromJson(
+            jsonString,
+            object : TypeToken<List<ServerNodeListOverLoaded>>() {}.type
+        )
     }
 
     override fun getReceiptValidator(): ReceiptValidator {

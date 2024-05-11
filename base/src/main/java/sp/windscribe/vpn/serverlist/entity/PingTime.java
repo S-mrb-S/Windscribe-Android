@@ -84,9 +84,13 @@ public class PingTime {
         isStatic = aStatic;
     }
 
-    public void setIp(String ip) { this.ip = ip; }
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @NonNull
     @Ignore

@@ -20,6 +20,10 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.holder.CityViewHolder;
 import sp.windscribe.mobile.holder.RegionViewHolder;
@@ -34,9 +38,6 @@ import sp.windscribe.vpn.serverlist.entity.Region;
 import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RegionsAdapter extends ExpandableRecyclerViewAdapter<RegionViewHolder, CityViewHolder> {
 
     private ServerListData serverListData;
@@ -46,7 +47,7 @@ public class RegionsAdapter extends ExpandableRecyclerViewAdapter<RegionViewHold
     private final ListViewClickListener mListener;
 
     public RegionsAdapter(List<? extends ExpandableGroup> groups, ServerListData serverListData,
-            ListViewClickListener mListener) {
+                          ListViewClickListener mListener) {
         super(groups);
         this.mListener = mListener;
         this.serverListData = serverListData;
@@ -72,7 +73,7 @@ public class RegionsAdapter extends ExpandableRecyclerViewAdapter<RegionViewHold
     //City View Holder
     @Override
     public void onBindChildViewHolder(final CityViewHolder holder, final int flatPosition,
-            final ExpandableGroup group, int childIndex) {
+                                      final ExpandableGroup group, int childIndex) {
         final City city = (City) group.getItems().get(childIndex);
         bindCity(holder, city);
     }
@@ -80,7 +81,7 @@ public class RegionsAdapter extends ExpandableRecyclerViewAdapter<RegionViewHold
     // Group View holder
     @Override
     public void onBindGroupViewHolder(final RegionViewHolder holder, final int flatPosition,
-            final ExpandableGroup group) {
+                                      final ExpandableGroup group) {
         Group expandableGroup = (Group) group;
         // Best Location and normal Location
         if (((Group) group).getRegion() == null) {
@@ -226,6 +227,7 @@ public class RegionsAdapter extends ExpandableRecyclerViewAdapter<RegionViewHold
                 int scrollTo = holder.getAdapterPosition() + (Math.min(cities.size(), 5));
                 mListener.setScrollTo(scrollTo);
             }
+
             @Override
             public void onItemCollapse() {
                 setGroupHealth(finalAverageHealth, holder);

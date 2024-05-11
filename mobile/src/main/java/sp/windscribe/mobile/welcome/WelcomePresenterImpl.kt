@@ -5,19 +5,6 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import com.apollographql.apollo3.api.Error
-import sp.windscribe.mobile.R
-import sp.windscribe.vpn.commonutils.CommonPasswordChecker
-import sp.windscribe.vpn.ActivityInteractor
-import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
-import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
-import sp.windscribe.vpn.api.CreateHashMap.createRegistrationMap
-import sp.windscribe.vpn.api.response.*
-import sp.windscribe.vpn.constants.NetworkErrorCodes
-import sp.windscribe.vpn.constants.NetworkKeyConstants
-import sp.windscribe.vpn.constants.UserStatusConstants.USER_STATUS_PREMIUM
-import sp.windscribe.vpn.errormodel.SessionErrorHandler
-import sp.windscribe.vpn.errormodel.WindError
-import sp.windscribe.vpn.repository.CallResult
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.SingleSource
@@ -32,10 +19,23 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.mobile.R
 import sp.windscribe.mobile.mrb.api.GetLoginWithKeyQuery
 import sp.windscribe.mobile.mrb.util.getAllServers
 import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.vpn.ActivityInteractor
+import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
+import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
+import sp.windscribe.vpn.api.CreateHashMap.createRegistrationMap
+import sp.windscribe.vpn.api.response.*
+import sp.windscribe.vpn.commonutils.CommonPasswordChecker
+import sp.windscribe.vpn.constants.NetworkErrorCodes
+import sp.windscribe.vpn.constants.NetworkKeyConstants
+import sp.windscribe.vpn.constants.UserStatusConstants.USER_STATUS_PREMIUM
+import sp.windscribe.vpn.errormodel.SessionErrorHandler
+import sp.windscribe.vpn.errormodel.WindError
 import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.repository.CallResult
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -108,6 +108,7 @@ class WelcomePresenterImpl @Inject constructor(
                                     onLoginResponseError(result.code, result.errorMessage)
                                 }
                             }
+
                             is CallResult.Success -> {
                                 logger.info("Account claimed successfully...")
                                 welcomeView.updateCurrentProcess("SignUp successful...")
@@ -123,60 +124,63 @@ class WelcomePresenterImpl @Inject constructor(
     override fun startGhostAccountSetup() {
         welcomeView.prepareUiForApiCallStart()
         welcomeView.updateCurrentProcess("Signing In")
-        interactor.getCompositeDisposable().add(interactor.getApiCallManager().getReg(null)
-            .flatMap(Function<GenericResponseClass<RegToken?, ApiErrorResponse?>, SingleSource<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>> label@{ regToken: GenericResponseClass<RegToken?, ApiErrorResponse?> ->
-                when (val result = regToken.callResult<RegToken>()) {
-                    is CallResult.Error -> {
-                        if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                            throw Exception("Unknown Error")
-                        } else {
-                            throw Exception(result.errorMessage)
-                        }
-                    }
-                    is CallResult.Success -> {
-                        val ghostModeMap = createGhostModeMap(result.data.token)
-                        return@label interactor.getApiCallManager().signUserIn(ghostModeMap)
-                    }
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object :
-                DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
-                override fun onError(e: Throwable) {
-                    welcomeView.prepareUiForApiCallFinished()
-                    if (e is IOException) {
-                        welcomeView.showError("Unable to reach server. Check your network connection.")
-                    } else {
-                        logger.debug(e.message)
-                        welcomeView.goToSignUp()
-                    }
-                }
-
-                override fun onSuccess(
-                    regResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
-                ) {
-                    when (val result = regResponse.callResult<UserRegistrationResponse>()) {
+        interactor.getCompositeDisposable().add(
+            interactor.getApiCallManager().getReg(null)
+                .flatMap(Function<GenericResponseClass<RegToken?, ApiErrorResponse?>, SingleSource<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>> label@{ regToken: GenericResponseClass<RegToken?, ApiErrorResponse?> ->
+                    when (val result = regToken.callResult<RegToken>()) {
                         is CallResult.Error -> {
-                            welcomeView.prepareUiForApiCallFinished()
-                            if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                logger.debug(result.errorMessage)
-                                welcomeView.goToSignUp()
+                            if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                throw Exception("Unknown Error")
+                            } else {
+                                throw Exception(result.errorMessage)
                             }
                         }
+
                         is CallResult.Success -> {
-                            interactor.getAppPreferenceInterface().sessionHash =
-                                result.data.sessionAuthHash
-                            interactor.getFireBaseManager().getFirebaseToken { session ->
-                                prepareLoginRegistrationDashboard(session)
+                            val ghostModeMap = createGhostModeMap(result.data.token)
+                            return@label interactor.getApiCallManager().signUserIn(ghostModeMap)
+                        }
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :
+                    DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
+                    override fun onError(e: Throwable) {
+                        welcomeView.prepareUiForApiCallFinished()
+                        if (e is IOException) {
+                            welcomeView.showError("Unable to reach server. Check your network connection.")
+                        } else {
+                            logger.debug(e.message)
+                            welcomeView.goToSignUp()
+                        }
+                    }
+
+                    override fun onSuccess(
+                        regResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
+                    ) {
+                        when (val result = regResponse.callResult<UserRegistrationResponse>()) {
+                            is CallResult.Error -> {
+                                welcomeView.prepareUiForApiCallFinished()
+                                if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                    logger.debug(result.errorMessage)
+                                    welcomeView.goToSignUp()
+                                }
+                            }
+
+                            is CallResult.Success -> {
+                                interactor.getAppPreferenceInterface().sessionHash =
+                                    result.data.sessionAuthHash
+                                interactor.getFireBaseManager().getFirebaseToken { session ->
+                                    prepareLoginRegistrationDashboard(session)
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
         )
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun setup(){
+    private fun setup() {
         val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
 
         GlobalScope.launch {
@@ -195,9 +199,9 @@ class WelcomePresenterImpl @Inject constructor(
         }
     }
 
-    private fun navigateToHome(){
-        try{
-            try{
+    private fun navigateToHome() {
+        try {
+            try {
                 interactor.getWorkManager().onAppStart()
                 interactor.getWorkManager().onAppMovedToForeground()
                 interactor.getWorkManager().updateNodeLatencies()
@@ -205,7 +209,7 @@ class WelcomePresenterImpl @Inject constructor(
             } finally {
                 MmkvManager.getLoginStorage().encode("is_login", true)
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             onLoginFailedWithNoError()
         }
     }
@@ -217,13 +221,15 @@ class WelcomePresenterImpl @Inject constructor(
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
             GlobalScope.launch {
-                try{
+                try {
                     GetLoginWithKeyQuery().performWork(username,
                         object : GetLoginWithKeyQuery.GetLoginCallback {
 
                             override fun onSuccess(data: GetLoginQuery.Data?) {
-                                MmkvManager.getLoginStorage().putString("user_name", data?.service?.name)
-                                MmkvManager.getLoginStorage().putString("reset_data",
+                                MmkvManager.getLoginStorage()
+                                    .putString("user_name", data?.service?.name)
+                                MmkvManager.getLoginStorage().putString(
+                                    "reset_data",
                                     data?.service?.days.toString()
                                 )
 
@@ -237,9 +243,9 @@ class WelcomePresenterImpl @Inject constructor(
 
                         })
 
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     Log.d("An error", e.toString())
-                }finally {
+                } finally {
                     welcomeView.prepareUiForApiCallFinished()
                 }
             }
@@ -294,6 +300,7 @@ class WelcomePresenterImpl @Inject constructor(
                                     onLoginResponseError(result.code, result.errorMessage)
                                 }
                             }
+
                             is CallResult.Success -> {
                                 logger.info("Sign up user successfully...")
                                 welcomeView.updateCurrentProcess("SignUp successful...")
@@ -356,12 +363,15 @@ class WelcomePresenterImpl @Inject constructor(
                 welcomeView.setFaFieldsVisibility(View.VISIBLE)
                 welcomeView.setTwoFaError(errorMessage)
             }
+
             NetworkErrorCodes.ERROR_USER_NAME_ALREADY_TAKEN, NetworkErrorCodes.ERROR_USER_NAME_ALREADY_IN_USE -> {
                 welcomeView.setUsernameError(errorMessage)
             }
+
             NetworkErrorCodes.ERROR_EMAIL_ALREADY_EXISTS, NetworkErrorCodes.ERROR_DISPOSABLE_EMAIL -> {
                 welcomeView.setEmailError(errorMessage)
             }
+
             else -> {
                 welcomeView.setLoginRegistrationError(errorMessage)
             }
@@ -383,7 +393,8 @@ class WelcomePresenterImpl @Inject constructor(
                             is CallResult.Error -> {}
                             is CallResult.Success -> {
                                 if (interactor.getAppPreferenceInterface()
-                                        .getDeviceUUID(result.data.userName) == null) {
+                                        .getDeviceUUID(result.data.userName) == null
+                                ) {
                                     logger.debug("No device id is found for the current user, generating and saving UUID")
                                     interactor.getAppPreferenceInterface().setDeviceUUID(
                                         result.data.userName, UUID.randomUUID().toString()

@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ScrollView
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import butterknife.BindView
 import butterknife.OnClick
@@ -21,7 +25,7 @@ import sp.windscribe.mobile.dialogs.SuccessDialog
 import sp.windscribe.mobile.welcome.SoftInputAssist
 import sp.windscribe.vpn.api.response.QueryType
 import sp.windscribe.vpn.commonutils.ThemeUtils
-import java.util.*
+import java.util.Objects
 import javax.inject.Inject
 
 class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
@@ -187,7 +191,12 @@ class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
         subjectView.setText("")
         messageView.setText("")
         queryTypeSpinner.setSelection(0)
-        SuccessDialog.show(this, message, ThemeUtils.getColor(this, R.attr.wdPrimaryInvertedColor, R.color.colorBackgroundDark), true)
+        SuccessDialog.show(
+            this,
+            message,
+            ThemeUtils.getColor(this, R.attr.wdPrimaryInvertedColor, R.color.colorBackgroundDark),
+            true
+        )
     }
 
     private fun hideKeyBoard() {

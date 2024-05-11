@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream

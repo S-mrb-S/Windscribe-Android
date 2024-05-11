@@ -7,11 +7,10 @@ package sp.windscribe.vpn.localdatabase;
 import androidx.room.Dao;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.localdatabase.tables.PingTestResults;
-
 import java.util.List;
 
 import io.reactivex.Single;
+import sp.windscribe.vpn.localdatabase.tables.PingTestResults;
 
 @Dao
 public interface PingTestDao {

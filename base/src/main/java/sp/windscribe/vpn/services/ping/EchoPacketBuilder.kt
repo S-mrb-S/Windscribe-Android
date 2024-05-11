@@ -4,9 +4,9 @@
 
 package sp.windscribe.vpn.services.ping
 
+import okhttp3.internal.and
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicInteger
-import okhttp3.internal.and
 
 class EchoPacketBuilder(private val mType: Byte, payload: ByteArray?) {
 

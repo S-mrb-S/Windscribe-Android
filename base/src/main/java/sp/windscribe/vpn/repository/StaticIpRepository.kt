@@ -1,16 +1,8 @@
 package sp.windscribe.vpn.repository
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import sp.windscribe.vpn.api.IApiCallManager
-import sp.windscribe.vpn.apppreference.PreferencesHelper
-import sp.windscribe.vpn.constants.NetworkKeyConstants
-import sp.windscribe.vpn.localdatabase.LocalDbInterface
-import sp.windscribe.vpn.serverlist.entity.StaticRegion
 import io.reactivex.Completable
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +10,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.rx2.rxCompletable
 import org.json.JSONObject
+import sp.windscribe.vpn.api.IApiCallManager
+import sp.windscribe.vpn.apppreference.PreferencesHelper
+import sp.windscribe.vpn.constants.NetworkKeyConstants
+import sp.windscribe.vpn.localdatabase.LocalDbInterface
+import sp.windscribe.vpn.serverlist.entity.StaticRegion
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class StaticIpRepository @Inject constructor(
-        val scope: CoroutineScope,
-        private val preferencesHelper: PreferencesHelper,
-        private val apiCallManager: IApiCallManager,
-        private val localDbInterface: LocalDbInterface,
+    val scope: CoroutineScope,
+    private val preferencesHelper: PreferencesHelper,
+    private val apiCallManager: IApiCallManager,
+    private val localDbInterface: LocalDbInterface,
 ) {
     private var _events = MutableStateFlow(emptyList<StaticRegion>())
     val regions: StateFlow<List<StaticRegion>> = _events
@@ -38,7 +37,8 @@ class StaticIpRepository @Inject constructor(
             try {
                 val regions = localDbInterface.allStaticRegions.await()
                 _events.emit(regions)
-            }catch (e:Exception){}
+            } catch (e: Exception) {
+            }
         }
     }
 
@@ -51,8 +51,8 @@ class StaticIpRepository @Inject constructor(
         val regions = response.dataClass?.let {
             val jsonObject = JSONObject(Gson().toJson(it))
             Gson().fromJson<List<StaticRegion>>(
-                    jsonObject.getJSONArray("static_ips").toString(),
-                    object : TypeToken<List<StaticRegion>?>() {}.type
+                jsonObject.getJSONArray("static_ips").toString(),
+                object : TypeToken<List<StaticRegion>?>() {}.type
             )
         } ?: emptyList()
         if (regions.isNotEmpty()) {

@@ -1,23 +1,30 @@
 package sp.windscribe.mobile.custom_view.preferences
 
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.TextView
 import sp.windscribe.mobile.R
 
-class SplitRoutingModeView(private val childView: View) : BaseView(childView) , AdapterView.OnItemSelectedListener{
+class SplitRoutingModeView(private val childView: View) : BaseView(childView),
+    AdapterView.OnItemSelectedListener {
     private var spinner: Spinner? = null
     private var current: TextView? = null
 
     interface Delegate {
         fun onModeSelect(mode: String)
     }
+
     var delegate: Delegate? = null
     var values: Array<String>? = null
 
     init {
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
-        view.findViewById<ImageView>(R.id.clickable_area).setOnClickListener { spinner?.performClick() }
+        view.findViewById<ImageView>(R.id.clickable_area)
+            .setOnClickListener { spinner?.performClick() }
         spinner?.onItemSelectedListener = this
     }
 

@@ -4,6 +4,10 @@ import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.RobertAdapterListener
 import sp.windscribe.mobile.adapter.RobertSettingsAdapter
@@ -17,10 +21,6 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.exceptions.WindScribeException
 import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 class RobertSettingsPresenterImpl(
@@ -139,6 +139,7 @@ class RobertSettingsPresenterImpl(
                     )
                 }
             }
+
             is CallResult.Success -> {
                 robertSettingsView.hideProgress()
                 robertSettingsView.showToast(interactor.getResourceString(R.string.successfully_updated_robert_rules))
@@ -186,6 +187,7 @@ class RobertSettingsPresenterImpl(
                     robertSettingsView.showErrorDialog("Failed to generate Web-Session. Check your network connection.")
                 }
             }
+
             is CallResult.Success -> {
                 robertSettingsView.openUrl(responseToUrl(result.data))
             }
@@ -253,6 +255,7 @@ class RobertSettingsPresenterImpl(
                     throw WindScribeException("Unexpected Api response.")
                 }
             }
+
             is CallResult.Success -> {
                 val robertSettings = result.data.filters
                 val json = Gson().toJson(robertSettings)

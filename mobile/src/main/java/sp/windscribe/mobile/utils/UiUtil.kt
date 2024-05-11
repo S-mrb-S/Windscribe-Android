@@ -35,9 +35,11 @@ object UiUtil {
                     maxData /
                             UserStatusConstants.GB_DATA.toFloat()
                     ) -> appContext.resources.getColor(R.color.colorRed)
+
             dataRemaining
                     < BillingConstants.DATA_WARNING_PERCENTAGE * (maxData / UserStatusConstants.GB_DATA.toFloat()) ->
                 appContext.resources.getColor(R.color.colorYellow)
+
             else ->
                 appContext.resources.getColor(R.color.colorWhite)
         } else appContext.resources.getColor(R.color.colorWhite)

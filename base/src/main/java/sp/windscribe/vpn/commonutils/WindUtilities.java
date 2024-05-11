@@ -21,6 +21,11 @@ import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.util.HashMap;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import sp.windscribe.vpn.R;
 import sp.windscribe.vpn.Windscribe;
 import sp.windscribe.vpn.backend.Util;
@@ -29,16 +34,6 @@ import sp.windscribe.vpn.exceptions.BackgroundLocationPermissionNotAvailable;
 import sp.windscribe.vpn.exceptions.NoLocationPermissionException;
 import sp.windscribe.vpn.exceptions.NoNetworkException;
 import sp.windscribe.vpn.exceptions.WindScribeException;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import io.reactivex.Completable;
-import io.reactivex.Single;
 
 public class WindUtilities {
 
@@ -217,14 +212,14 @@ public class WindUtilities {
         }
     }
 
-    public static HashMap<String, String> toKeyValuePairs(String text){
-        HashMap<String, String> map = new HashMap<String,String>();
-        if (!text.isEmpty() && text.split("\n").length > 0){
-         String[] lines = text.split("\n");
-            for (String line: lines) {
+    public static HashMap<String, String> toKeyValuePairs(String text) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        if (!text.isEmpty() && text.split("\n").length > 0) {
+            String[] lines = text.split("\n");
+            for (String line : lines) {
                 String[] kv = line.split("=");
                 if (kv.length == 2) {
-                  map.put(kv[0], kv[1]);
+                    map.put(kv[0], kv[1]);
                 }
             }
         }

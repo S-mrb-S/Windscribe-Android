@@ -20,6 +20,7 @@ import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.InstalledAppsAdapter
 import sp.windscribe.mobile.base.BaseActivity
@@ -30,7 +31,6 @@ import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
 import sp.windscribe.vpn.constants.AnimConstants
 import sp.windscribe.vpn.constants.FeatureExplainer
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 

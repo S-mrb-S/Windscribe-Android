@@ -16,6 +16,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.NotificationCompat.Builder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.R.mipmap
 import sp.windscribe.vpn.R.string
 import sp.windscribe.vpn.ServiceInteractor
@@ -23,25 +27,25 @@ import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.backend.TrafficCounter
 import sp.windscribe.vpn.backend.Util
 import sp.windscribe.vpn.backend.VPNState.Status
-import sp.windscribe.vpn.backend.VPNState.Status.*
+import sp.windscribe.vpn.backend.VPNState.Status.Connected
+import sp.windscribe.vpn.backend.VPNState.Status.Connecting
+import sp.windscribe.vpn.backend.VPNState.Status.Disconnected
+import sp.windscribe.vpn.backend.VPNState.Status.ProtocolSwitch
+import sp.windscribe.vpn.backend.VPNState.Status.UnsecuredNetwork
 import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.services.DisconnectService
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WindNotificationBuilder @Inject constructor(
-        private val notificationManager: NotificationManager,
-        private val notificationBuilder: Builder,
-        private val vpnConnectionStateManager: VPNConnectionStateManager,
-        private val trafficCounter: TrafficCounter,
-        val scope: CoroutineScope,
-        private val interactor: ServiceInteractor
+    private val notificationManager: NotificationManager,
+    private val notificationBuilder: Builder,
+    private val vpnConnectionStateManager: VPNConnectionStateManager,
+    private val trafficCounter: TrafficCounter,
+    val scope: CoroutineScope,
+    private val interactor: ServiceInteractor
 ) {
 
     private var lastUpdateTime = System.currentTimeMillis()
@@ -53,25 +57,29 @@ class WindNotificationBuilder @Inject constructor(
         when {
             status === Connected -> {
                 updateNotification(
-                        mipmap.connected,
-                        Windscribe.appContext.getString(string.connected_to, location), trafficStats
+                    mipmap.connected,
+                    Windscribe.appContext.getString(string.connected_to, location), trafficStats
                 )
             }
+
             status === Disconnected -> {
                 updateNotification(
-                        mipmap.disconnected,
-                        Windscribe.appContext.getString(string.connected_lower_case), null
+                    mipmap.disconnected,
+                    Windscribe.appContext.getString(string.connected_lower_case), null
                 )
             }
+
             status === Connecting -> {
                 updateNotification(
-                        mipmap.connecting,
-                        Windscribe.appContext.getString(string.connecting_to, location), null
+                    mipmap.connecting,
+                    Windscribe.appContext.getString(string.connecting_to, location), null
                 )
             }
+
             status == ProtocolSwitch -> {
                 updateNotification(mipmap.connection_error, "Waiting for protocol switch", null)
             }
+
             status == UnsecuredNetwork -> {
                 updateNotification(mipmap.connection_error, "Waiting for secured network", null)
             }
@@ -118,58 +126,59 @@ class WindNotificationBuilder @Inject constructor(
         // Start disconnect service with pending intent to disconnect.
         val serviceIntent = Intent(Windscribe.appContext, DisconnectService::class.java)
         val disconnectPendingIntent = PendingIntent
-                .getService(
-                        Windscribe.appContext, 200, serviceIntent,
-                        if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-                )
+            .getService(
+                Windscribe.appContext, 200, serviceIntent,
+                if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            )
         val action = Action.Builder(
-                mipmap.connected, "Disconnect",
-                disconnectPendingIntent
+            mipmap.connected, "Disconnect",
+            disconnectPendingIntent
         ).build()
         notificationBuilder.addAction(action)
         // Launch App on Notification click.
         val contentIntent = Windscribe.appContext.applicationInterface.splashIntent
-        contentIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+        contentIntent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
         val pendingIntent = PendingIntent
-                .getActivity(
-                        Windscribe.appContext, 0, contentIntent,
-                        if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-                )
+            .getActivity(
+                Windscribe.appContext, 0, contentIntent,
+                if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            )
         notificationBuilder.setContentIntent(pendingIntent)
     }
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private fun setupNotificationLollipop() {
         notificationBuilder.setSmallIcon(mipmap.connecting)
-                .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-                .setOnlyAlertOnce(true)
-                .setOngoing(true)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+            .setOnlyAlertOnce(true)
+            .setOngoing(true)
         setContentIntent()
     }
 
     @TargetApi(VERSION_CODES.N)
     private fun setupNotificationNougat() {
         notificationBuilder.setSmallIcon(mipmap.connecting)
-                .setOnlyAlertOnce(true)
-                .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setOngoing(true)
         setContentIntent()
     }
 
     @RequiresApi(api = 26)
     private fun setupNotificationOreo() {
         val channel = NotificationChannel(
-                NotificationConstants.NOTIFICATION_CHANNEL_ID,
-                "WindScribe", NotificationManager.IMPORTANCE_LOW
+            NotificationConstants.NOTIFICATION_CHANNEL_ID,
+            "WindScribe", NotificationManager.IMPORTANCE_LOW
         )
         channel.description =
-                "Provides information about the VPN connection state and serves as permanent notification to keep the VPN service running in the background."
+            "Provides information about the VPN connection state and serves as permanent notification to keep the VPN service running in the background."
         channel.enableLights(true)
         notificationManager.createNotificationChannel(channel)
 
         notificationBuilder.setSmallIcon(mipmap.connecting)
-                .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-                .setChannelId(NotificationConstants.NOTIFICATION_CHANNEL_ID)
-                .setOnlyAlertOnce(true)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+            .setChannelId(NotificationConstants.NOTIFICATION_CHANNEL_ID)
+            .setOnlyAlertOnce(true)
         setContentIntent()
     }
 
@@ -184,8 +193,8 @@ class WindNotificationBuilder @Inject constructor(
                     notificationManager.cancel(NotificationConstants.SERVICE_NOTIFICATION_ID)
                 } else {
                     notificationManager.notify(
-                            NotificationConstants.SERVICE_NOTIFICATION_ID,
-                            buildNotification(it.status)
+                        NotificationConstants.SERVICE_NOTIFICATION_ID,
+                        buildNotification(it.status)
                     )
                 }
             }
@@ -209,9 +218,11 @@ class WindNotificationBuilder @Inject constructor(
             VERSION.SDK_INT >= VERSION_CODES.O -> {
                 setupNotificationOreo()
             }
+
             VERSION.SDK_INT >= VERSION_CODES.N -> {
                 setupNotificationNougat()
             }
+
             else -> {
                 setupNotificationLollipop()
             }

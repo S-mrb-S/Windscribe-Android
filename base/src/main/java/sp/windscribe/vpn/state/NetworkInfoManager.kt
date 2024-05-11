@@ -4,24 +4,27 @@
 
 package sp.windscribe.vpn.state
 
-import sp.windscribe.vpn.Windscribe.Companion.appContext
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.localdatabase.LocalDbInterface
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.state.DeviceStateManager.DeviceStateListener
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Singleton
 
 @Singleton
-class NetworkInfoManager(private val preferencesHelper: PreferencesHelper, private val localDbInterface: LocalDbInterface, deviceStateManager: DeviceStateManager) :
-        DeviceStateListener {
+class NetworkInfoManager(
+    private val preferencesHelper: PreferencesHelper,
+    private val localDbInterface: LocalDbInterface,
+    deviceStateManager: DeviceStateManager
+) :
+    DeviceStateListener {
 
     private val compositeDisposable = CompositeDisposable()
     var networkInfo: NetworkInfo? = null
@@ -33,7 +36,11 @@ class NetworkInfoManager(private val preferencesHelper: PreferencesHelper, priva
 
     private fun addNetworkToKnown(networkName: String): Single<Long> {
         val networkInfo = NetworkInfo(
-                networkName, preferencesHelper.isAutoSecureOn, false, PreferencesKeyConstants.PROTO_IKev2, PreferencesKeyConstants.DEFAULT_IKEV2_PORT
+            networkName,
+            preferencesHelper.isAutoSecureOn,
+            false,
+            PreferencesKeyConstants.PROTO_IKev2,
+            PreferencesKeyConstants.DEFAULT_IKEV2_PORT
         )
         return localDbInterface.addNetwork(networkInfo)
     }
@@ -52,34 +59,34 @@ class NetworkInfoManager(private val preferencesHelper: PreferencesHelper, priva
 
     fun updateNetworkInfo(networkInfo: NetworkInfo) {
         compositeDisposable.add(
-                localDbInterface.updateNetwork(networkInfo).doOnSuccess { reloadCurrentNetwork(true) }
-                        .subscribeOn(Schedulers.io())
-                        .subscribe()
+            localDbInterface.updateNetwork(networkInfo).doOnSuccess { reloadCurrentNetwork(true) }
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         )
     }
 
     private fun reloadCurrentNetwork(userReload: Boolean) {
         compositeDisposable.add(
-                Single.fromCallable(Callable { WindUtilities.getNetworkName() } as Callable<String>)
-                        .flatMap { name ->
-                            localDbInterface
-                                    .getNetwork(name).onErrorResumeNext(
-                                            addNetworkToKnown(name)
-                                                    .flatMap { localDbInterface.getNetwork(name) }
-                                    )
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSuccess {
-                            this.networkInfo = it
-                            for (listener in listeners) {
-                                listener.onNetworkInfoUpdate(networkInfo, userReload)
-                            }
-                        }.doOnError {
-                            networkInfo = null
-                            for (listener in listeners) {
-                                listener.onNetworkInfoUpdate(null, userReload)
-                            }
-                        }.subscribeOn(Schedulers.io()).subscribe({}, {})
+            Single.fromCallable(Callable { WindUtilities.getNetworkName() } as Callable<String>)
+                .flatMap { name ->
+                    localDbInterface
+                        .getNetwork(name).onErrorResumeNext(
+                            addNetworkToKnown(name)
+                                .flatMap { localDbInterface.getNetwork(name) }
+                        )
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    this.networkInfo = it
+                    for (listener in listeners) {
+                        listener.onNetworkInfoUpdate(networkInfo, userReload)
+                    }
+                }.doOnError {
+                    networkInfo = null
+                    for (listener in listeners) {
+                        listener.onNetworkInfoUpdate(null, userReload)
+                    }
+                }.subscribeOn(Schedulers.io()).subscribe({}, {})
         )
     }
 

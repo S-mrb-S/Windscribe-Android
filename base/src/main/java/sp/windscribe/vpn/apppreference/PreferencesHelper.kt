@@ -1,12 +1,12 @@
 package sp.windscribe.vpn.apppreference
 
+import io.reactivex.Single
 import sp.windscribe.vpn.api.response.NewsFeedNotification
 import sp.windscribe.vpn.api.response.ServerCredentialsResponse
 import sp.windscribe.vpn.autoconnection.ProtocolConnectionStatus
 import sp.windscribe.vpn.decoytraffic.FakeTrafficVolume
 import sp.windscribe.vpn.repository.WgLocalParams
-import io.reactivex.Single
-import java.util.*
+import java.util.Date
 import javax.inject.Singleton
 
 @Singleton
@@ -72,7 +72,7 @@ interface PreferencesHelper {
     var userStatus: Int
     var whitelistOverride: Boolean
     val wireGuardPort: String
-    var isAutoSecureOn : Boolean
+    var isAutoSecureOn: Boolean
     fun isConnectingToConfiguredLocation(): Boolean
     val isConnectingToStaticIp: Boolean
     var isCustomBackground: Boolean
@@ -104,7 +104,7 @@ interface PreferencesHelper {
     fun saveCredentials(key: String, value: ServerCredentialsResponse)
     fun getCredentials(key: String): ServerCredentialsResponse?
     fun saveOpenVPNServerConfig(value: String)
-    fun getOpenVPNServerConfig():String?
+    fun getOpenVPNServerConfig(): String?
     fun saveSelection(selection: String?)
     fun saveSplitRoutingMode(mode: String?)
     fun saveWireGuardPort(port: String?)
@@ -131,5 +131,5 @@ interface PreferencesHelper {
     fun userIsInGhostMode(): Boolean
     var alreadyShownShareAppLink: Boolean
 
-    var fakeTrafficVolume:FakeTrafficVolume
+    var fakeTrafficVolume: FakeTrafficVolume
 }

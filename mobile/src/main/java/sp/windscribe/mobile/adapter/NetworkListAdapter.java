@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.networksecurity.viewholder.NetworkAdapterActionListener;
 import sp.windscribe.mobile.networksecurity.viewholder.NetworkListViewHolder;
 import sp.windscribe.vpn.Windscribe;
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo;
-
-import java.util.List;
 
 public class NetworkListAdapter extends RecyclerView.Adapter<NetworkListViewHolder> {
 
@@ -45,7 +45,7 @@ public class NetworkListAdapter extends RecyclerView.Adapter<NetworkListViewHold
         holder.tvProtection.setText(protectionStatus);
 
         holder.itemView.setOnClickListener(v -> mAdapterActionListener.onItemSelected(networkInfo));
-        if(position == getItemCount()-1){
+        if (position == getItemCount() - 1) {
             holder.dividerView.setVisibility(View.GONE);
         }
     }

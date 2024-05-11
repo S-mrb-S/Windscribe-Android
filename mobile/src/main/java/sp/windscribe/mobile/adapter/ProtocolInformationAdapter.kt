@@ -152,6 +152,7 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
                     //   param.setMargins(0,0,margin,0)
                     statusView.layoutParams = param
                 }
+
                 ProtocolConnectionStatus.Disconnected -> {
                     containerView.background = AppCompatResources.getDrawable(
                         context,
@@ -190,6 +191,7 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
                     actionArrowView.visibility = View.VISIBLE
                     errorView.visibility = View.GONE
                 }
+
                 ProtocolConnectionStatus.Failed -> {
                     containerView.background = AppCompatResources.getDrawable(
                         context,
@@ -228,6 +230,7 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
                     actionArrowView.visibility = View.GONE
                     errorView.visibility = View.VISIBLE
                 }
+
                 ProtocolConnectionStatus.NextUp -> {
                     containerView.background = AppCompatResources.getDrawable(
                         context,

@@ -6,6 +6,10 @@ package sp.windscribe.vpn
 
 import android.os.Build
 import com.google.gson.Gson
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.rx2.await
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.api.response.GenericSuccess
 import sp.windscribe.vpn.api.response.UserSessionResponse
@@ -20,10 +24,6 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.localdatabase.tables.UserStatusTable
 import sp.windscribe.vpn.repository.CallResult
 import sp.windscribe.vpn.serverlist.entity.*
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.rx2.await
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -52,7 +52,10 @@ class ServiceInteractorImpl @Inject constructor(
     override val savedLocale: String
         get() {
             val selectedLanguage = preferenceHelper.savedLanguage
-            return selectedLanguage.substring(selectedLanguage.indexOf("(") + 1, selectedLanguage.indexOf(")"))
+            return selectedLanguage.substring(
+                selectedLanguage.indexOf("(") + 1,
+                selectedLanguage.indexOf(")")
+            )
         }
 
     override fun insertOrUpdateUserStatus(userStatusTable: UserStatusTable): Completable {
@@ -103,7 +106,13 @@ class ServiceInteractorImpl @Inject constructor(
     }
 
     override fun addNetworkToKnown(networkName: String): Single<Long> {
-        val networkInfo = NetworkInfo(networkName, preferenceHelper.isAutoSecureOn, false, PreferencesKeyConstants.PROTO_IKev2, PreferencesKeyConstants.DEFAULT_IKEV2_PORT)
+        val networkInfo = NetworkInfo(
+            networkName,
+            preferenceHelper.isAutoSecureOn,
+            false,
+            PreferencesKeyConstants.PROTO_IKev2,
+            PreferencesKeyConstants.DEFAULT_IKEV2_PORT
+        )
         return localDbInterface.addNetwork(networkInfo)
     }
 

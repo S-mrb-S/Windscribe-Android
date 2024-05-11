@@ -26,10 +26,16 @@ import sp.windscribe.mobile.utils.PermissionManagerImpl.Companion.resultKey
  * Build permission request for each permission
  * and register in onCreate of activity.
  */
-data class PermissionRequest(val activity: AppCompatActivity, val permission: String, val rationaleDialog: DialogFragment, val disabledFeatureDialog: DialogFragment) {
+data class PermissionRequest(
+    val activity: AppCompatActivity,
+    val permission: String,
+    val rationaleDialog: DialogFragment,
+    val disabledFeatureDialog: DialogFragment
+) {
     var callback: ((Boolean) -> Unit)? = null
     var launcher: ActivityResultLauncher<String>? = null
-    fun isGranted(context: Context): Boolean = ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    fun isGranted(context: Context): Boolean =
+        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 
     /**
      * Requests given permission and shows rational dialog if required.
@@ -86,7 +92,10 @@ data class PermissionRequest(val activity: AppCompatActivity, val permission: St
         }
     }
 
-    private fun showDisabledFeatureDialog(activity: AppCompatActivity, callback: (Boolean) -> Unit) {
+    private fun showDisabledFeatureDialog(
+        activity: AppCompatActivity,
+        callback: (Boolean) -> Unit
+    ) {
         if (activity.supportFragmentManager.findFragmentByTag(disabledFeatureTag) != null) {
             callback(false)
             return
@@ -122,7 +131,9 @@ class PermissionManagerImpl(private val activity: AppCompatActivity) : Permissio
 
     override fun isBackgroundPermissionGranted(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return ::backgroundPermissionRequest.isInitialized && backgroundPermissionRequest.isGranted(activity)
+            return ::backgroundPermissionRequest.isInitialized && backgroundPermissionRequest.isGranted(
+                activity
+            )
         }
         return true
     }
@@ -131,16 +142,28 @@ class PermissionManagerImpl(private val activity: AppCompatActivity) : Permissio
      * Register activity for result callbacks for each permission. Must be called from onCreate of activity.
      */
     override fun register(activity: AppCompatActivity) {
-        foregroundPermissionRequest = PermissionRequest(activity, Manifest.permission.ACCESS_FINE_LOCATION, ForegroundLocationPermissionDialog(), LocationPermissionMissingDialog())
-        val foregroundLocationPermissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
-            foregroundPermissionRequest.permissionResultReceived(permission)
-        }
+        foregroundPermissionRequest = PermissionRequest(
+            activity,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            ForegroundLocationPermissionDialog(),
+            LocationPermissionMissingDialog()
+        )
+        val foregroundLocationPermissionLauncher =
+            activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+                foregroundPermissionRequest.permissionResultReceived(permission)
+            }
         foregroundPermissionRequest.launcher = foregroundLocationPermissionLauncher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            backgroundPermissionRequest = PermissionRequest(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION, BackgroundLocationPermissionDialog(), LocationPermissionMissingDialog())
-            val backgroundLocationPermissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
-                backgroundPermissionRequest.permissionResultReceived(permission)
-            }
+            backgroundPermissionRequest = PermissionRequest(
+                activity,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                BackgroundLocationPermissionDialog(),
+                LocationPermissionMissingDialog()
+            )
+            val backgroundLocationPermissionLauncher =
+                activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+                    backgroundPermissionRequest.permissionResultReceived(permission)
+                }
             backgroundPermissionRequest.launcher = backgroundLocationPermissionLauncher
         }
     }

@@ -1,9 +1,5 @@
 package sp.windscribe.vpn.qq
 
-import sp.windscribe.vpn.serverlist.entity.City
-import sp.windscribe.vpn.serverlist.entity.Region
-import sp.windscribe.vpn.serverlist.entity.RegionAndCities
-
 object Data {
     const val Api = "http://sub.iprostable.enterprises/graphql"
 

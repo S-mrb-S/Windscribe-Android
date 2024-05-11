@@ -19,9 +19,10 @@ class ProtocolAdapter(
     var protocolConfigs: List<ProtocolConfig> = emptyList()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+            field = value
+            notifyDataSetChanged()
+        }
+
     class ProtocolViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mProtocolTextView: TextView = itemView.findViewById(R.id.protocol)
         fun bind(protocolConfig: ProtocolConfig) {

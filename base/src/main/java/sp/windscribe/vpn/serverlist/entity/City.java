@@ -16,10 +16,11 @@ import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import sp.windscribe.vpn.serverlist.converter.NodeToJson;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sp.windscribe.vpn.serverlist.converter.NodeToJson;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "City")

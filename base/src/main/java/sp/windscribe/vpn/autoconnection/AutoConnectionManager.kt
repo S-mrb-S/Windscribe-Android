@@ -1,6 +1,19 @@
 package sp.windscribe.vpn.autoconnection
 
 import androidx.fragment.app.DialogFragment
+import dagger.Lazy
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.suspendCancellableCoroutine
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.alert.showErrorDialog
@@ -17,15 +30,7 @@ import sp.windscribe.vpn.repository.ConnectionDataRepository
 import sp.windscribe.vpn.state.NetworkInfoListener
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import dagger.Lazy
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.rx2.await
-import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.UUID
 import javax.inject.Singleton
 
 @Singleton
@@ -242,7 +247,7 @@ class AutoConnectionManager(
             }
         }
     }
-    
+
     private fun moveProtocolToTop(
         protocolInformation: ProtocolInformation,
         appSupportedProtocolOrder: ThreadSafeList<ProtocolInformation>
@@ -361,6 +366,7 @@ class AutoConnectionManager(
                             dismissDialog()
                             stop()
                         }
+
                         is CallResult.Success -> {
                             dismissDialog()
                             contactSupport()

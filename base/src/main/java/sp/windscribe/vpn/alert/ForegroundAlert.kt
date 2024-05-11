@@ -19,7 +19,7 @@ fun showRetryDialog(message: String, retryCallBack: () -> Unit, cancelCallBack: 
             dialog.dismiss()
             if (which == AlertDialog.BUTTON_POSITIVE) {
                 retryCallBack()
-            }else if(which == AlertDialog.BUTTON_NEGATIVE){
+            } else if (which == AlertDialog.BUTTON_NEGATIVE) {
                 cancelCallBack()
             }
         }
@@ -110,7 +110,10 @@ fun showAlertDialog(
                 positionButtonLabel,
                 DialogInterface.OnClickListener(function = listener)
             )
-            setNegativeButton(negativeButtonLabel, DialogInterface.OnClickListener(function = listener))
+            setNegativeButton(
+                negativeButtonLabel,
+                DialogInterface.OnClickListener(function = listener)
+            )
             show()
         }
     }

@@ -5,7 +5,7 @@
 package sp.windscribe.vpn.backend
 
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
-import java.util.*
+import java.util.UUID
 
 class VPNState(
     val status: Status,

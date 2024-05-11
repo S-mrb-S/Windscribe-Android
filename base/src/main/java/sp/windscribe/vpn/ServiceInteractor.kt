@@ -4,6 +4,9 @@
 
 package sp.windscribe.vpn
 
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.api.response.GenericSuccess
 import sp.windscribe.vpn.api.response.UserSessionResponse
@@ -11,10 +14,13 @@ import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.localdatabase.tables.UserStatusTable
 import sp.windscribe.vpn.repository.CallResult
-import sp.windscribe.vpn.serverlist.entity.*
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
+import sp.windscribe.vpn.serverlist.entity.City
+import sp.windscribe.vpn.serverlist.entity.CityAndRegion
+import sp.windscribe.vpn.serverlist.entity.ConfigFile
+import sp.windscribe.vpn.serverlist.entity.Favourite
+import sp.windscribe.vpn.serverlist.entity.PingTime
+import sp.windscribe.vpn.serverlist.entity.RegionAndCities
+import sp.windscribe.vpn.serverlist.entity.StaticRegion
 
 /**
  * This interface exposes base module functionality

@@ -1,5 +1,15 @@
 package sp.windscribe.vpn.repository
 
+import dagger.Lazy
+import io.reactivex.Single
+import io.reactivex.SingleSource
+import io.reactivex.functions.Function
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.backend.utils.SelectedLocationType
@@ -10,19 +20,8 @@ import sp.windscribe.vpn.localdatabase.LocalDbInterface
 import sp.windscribe.vpn.serverlist.entity.City
 import sp.windscribe.vpn.serverlist.entity.CityAndRegion
 import sp.windscribe.vpn.serverlist.entity.Node
-import dagger.Lazy
-import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.functions.Function
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.rx2.rxSingle
 
 @Singleton
 class LocationRepository @Inject constructor(
@@ -39,7 +38,7 @@ class LocationRepository @Inject constructor(
         setSelectedCity()
     }
 
-    fun setSelectedCity(locationId: Int?=null){
+    fun setSelectedCity(locationId: Int? = null) {
         locationId?.let {
             preferencesHelper.selectedCity = locationId
         }
@@ -63,15 +62,15 @@ class LocationRepository @Inject constructor(
 
     private fun update(): Single<Int> {
         logger.debug("updating last selected location: ${selectedCity.value}")
-        val userStatus = userRepository.get().user.value?.userStatusInt?:0
+        val userStatus = userRepository.get().user.value?.userStatusInt ?: 0
         return isLocationValid(selectedCity.value, userStatus)
             .flatMap { if (it) Single.fromCallable { selectedCity.value } else alternativeLocation }
     }
 
-    suspend fun updateLocation():Int{
+    suspend fun updateLocation(): Int {
         return try {
             update().await()
-        }catch (e: WindScribeException){
+        } catch (e: WindScribeException) {
             -1
         }
     }
@@ -152,7 +151,7 @@ class LocationRepository @Inject constructor(
                     ) {
                         preferencesHelper.selectedCity = -1
                         return@fromCallable true
-                    } */else {
+                    } */ else {
                         return@fromCallable true
                     }
                 }
@@ -171,9 +170,11 @@ class LocationRepository @Inject constructor(
             locationSourceType === SelectedLocationType.StaticIp -> {
                 isStaticIpAvailable(id)
             }
+
             locationSourceType === SelectedLocationType.CustomConfiguredProfile -> {
                 isConfigProfileAvailable(id)
             }
+
             else -> {
                 isCityAvailable(id, userPro)
             }

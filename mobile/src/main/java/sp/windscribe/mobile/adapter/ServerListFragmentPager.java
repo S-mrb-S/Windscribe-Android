@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import sp.windscribe.mobile.fragments.ServerListFragment;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+
+import sp.windscribe.mobile.fragments.ServerListFragment;
 
 public class ServerListFragmentPager extends FragmentStatePagerAdapter {
 

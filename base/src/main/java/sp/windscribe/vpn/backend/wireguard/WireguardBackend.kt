@@ -13,6 +13,21 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import android.os.PowerManager
+import com.wireguard.android.backend.GoBackend
+import com.wireguard.android.backend.Tunnel.State.DOWN
+import com.wireguard.android.backend.Tunnel.State.TOGGLE
+import com.wireguard.android.backend.Tunnel.State.UP
+import com.wireguard.config.Config
+import dagger.Lazy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sp.windscribe.vpn.R
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
@@ -32,25 +47,11 @@ import sp.windscribe.vpn.repository.UserRepository
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import com.wireguard.android.backend.GoBackend
-import com.wireguard.android.backend.Tunnel.State.DOWN
-import com.wireguard.android.backend.Tunnel.State.TOGGLE
-import com.wireguard.android.backend.Tunnel.State.UP
-import com.wireguard.config.Config
-import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.cancellable
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlin.jvm.optionals.getOrDefault
@@ -60,15 +61,15 @@ import kotlin.random.Random
 
 @Singleton
 class WireguardBackend(
-        var backend: GoBackend,
-        var scope: CoroutineScope,
-        var networkInfoManager: NetworkInfoManager,
-        vpnStateManager: VPNConnectionStateManager,
-        var serviceInteractor: ServiceInteractor,
-        val vpnProfileCreator: VPNProfileCreator,
-        val userRepository: Lazy<UserRepository>,
-        val deviceStateManager: DeviceStateManager,
-        val preferencesHelper: PreferencesHelper
+    var backend: GoBackend,
+    var scope: CoroutineScope,
+    var networkInfoManager: NetworkInfoManager,
+    vpnStateManager: VPNConnectionStateManager,
+    var serviceInteractor: ServiceInteractor,
+    val vpnProfileCreator: VPNProfileCreator,
+    val userRepository: Lazy<UserRepository>,
+    val deviceStateManager: DeviceStateManager,
+    val preferencesHelper: PreferencesHelper
 ) : VpnBackend(scope, vpnStateManager, serviceInteractor, networkInfoManager) {
 
     var service: WireGuardWrapperService? = null
@@ -80,11 +81,11 @@ class WireguardBackend(
     override var active = false
     private val maxHandshakeTimeInSeconds = 180L
     private val connectivityManager =
-            appContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        appContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val powerManager = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
     private val networkRequest =
-            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
+        NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
     private val callback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -109,7 +110,7 @@ class WireguardBackend(
     }
 
     private val testTunnel = WireGuardTunnel(
-            name = appContext.getString(R.string.app_name), config = null, state = DOWN
+        name = appContext.getString(R.string.app_name), config = null, state = DOWN
     )
 
     private var stickyDisconnectEvent = false
@@ -149,7 +150,7 @@ class WireguardBackend(
 
     @Suppress("UNUSED_VARIABLE")
     private fun sendUdpStuffingForWireGuard(
-            config: Config
+        config: Config
     ) {
         try {
             //Open a port to send the package
@@ -167,9 +168,12 @@ class WireguardBackend(
                 }
                 for (k in config.peers) {
                     k.endpoint.toSet().forEach {
-                        val sendPacket = socket.send(DatagramPacket(ntpBuf, ntpBuf.size,
+                        val sendPacket = socket.send(
+                            DatagramPacket(
+                                ntpBuf, ntpBuf.size,
                                 InetAddress.getByName(it.host), it.port
-                        ))
+                            )
+                        )
                     }
                 }
             }
@@ -280,11 +284,11 @@ class WireguardBackend(
             vpnLogger.debug("Creating config from saved params")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 vpnLogger.debug(
-                        "Power options: Interactive:${powerManager.isInteractive} Power Save mode: ${powerManager.isPowerSaveMode} Ignore battery optimization: ${
-                            powerManager.isIgnoringBatteryOptimizations(
-                                    appContext.packageName
-                            )
-                        } Device Idle: ${powerManager.isDeviceIdleMode}"
+                    "Power options: Interactive:${powerManager.isInteractive} Power Save mode: ${powerManager.isPowerSaveMode} Ignore battery optimization: ${
+                        powerManager.isIgnoringBatteryOptimizations(
+                            appContext.packageName
+                        )
+                    } Device Idle: ${powerManager.isDeviceIdleMode}"
                 )
             }
             try {

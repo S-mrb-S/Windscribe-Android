@@ -1,16 +1,20 @@
 package sp.windscribe.vpn.api
 
-import sp.windscribe.vpn.Windscribe
-import sp.windscribe.vpn.backend.wireguard.WireguardBackend
-import sp.windscribe.vpn.constants.NetworkKeyConstants
 import okhttp3.OkHttpClient.Builder
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import sp.windscribe.vpn.Windscribe
+import sp.windscribe.vpn.backend.wireguard.WireguardBackend
+import sp.windscribe.vpn.constants.NetworkKeyConstants
 import java.security.KeyStore
 import javax.inject.Inject
 import javax.inject.Singleton
-import javax.net.ssl.*
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 @Singleton
 class EchApiFactory @Inject constructor(

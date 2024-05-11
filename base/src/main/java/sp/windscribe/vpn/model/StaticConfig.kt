@@ -4,7 +4,6 @@
 
 package sp.windscribe.vpn.model
 
-import com.google.gson.Gson
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.serverlist.entity.StaticRegion
@@ -35,6 +34,9 @@ class StaticConfig(staticRegion: StaticRegion) {
         wgIp = staticRegion.wgIp
         wgPubKey = staticRegion.wgPubKey
         x509Name = staticRegion.ovpnX509
-        appContext.preference.saveCredentials(PreferencesKeyConstants.STATIC_IP_CREDENTIAL,staticRegion.credentials)
+        appContext.preference.saveCredentials(
+            PreferencesKeyConstants.STATIC_IP_CREDENTIAL,
+            staticRegion.credentials
+        )
     }
 }

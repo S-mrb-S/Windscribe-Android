@@ -4,12 +4,12 @@
 
 package sp.windscribe.vpn.encoding.io.pem;
 
-import sp.windscribe.vpn.encoding.encoders.Base64;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+
+import sp.windscribe.vpn.encoding.encoders.Base64;
 
 /**
  * A generic PEM writer, based on RFC 1421

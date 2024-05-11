@@ -11,15 +11,15 @@ import android.content.Intent.ACTION_SCREEN_OFF
 import android.content.Intent.ACTION_SCREEN_ON
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import sp.windscribe.vpn.services.DeviceStateService.Companion.enqueueWork
-import java.util.concurrent.ConcurrentLinkedQueue
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.services.DeviceStateService.Companion.enqueueWork
+import java.util.concurrent.ConcurrentLinkedQueue
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class DeviceStateManager @Inject constructor(val scope: CoroutineScope) : BroadcastReceiver() {
@@ -48,10 +48,12 @@ class DeviceStateManager @Inject constructor(val scope: CoroutineScope) : Broadc
                         deviceStateListener.onNetworkStateChanged()
                     }
                 }
+
                 ACTION_SCREEN_OFF -> {
                     logger.debug("Device going to Idle state.")
                     scope.launch { _deviceInteractiveEvents.emit(false) }
                 }
+
                 ACTION_SCREEN_ON -> {
                     logger.debug("Device coming out of Idle state.")
                     scope.launch { _deviceInteractiveEvents.emit(true) }

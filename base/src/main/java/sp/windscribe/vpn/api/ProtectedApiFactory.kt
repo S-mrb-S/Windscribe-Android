@@ -23,9 +23,9 @@ class ProtectedApiFactory @Inject constructor(
         protectedHttpClient?.connectionPool?.evictAll()
         protectedHttpClient?.socketFactory?.createSocket()
         return retrofitBuilder
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(protectedHttpClient!!).baseUrl(url)
-                .build().create(ApiService::class.java)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(protectedHttpClient!!).baseUrl(url)
+            .build().create(ApiService::class.java)
     }
 }

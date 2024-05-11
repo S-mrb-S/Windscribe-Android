@@ -1,8 +1,8 @@
 package sp.windscribe.vpn.di
 
-import sp.windscribe.vpn.api.HostType
 import dagger.Module
 import dagger.Provides
+import sp.windscribe.vpn.api.HostType
 import javax.inject.Named
 
 @Module

@@ -3,8 +3,8 @@ package sp.windscribe.vpn.apppreference
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import sp.windscribe.vpn.Windscribe
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.Windscribe
 
 class SecurePreferences(app: Windscribe) {
     private val logger = LoggerFactory.getLogger("secure_p")

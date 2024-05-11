@@ -11,15 +11,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.holder.ConfigViewHolder;
 import sp.windscribe.mobile.holder.RemoveConfigHolder;
 import sp.windscribe.vpn.serverlist.entity.ConfigFile;
-import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.entity.PingTime;
+import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener;
-
-import java.util.List;
 
 public class ConfigAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -30,7 +30,7 @@ public class ConfigAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private final ListViewClickListener listViewClickListener;
 
     public ConfigAdapter(List<ConfigFile> configFiles, ServerListData serverListData,
-            ListViewClickListener listViewClickListener) {
+                         ListViewClickListener listViewClickListener) {
         this.configFiles = configFiles;
         this.listViewClickListener = listViewClickListener;
         this.serverListData = serverListData;

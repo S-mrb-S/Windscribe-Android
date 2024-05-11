@@ -1,10 +1,10 @@
 package sp.windscribe.vpn.api
 
 import com.google.gson.Gson
-import sp.windscribe.vpn.api.response.ApiErrorResponse
-import sp.windscribe.vpn.constants.ApiConstants.JSON_RESPONSE_KEY
 import org.json.JSONException
 import org.json.JSONObject
+import sp.windscribe.vpn.api.response.ApiErrorResponse
+import sp.windscribe.vpn.constants.ApiConstants.JSON_RESPONSE_KEY
 
 /**
  * Json converter to convert api response bodies to

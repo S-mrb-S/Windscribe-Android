@@ -75,6 +75,7 @@ class ConfirmActivity : BaseActivity(), ConfirmEmailView {
 
     companion object {
         const val ReasonToConfirmEmail = "reasonToConfirmEmail"
+
         @JvmStatic
         fun getStartIntent(context: Context?): Intent {
             return Intent(context, ConfirmActivity::class.java)

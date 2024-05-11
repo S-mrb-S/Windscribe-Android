@@ -12,16 +12,15 @@ import android.widget.Toast;
 
 import androidx.viewpager2.widget.ViewPager2;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.adapter.GpsSpoofingPagerAdapter;
 import sp.windscribe.mobile.base.BaseActivity;
 import sp.windscribe.mobile.di.ActivityModule;
 import sp.windscribe.vpn.mocklocation.MockLocationManager;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class GpsSpoofingSettingsActivity extends BaseActivity
         implements GpsSpoofingSettingView, GpsSpoofingFragmentListener {

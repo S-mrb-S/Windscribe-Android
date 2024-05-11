@@ -6,6 +6,9 @@ package sp.windscribe.vpn.backend.wireguard
 
 import android.content.Intent
 import android.net.VpnService
+import com.wireguard.android.backend.GoBackend
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.backend.VPNState.Status.Connecting
@@ -13,9 +16,6 @@ import sp.windscribe.vpn.backend.utils.WindNotificationBuilder
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.state.ShortcutStateManager
-import com.wireguard.android.backend.GoBackend
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class WireGuardWrapperService : GoBackend.VpnService() {

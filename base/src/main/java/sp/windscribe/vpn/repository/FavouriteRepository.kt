@@ -1,13 +1,13 @@
 package sp.windscribe.vpn.repository
 
-import sp.windscribe.vpn.commonutils.Ext.toResult
-import sp.windscribe.vpn.localdatabase.LocalDbInterface
-import sp.windscribe.vpn.serverlist.entity.City
-import sp.windscribe.vpn.serverlist.entity.Favourite
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import sp.windscribe.vpn.commonutils.Ext.toResult
+import sp.windscribe.vpn.localdatabase.LocalDbInterface
+import sp.windscribe.vpn.serverlist.entity.City
+import sp.windscribe.vpn.serverlist.entity.Favourite
 import javax.inject.Inject
 
 class FavouriteRepository @Inject constructor(

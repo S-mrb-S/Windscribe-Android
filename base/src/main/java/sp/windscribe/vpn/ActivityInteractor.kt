@@ -5,6 +5,12 @@
 package sp.windscribe.vpn
 
 import androidx.lifecycle.LifecycleCoroutineScope
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Single
+import io.reactivex.SingleSource
+import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
 import sp.windscribe.vpn.ActivityInteractorImpl.PortMapLoadCallback
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.api.response.ServerNodeListOverLoaded
@@ -18,17 +24,11 @@ import sp.windscribe.vpn.localdatabase.tables.*
 import sp.windscribe.vpn.repository.*
 import sp.windscribe.vpn.serverlist.entity.*
 import sp.windscribe.vpn.services.FirebaseManager
+import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * This interface exposes base module functionality
@@ -57,6 +57,7 @@ interface ActivityInteractor {
     fun getConfigFile(id: Int): Single<ConfigFile>
     fun getCurrentUserStatusTable(userName: String): Flowable<UserStatusTable>
     fun getDataLeftString(resourceId: Int, dataRemaining: Float): String
+
     @Throws(Exception::class)
     fun getEncodedLog(): String
     fun getFavourites(): Single<List<Favourite>>

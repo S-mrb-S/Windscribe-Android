@@ -16,6 +16,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import butterknife.ButterKnife
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.di.ActivityComponent
 import sp.windscribe.mobile.di.ActivityModule
@@ -23,8 +25,6 @@ import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -55,9 +55,9 @@ abstract class BaseActivity : AppCompatActivity() {
             } else {
                 val backButton = findViewById<ConstraintLayout>(R.id.nav_bar)
                 backButton?.setPaddingRelative(
-                        backButton.paddingStart,
-                        backButton.paddingTop + boundingRectHeight / 2, backButton.paddingEnd,
-                        backButton.paddingBottom
+                    backButton.paddingStart,
+                    backButton.paddingTop + boundingRectHeight / 2, backButton.paddingEnd,
+                    backButton.paddingBottom
                 )
             }
         }
@@ -99,11 +99,12 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun setActivityModule(activityModule: ActivityModule?): ActivityComponent {
-        return sp.windscribe.mobile.di.DaggerActivityComponent.builder().activityModule(activityModule)
-                .applicationComponent(
-                        appContext
-                                .applicationComponent
-                ).build()
+        return sp.windscribe.mobile.di.DaggerActivityComponent.builder()
+            .activityModule(activityModule)
+            .applicationComponent(
+                appContext
+                    .applicationComponent
+            ).build()
     }
 
     protected fun setContentLayout(layoutID: Int, setTheme: Boolean = true) {

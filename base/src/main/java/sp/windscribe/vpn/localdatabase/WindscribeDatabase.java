@@ -7,6 +7,8 @@ package sp.windscribe.vpn.localdatabase;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
+import javax.inject.Singleton;
+
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo;
 import sp.windscribe.vpn.localdatabase.tables.PingTestResults;
 import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable;
@@ -28,8 +30,6 @@ import sp.windscribe.vpn.serverlist.entity.Favourite;
 import sp.windscribe.vpn.serverlist.entity.PingTime;
 import sp.windscribe.vpn.serverlist.entity.Region;
 import sp.windscribe.vpn.serverlist.entity.StaticRegion;
-
-import javax.inject.Singleton;
 
 @Database(entities = {PingTestResults.class, UserStatusTable.class, ServerStatusUpdateTable.class,
         PopupNotificationTable.class, Region.class,

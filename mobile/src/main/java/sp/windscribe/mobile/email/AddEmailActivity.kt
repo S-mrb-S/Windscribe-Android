@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.work.Data
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.base.BaseActivity
 import sp.windscribe.mobile.confirmemail.ConfirmActivity
@@ -25,7 +26,6 @@ import sp.windscribe.mobile.welcome.SoftInputAssist
 import sp.windscribe.mobile.windscribe.WindscribeActivity.Companion.getStartIntent
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class AddEmailActivity : BaseActivity(), AddEmailView {

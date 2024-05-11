@@ -6,13 +6,6 @@ package sp.windscribe.vpn.backend.openvpn
 
 import android.content.Intent
 import android.os.Build
-import sp.windscribe.vpn.ServiceInteractor
-import sp.windscribe.vpn.Windscribe
-import sp.windscribe.vpn.autoconnection.ProtocolInformation
-import sp.windscribe.vpn.backend.VPNState
-import sp.windscribe.vpn.backend.VpnBackend
-import sp.windscribe.vpn.state.NetworkInfoManager
-import sp.windscribe.vpn.state.VPNConnectionStateManager
 import com.wireguard.android.backend.GoBackend
 import de.blinkt.openvpn.core.ConnectionStatus
 import de.blinkt.openvpn.core.OpenVPNService
@@ -20,7 +13,14 @@ import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
+import sp.windscribe.vpn.ServiceInteractor
+import sp.windscribe.vpn.Windscribe
+import sp.windscribe.vpn.autoconnection.ProtocolInformation
+import sp.windscribe.vpn.backend.VPNState
+import sp.windscribe.vpn.backend.VpnBackend
+import sp.windscribe.vpn.state.NetworkInfoManager
+import sp.windscribe.vpn.state.VPNConnectionStateManager
+import java.util.UUID
 import javax.inject.Singleton
 
 @Singleton
@@ -92,11 +92,11 @@ class OpenVPNBackend(
     }
 
     override fun updateState(
-            openVpnState: String?,
-            logmessage: String?,
-            localizedResId: Int,
-            level: ConnectionStatus?,
-            Intent: Intent?
+        openVpnState: String?,
+        logmessage: String?,
+        localizedResId: Int,
+        level: ConnectionStatus?,
+        Intent: Intent?
     ) {
         vpnLogger.debug("$openVpnState $localizedResId $level")
         level?.let {
@@ -105,6 +105,7 @@ class OpenVPNBackend(
                 ConnectionStatus.LEVEL_CONNECTING_SERVER_REPLIED -> {
                     //  updateState(VPNState(VPNState.Status.Connecting, connectionId = connectionId))
                 }
+
                 ConnectionStatus.LEVEL_NOTCONNECTED -> {
                     if (stickyDisconnectEvent && stateManager.state.value.status == VPNState.Status.Connecting) {
                         stickyDisconnectEvent = false
@@ -113,9 +114,11 @@ class OpenVPNBackend(
                     connectionJob?.cancel()
                     updateState(VPNState(VPNState.Status.Disconnected, connectionId = connectionId))
                 }
+
                 ConnectionStatus.LEVEL_CONNECTED -> {
                     testConnectivity()
                 }
+
                 ConnectionStatus.LEVEL_MULTI_USER_PERMISSION -> {
                     updateState(
                         VPNState(
@@ -124,6 +127,7 @@ class OpenVPNBackend(
                         )
                     )
                 }
+
                 ConnectionStatus.LEVEL_AUTH_FAILED -> {
                     serviceInteractor.preferenceHelper.isReconnecting = false
                     scope.launch {
@@ -135,6 +139,7 @@ class OpenVPNBackend(
                         )
                     }
                 }
+
                 ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT -> {
                     updateState(
                         VPNState(
@@ -143,6 +148,7 @@ class OpenVPNBackend(
                         )
                     )
                 }
+
                 else -> {}
             }
         }

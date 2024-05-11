@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.NewsFeedAdapter
 import sp.windscribe.mobile.base.BaseActivity
@@ -18,8 +20,6 @@ import sp.windscribe.mobile.di.ActivityModule
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.vpn.api.response.PushNotificationAction
 import sp.windscribe.vpn.constants.ExtraConstants.PROMO_EXTRA
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NewsFeedActivity : BaseActivity(), NewsFeedView {

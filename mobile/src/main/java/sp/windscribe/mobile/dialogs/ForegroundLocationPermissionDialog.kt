@@ -13,7 +13,7 @@ class ForegroundLocationPermissionDialog : FullScreenDialog() {
     private var binding: ForegroundLocationPermissionDialogBinding? = null
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = ForegroundLocationPermissionDialogBinding.inflate(inflater, container, false)
         return binding?.root

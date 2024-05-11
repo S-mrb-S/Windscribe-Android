@@ -1,5 +1,8 @@
 package sp.windscribe.vpn.mocks
 
+import dagger.Lazy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.autoconnection.AutoConnectionManager
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
@@ -12,10 +15,7 @@ import sp.windscribe.vpn.repository.LocationRepository
 import sp.windscribe.vpn.repository.UserRepository
 import sp.windscribe.vpn.repository.WgConfigRepository
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import java.util.*
+import java.util.UUID
 
 class TestWindVpnController(
     scope: CoroutineScope,

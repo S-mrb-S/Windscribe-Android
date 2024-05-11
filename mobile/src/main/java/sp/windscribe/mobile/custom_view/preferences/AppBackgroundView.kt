@@ -7,14 +7,19 @@ import android.transition.TransitionManager
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
 import sp.windscribe.mobile.R
 
 
 class AppBackgroundView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), AdapterView.OnItemSelectedListener {
 
     interface Delegate {
@@ -22,6 +27,7 @@ class AppBackgroundView @JvmOverloads constructor(
         fun onFirstRightIconClick()
         fun onSecondRightIconClick()
     }
+
     var delegate: Delegate? = null
     private var spinner: Spinner? = null
     private var current: TextView? = null
@@ -31,9 +37,12 @@ class AppBackgroundView @JvmOverloads constructor(
     init {
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
-        view.findViewById<ImageView>(R.id.first_item_right_icon).setOnClickListener { delegate?.onFirstRightIconClick() }
-        view.findViewById<ImageView>(R.id.second_item_right_icon).setOnClickListener { delegate?.onSecondRightIconClick() }
-        view.findViewById<ImageView>(R.id.clickable_area).setOnClickListener { spinner?.performClick() }
+        view.findViewById<ImageView>(R.id.first_item_right_icon)
+            .setOnClickListener { delegate?.onFirstRightIconClick() }
+        view.findViewById<ImageView>(R.id.second_item_right_icon)
+            .setOnClickListener { delegate?.onSecondRightIconClick() }
+        view.findViewById<ImageView>(R.id.clickable_area)
+            .setOnClickListener { spinner?.performClick() }
         spinner?.onItemSelectedListener = this
     }
 
@@ -69,15 +78,15 @@ class AppBackgroundView @JvmOverloads constructor(
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
 
-    fun setTitle(value: String){
+    fun setTitle(value: String) {
         view.findViewById<TextView>(R.id.label).text = value
     }
 
-    fun setFirstItemTitle(value: String){
+    fun setFirstItemTitle(value: String) {
         view.findViewById<TextView>(R.id.first_item_title).text = value
     }
 
-    fun setSecondItemTitle(value: String){
+    fun setSecondItemTitle(value: String) {
         view.findViewById<TextView>(R.id.second_item_title).text = value
     }
 

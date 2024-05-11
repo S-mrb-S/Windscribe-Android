@@ -10,7 +10,6 @@ import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
-import sp.windscribe.vpn.commonutils.AutoScrollTextView.CursorScrollingMovementMethod
 
 class AutoScrollTextView : AppCompatEditText {
     /**
