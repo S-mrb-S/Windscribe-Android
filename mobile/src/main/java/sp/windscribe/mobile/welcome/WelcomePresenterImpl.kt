@@ -31,7 +31,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetLoginQuery
-import sp.windscribe.mobile.ui.api.GetLoginWithKeyQuery
+import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.mobile.mrb.api.GetLoginWithKeyQuery
+import sp.windscribe.mobile.mrb.util.getAllServers
+import sp.windscribe.mobile.mrb.util.saveDataAndFinish
 import sp.windscribe.vpn.qq.MmkvManager
 import java.io.File
 import java.io.IOException
@@ -173,6 +176,40 @@ class WelcomePresenterImpl @Inject constructor(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
+    private fun setup(){
+        val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
+
+        GlobalScope.launch {
+            getAllServers(
+                keyStr!!,
+                ::setDataAndLoad
+            ) {
+                onLoginFailedWithNoError()
+            }
+        }
+    }
+
+    private fun setDataAndLoad(data: GetServersQuery.Data?) {
+        saveDataAndFinish(data, ::navigateToHome) {
+            onLoginFailedWithNoError()
+        }
+    }
+
+    private fun navigateToHome(){
+        try{
+            interactor.getWorkManager().onAppStart()
+            interactor.getWorkManager().onAppMovedToForeground()
+            interactor.getWorkManager().updateNodeLatencies()
+            welcomeView.gotoHomeActivity(true)
+        }catch (e: Exception){
+            Log.d("ERR 1", e.toString())
+            Log.d("MRBT", "Step 3 catch!")
+        }finally {
+            MmkvManager.getLoginStorage().encode("is_login", true)
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun startLoginProcess(username: String, password: String, twoFa: String) {
         welcomeView.hideSoftKeyboard()
         if (validateLoginInputs(username, password, "", true)) {
@@ -189,18 +226,7 @@ class WelcomePresenterImpl @Inject constructor(
                                     data?.service?.days.toString()
                                 )
 
-                                    try{
-                                        interactor.getWorkManager().onAppStart()
-                                        interactor.getWorkManager().onAppMovedToForeground()
-                                        interactor.getWorkManager().updateNodeLatencies()
-                                        welcomeView.gotoHomeActivity(true)
-                                    }catch (e: Exception){
-                                        Log.d("ERR 1", e.toString())
-                                        Log.d("MRBT", "Step 3 catch!")
-                                    }finally {
-                                        MmkvManager.getLoginStorage().encode("is_login", true)
-                                    }
-
+                                setup() // get servers
                             }
 
                             override fun onFailure(errors: List<Error>?) {
