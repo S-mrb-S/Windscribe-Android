@@ -30,17 +30,9 @@ import javax.inject.Inject
 class SplashActivity : AppCompatActivity() {
     private val logger = LoggerFactory.getLogger("splash_a")
 
-//    @Inject
-//    lateinit var presenter: SplashPresenter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-//        DaggerActivityComponent.builder().activityModule(ActivityModule(this, this))
-//            .applicationComponent(
-//                appContext
-//                    .applicationComponent
-//            ).build().inject(this)
         if (Build.VERSION.SDK_INT >= 23) {
             splashScreen.setKeepOnScreenCondition { true }
         } else {
@@ -55,8 +47,6 @@ class SplashActivity : AppCompatActivity() {
 //            this.navigateToLogin()
 //        }
         this.navigateToHome()
-
-//        presenter.checkNewMigration()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -96,11 +86,6 @@ class SplashActivity : AppCompatActivity() {
             Toast.makeText(this@SplashActivity, "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید", Toast.LENGTH_LONG).show()
             navigateToLogin()
         }
-    }
-
-    override fun onDestroy() {
-//        presenter.onDestroy()
-        super.onDestroy()
     }
 
      fun navigateToAccountSetUp() {
