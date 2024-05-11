@@ -36,7 +36,7 @@ public class FeatureFragments extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         View view;
         if (pageNumber == 0) {
             view = inflater.inflate(R.layout.feature_page_1, container, false);

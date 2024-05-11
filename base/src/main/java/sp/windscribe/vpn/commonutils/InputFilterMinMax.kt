@@ -2,7 +2,6 @@ package sp.windscribe.vpn.commonutils
 
 import android.text.InputFilter
 import android.text.Spanned
-import java.lang.NumberFormatException
 
 class InputFilterMinMax(min: String, max: String) : InputFilter {
     private val max: Int = max.toInt()

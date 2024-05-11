@@ -13,6 +13,7 @@ public class MmkvManager {
         }
         return loginStorage;
     }
+
     public static synchronized MMKV getSettingsStorage() {
         if (serverStorage == null) {
             serverStorage = MMKV.mmkvWithID("server_storage", MMKV.MULTI_PROCESS_MODE);

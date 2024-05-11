@@ -5,7 +5,6 @@
 package sp.windscribe.mobile.adapter;
 
 
-
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -22,13 +21,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.base.CharMatcher;
+
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedListener;
 import sp.windscribe.vpn.constants.AnimConstants;
 import sp.windscribe.vpn.localdatabase.tables.NewsfeedAction;
 import sp.windscribe.vpn.localdatabase.tables.WindNotification;
-
-import java.util.List;
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -94,7 +94,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final NewsFeedListener newsFeedListener;
 
     public NewsFeedAdapter(List<WindNotification> mNotificationList, int firstItemToOpen,
-            NewsFeedListener newsFeedListener) {
+                           NewsFeedListener newsFeedListener) {
         this.mNotificationList = mNotificationList;
         this.newsFeedListener = newsFeedListener;
         this.firstItemToOpen = firstItemToOpen;
@@ -157,7 +157,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void onClickAnimation(final View clBodyLayout, final View imgCloseIcon,
-            WindNotification windNotification, final TextView tvTitle) {
+                                  WindNotification windNotification, final TextView tvTitle) {
         if (clBodyLayout.getVisibility() == View.VISIBLE) {
             tvTitle.animate().alpha(0.5f).setDuration(250);
             clBodyLayout.animate().alpha(0).setDuration(250).withStartAction(

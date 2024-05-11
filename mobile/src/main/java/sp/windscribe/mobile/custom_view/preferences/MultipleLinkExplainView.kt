@@ -15,13 +15,14 @@ import sp.windscribe.mobile.utils.UiUtil
 
 
 @SuppressLint("ClickableViewAccessibility")
-class  MultipleLinkExplainView @JvmOverloads constructor(
+class MultipleLinkExplainView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.MultipleLinkExplainView)
+    private val attributes: TypedArray =
+        context.obtainStyledAttributes(attrs, R.styleable.MultipleLinkExplainView)
     private val view: View = View.inflate(context, R.layout.multiple_link_explain_view, this)
 
     init {
@@ -52,11 +53,11 @@ class  MultipleLinkExplainView @JvmOverloads constructor(
         )
     }
 
-    fun onFirstItemClick(click: OnClickListener){
+    fun onFirstItemClick(click: OnClickListener) {
         view.findViewById<AppCompatImageView>(R.id.first_item_tap_area).setOnClickListener(click)
     }
 
-    fun onSecondItemClick(click: OnClickListener){
+    fun onSecondItemClick(click: OnClickListener) {
         view.findViewById<AppCompatImageView>(R.id.second_item_tap_area).setOnClickListener(click)
         view.findViewById<AppCompatImageView>(R.id.clip_corner_background).setOnClickListener(click)
     }

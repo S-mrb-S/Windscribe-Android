@@ -3,10 +3,10 @@ package sp.windscribe.vpn.workers.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import sp.windscribe.vpn.Windscribe
-import sp.windscribe.vpn.repository.LatencyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import sp.windscribe.vpn.Windscribe
+import sp.windscribe.vpn.repository.LatencyRepository
 import javax.inject.Inject
 
 class LatencyWorker(context: Context, parameters: WorkerParameters) :

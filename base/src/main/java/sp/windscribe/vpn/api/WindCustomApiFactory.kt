@@ -1,13 +1,13 @@
 package sp.windscribe.vpn.api
 
-import sp.windscribe.vpn.BuildConfig
-import sp.windscribe.vpn.constants.NetworkKeyConstants.API_ENDPOINT
-import sp.windscribe.vpn.encoding.encoders.Base64
 import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import sp.windscribe.vpn.BuildConfig
+import sp.windscribe.vpn.constants.NetworkKeyConstants.API_ENDPOINT
+import sp.windscribe.vpn.encoding.encoders.Base64
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
@@ -29,7 +29,7 @@ class WindCustomApiFactory @Inject constructor(
      */
     fun createCustomCertApi(url: String): ApiService {
         return retrofit?.newBuilder()?.baseUrl(url)
-                ?.build()?.create(ApiService::class.java)!!
+            ?.build()?.create(ApiService::class.java)!!
     }
 
     /**
@@ -40,10 +40,10 @@ class WindCustomApiFactory @Inject constructor(
     init {
         getUnsafeOkHttpClient()?.let {
             retrofit = retrofitBuilder.baseUrl(API_ENDPOINT)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(it.build())
-                    .build()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(it.build())
+                .build()
         }
     }
 

@@ -4,9 +4,9 @@
 
 package sp.windscribe.mobile.gpsspoofing;
 
-import sp.windscribe.vpn.ActivityInteractor;
-
 import javax.inject.Inject;
+
+import sp.windscribe.vpn.ActivityInteractor;
 
 public class GpsSpoofingPresenterImp implements GpsSpoofingPresenter {
 
@@ -16,7 +16,7 @@ public class GpsSpoofingPresenterImp implements GpsSpoofingPresenter {
 
     @Inject
     public GpsSpoofingPresenterImp(GpsSpoofingSettingView gpsSpoofingSettingView,
-            ActivityInteractor activityInteractor) {
+                                   ActivityInteractor activityInteractor) {
         this.gpsSpoofingInteractor = activityInteractor;
         this.gpsSpoofingSettingView = gpsSpoofingSettingView;
     }

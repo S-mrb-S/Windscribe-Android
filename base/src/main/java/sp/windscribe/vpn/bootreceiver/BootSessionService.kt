@@ -7,11 +7,11 @@ package sp.windscribe.vpn.bootreceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentWorkAroundService
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.state.ShortcutStateManager
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 

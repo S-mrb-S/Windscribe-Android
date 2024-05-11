@@ -39,7 +39,7 @@ public class RemoveConfigHolder extends RecyclerView.ViewHolder {
     }
 
     public void onBind(ConfigFile configFile, ListViewClickListener listViewClickListener, ServerListData dataDetails,
-            int pingResult) {
+                       int pingResult) {
         int length = configFile.getName().length();
         configNameView.setText(configFile.getName().substring(length / 2));
         mDelete.setOnClickListener(v -> listViewClickListener.deleteConfigFile(configFile));

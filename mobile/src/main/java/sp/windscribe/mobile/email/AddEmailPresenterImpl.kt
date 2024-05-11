@@ -2,6 +2,10 @@ package sp.windscribe.mobile.email
 
 import android.text.TextUtils
 import android.util.Patterns
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.AddEmailResponse
@@ -10,10 +14,6 @@ import sp.windscribe.vpn.api.response.GenericResponseClass
 import sp.windscribe.vpn.constants.NetworkErrorCodes
 import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class AddEmailPresenterImpl @Inject constructor(
@@ -76,6 +76,7 @@ class AddEmailPresenterImpl @Inject constructor(
                                             emailView.showInputError(result.errorMessage)
                                         }
                                     }
+
                                     is CallResult.Success -> {
                                         emailView.showToast(interactor.getResourceString(R.string.added_email_successfully))
                                         logger.info("Email address added successfully...")

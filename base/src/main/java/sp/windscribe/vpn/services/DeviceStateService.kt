@@ -7,6 +7,10 @@ package sp.windscribe.vpn.services
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentWorkAroundService
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.apppreference.PreferencesHelper
@@ -16,10 +20,6 @@ import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.exceptions.WindScribeException
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -75,18 +75,20 @@ class DeviceStateService : JobIntentWorkAroundService() {
 
     private fun addToKnownNetworks(networkName: String) {
         compositeDisposable.add(
-                interactor.getNetwork(networkName)
-                        .onErrorResumeNext {
-                            logger.debug("Saving $networkName(SSID) to database.")
-                            interactor.addNetworkToKnown(networkName).flatMap { interactor.getNetwork(networkName) }
-                        }.subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .subscribe({
-                            resetConnectState(it)
-                        }, {
-                            logger.debug("Ignore: no network information for network name: $networkName")
-                            interactor.compositeDisposable.dispose()
-                        }))
+            interactor.getNetwork(networkName)
+                .onErrorResumeNext {
+                    logger.debug("Saving $networkName(SSID) to database.")
+                    interactor.addNetworkToKnown(networkName)
+                        .flatMap { interactor.getNetwork(networkName) }
+                }.subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe({
+                    resetConnectState(it)
+                }, {
+                    logger.debug("Ignore: no network information for network name: $networkName")
+                    interactor.compositeDisposable.dispose()
+                })
+        )
     }
 
     private fun resetConnectState(networkInfo: NetworkInfo) {
@@ -105,8 +107,11 @@ class DeviceStateService : JobIntentWorkAroundService() {
         @JvmStatic
         fun enqueueWork(context: Context) {
             enqueueWork(
-                    context, DeviceStateService::class.java, JOB_ID,
-                    Intent(context, DeviceStateService::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context, DeviceStateService::class.java, JOB_ID,
+                Intent(
+                    context,
+                    DeviceStateService::class.java
+                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
     }

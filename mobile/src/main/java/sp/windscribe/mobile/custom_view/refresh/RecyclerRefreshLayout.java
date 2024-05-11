@@ -262,7 +262,7 @@ public class RecyclerRefreshLayout extends ViewGroup
 
     @Override
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed, int[] offsetInWindow) {
+                                        int dyUnconsumed, int[] offsetInWindow) {
         return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed,
                 dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
@@ -423,13 +423,13 @@ public class RecyclerRefreshLayout extends ViewGroup
 
     @Override
     public boolean onNestedFling(@NotNull View target, float velocityX, float velocityY,
-            boolean consumed) {
+                                 boolean consumed) {
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean onNestedPreFling(@NotNull View target, float velocityX,
-            float velocityY) {
+                                    float velocityY) {
         return dispatchNestedPreFling(velocityX, velocityY);
     }
 
@@ -460,7 +460,7 @@ public class RecyclerRefreshLayout extends ViewGroup
 
     @Override
     public void onNestedScroll(@NotNull final View target, final int dxConsumed, final int dyConsumed,
-            final int dxUnconsumed, final int dyUnconsumed) {
+                               final int dxUnconsumed, final int dyUnconsumed) {
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow);

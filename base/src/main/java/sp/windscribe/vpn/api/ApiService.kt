@@ -1,10 +1,21 @@
 package sp.windscribe.vpn.api
 
-import sp.windscribe.vpn.api.response.Latency
 import io.reactivex.Single
 import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.DELETE
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
+import retrofit2.http.Streaming
+import sp.windscribe.vpn.api.response.Latency
 
 interface ApiService {
 
@@ -55,18 +66,18 @@ interface ApiService {
 
     @GET("/serverlist/mob-v2/{plan}/{loc_rev}")
     fun getServerList(
-            @Path("plan") billing_plan: String?,
-            @Path("loc_rev") locRev: String?,
-            @Query("alc") alcList: String?,
-            @Query("country_override") country_override: String?
+        @Path("plan") billing_plan: String?,
+        @Path("loc_rev") locRev: String?,
+        @Query("alc") alcList: String?,
+        @Query("country_override") country_override: String?
     ): Single<ResponseBody>
 
     @GET("/assets/serverlist/mob-v2/{plan}/{loc_rev}")
     fun getServerListDirectIp(
-            @Path("plan") billing_plan: String?,
-            @Path("loc_rev") locRev: String?,
-            @Query("alc") alcList: String?,
-            @Query("country_override") country_override: String?,
+        @Path("plan") billing_plan: String?,
+        @Path("loc_rev") locRev: String?,
+        @Query("alc") alcList: String?,
+        @Query("country_override") country_override: String?,
     ): Single<ResponseBody>
 
     // Deprecated, exception with direct IP

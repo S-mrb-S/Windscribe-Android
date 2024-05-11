@@ -9,6 +9,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.strongswan.android.logic.CharonVpnService
+import org.strongswan.android.logic.VpnStateService
+import org.strongswan.android.logic.VpnStateService.VpnStateListener
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.Windscribe.Companion.appContext
@@ -20,16 +27,9 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.state.NetworkInfoListener
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.strongswan.android.logic.CharonVpnService
-import org.strongswan.android.logic.VpnStateService
-import org.strongswan.android.logic.VpnStateService.VpnStateListener
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 import javax.inject.Singleton
 
 @Singleton
@@ -135,8 +135,9 @@ class IKev2VpnBackend(
         }
     }
 
-    private fun checkLogFileSize(){
-        val logFile = File(appContext.filesDir.absolutePath + File.separator + CharonVpnService.LOG_FILE)
+    private fun checkLogFileSize() {
+        val logFile =
+            File(appContext.filesDir.absolutePath + File.separator + CharonVpnService.LOG_FILE)
         if (logFile.exists()) {
             try {
                 val sizeInMb = logFile.length() / (1024 * 1024)
@@ -150,26 +151,30 @@ class IKev2VpnBackend(
         }
     }
 
-    private fun serviceStateToVPNStatus(state: VpnStateService.State, error: VpnStateService.ErrorState): VPNState? =
-            if (error == VpnStateService.ErrorState.NO_ERROR) when (state) {
-                VpnStateService.State.DISABLED -> {
-                    connectionJob?.cancel()
-                    VPNState(Disconnected)
-                }
-                VpnStateService.State.CONNECTING -> VPNState(VPNState.Status.Connecting)
-                VpnStateService.State.CONNECTED -> VPNState(VPNState.Status.Connected)
-                VpnStateService.State.DISCONNECTING -> VPNState(VPNState.Status.Disconnecting)
-            } else {
-                if (error == VpnStateService.ErrorState.AUTH_FAILED) {
-                    scope.launch {
-                        disconnect(
-                            VPNState.Error(
-                                error = VPNState.ErrorType.AuthenticationError,
-                                message = "Authentication failed."
-                            )
-                        )
-                    }
-                }
-                null
+    private fun serviceStateToVPNStatus(
+        state: VpnStateService.State,
+        error: VpnStateService.ErrorState
+    ): VPNState? =
+        if (error == VpnStateService.ErrorState.NO_ERROR) when (state) {
+            VpnStateService.State.DISABLED -> {
+                connectionJob?.cancel()
+                VPNState(Disconnected)
             }
+
+            VpnStateService.State.CONNECTING -> VPNState(VPNState.Status.Connecting)
+            VpnStateService.State.CONNECTED -> VPNState(VPNState.Status.Connected)
+            VpnStateService.State.DISCONNECTING -> VPNState(VPNState.Status.Disconnecting)
+        } else {
+            if (error == VpnStateService.ErrorState.AUTH_FAILED) {
+                scope.launch {
+                    disconnect(
+                        VPNState.Error(
+                            error = VPNState.ErrorType.AuthenticationError,
+                            message = "Authentication failed."
+                        )
+                    )
+                }
+            }
+            null
+        }
 }

@@ -8,6 +8,12 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkManager
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.response.UserSessionResponse
@@ -16,12 +22,6 @@ import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.model.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
-import org.slf4j.LoggerFactory
 import javax.inject.Singleton
 
 @Singleton
@@ -46,7 +46,10 @@ class UserRepository(
     ) {
         scope.launch(Dispatchers.IO) {
             response?.let { it ->
-                serviceInteractor.preferenceHelper.saveResponseStringData(PreferencesKeyConstants.GET_SESSION, Gson().toJson(it))
+                serviceInteractor.preferenceHelper.saveResponseStringData(
+                    PreferencesKeyConstants.GET_SESSION,
+                    Gson().toJson(it)
+                )
                 val newUser = User(it)
                 user.postValue(newUser)
                 _userInfo.emit(newUser)
@@ -69,7 +72,7 @@ class UserRepository(
         }
     }
 
-    fun synchronizedReload(){
+    fun synchronizedReload() {
         try {
             logger.debug("Loading user info from cache")
             val cachedSessionResponse =
@@ -95,7 +98,12 @@ class UserRepository(
             val migrationRequired = serviceInteractor.preferenceHelper.migrationRequired
             val emailStatusChanged = it.emailStatus != newUser.emailStatus
             logger.info("What changed: Server list: $locationHashChanged | Alc: $alcListChanged | Sip: $sipChanged | User Status: $userStatusChanged | Account Status: $accountStatusChanged | Migration: $migrationRequired | Email Status: $emailStatusChanged")
-            return listOf(alcListChanged or locationHashChanged, sipChanged, userStatusChanged or accountStatusChanged or migrationRequired, emailStatusChanged)
+            return listOf(
+                alcListChanged or locationHashChanged,
+                sipChanged,
+                userStatusChanged or accountStatusChanged or migrationRequired,
+                emailStatusChanged
+            )
         } ?: kotlin.run {
             logger.debug("No user information found to compare.")
             return listOf(false, false, false, false)
@@ -136,7 +144,7 @@ class UserRepository(
             appContext.activeActivity?.let {
                 val intent = appContext.applicationInterface.welcomeIntent
                 intent.addFlags(
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 )
                 it.startActivity(intent)
                 it.finish()
@@ -144,15 +152,15 @@ class UserRepository(
         }
     }
 
-    fun loggedIn():Boolean{
+    fun loggedIn(): Boolean {
         return user.value?.let {
             return true
-        }?:false
+        } ?: false
     }
 
-    fun accountStatusOkay():Boolean{
+    fun accountStatusOkay(): Boolean {
         return user.value?.accountStatus?.let {
             return it == User.AccountStatus.Okay
-        }?:false
+        } ?: false
     }
 }

@@ -6,9 +6,13 @@ package sp.windscribe.vpn.model
 
 import sp.windscribe.vpn.api.response.UserSessionResponse
 import sp.windscribe.vpn.constants.UserStatusConstants
-import sp.windscribe.vpn.model.User.AccountStatus.*
-import sp.windscribe.vpn.model.User.EmailStatus.*
-import java.util.*
+import sp.windscribe.vpn.model.User.AccountStatus.Banned
+import sp.windscribe.vpn.model.User.AccountStatus.Expired
+import sp.windscribe.vpn.model.User.AccountStatus.Okay
+import sp.windscribe.vpn.model.User.EmailStatus.Confirmed
+import sp.windscribe.vpn.model.User.EmailStatus.EmailProvided
+import sp.windscribe.vpn.model.User.EmailStatus.NoEmail
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class User(private val sessionResponse: UserSessionResponse) {

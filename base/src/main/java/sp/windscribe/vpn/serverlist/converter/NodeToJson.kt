@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import sp.windscribe.vpn.serverlist.entity.Node
-import java.util.ArrayList
 
 object NodeToJson {
     @JvmStatic

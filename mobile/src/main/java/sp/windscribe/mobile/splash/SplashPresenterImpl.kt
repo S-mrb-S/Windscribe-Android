@@ -1,19 +1,17 @@
 package sp.windscribe.mobile.splash
 
-import sp.windscribe.vpn.ActivityInteractor
-import sp.windscribe.vpn.api.response.ApiErrorResponse
-import sp.windscribe.vpn.api.response.GenericResponseClass
-import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import sp.windscribe.vpn.constants.UserStatusConstants
-import sp.windscribe.vpn.errormodel.WindError
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.ActivityInteractor
+import sp.windscribe.vpn.api.response.ApiErrorResponse
+import sp.windscribe.vpn.api.response.GenericResponseClass
+import sp.windscribe.vpn.constants.PreferencesKeyConstants
+import sp.windscribe.vpn.constants.UserStatusConstants
+import sp.windscribe.vpn.errormodel.WindError
 import javax.inject.Inject
 
 class SplashPresenterImpl @Inject constructor(

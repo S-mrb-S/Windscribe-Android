@@ -8,10 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import sp.windscribe.vpn.Windscribe;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import sp.windscribe.vpn.Windscribe;
 
 public class Migrations {
 

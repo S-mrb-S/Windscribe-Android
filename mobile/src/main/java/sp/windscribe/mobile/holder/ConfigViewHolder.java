@@ -37,7 +37,7 @@ public class ConfigViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void onBind(ConfigFile configFile, ListViewClickListener listViewClickListener, ServerListData serverListData,
-            int pingResult) {
+                       int pingResult) {
         configNameView.setText(configFile.getName());
         itemView.setOnClickListener(v -> listViewClickListener.onConfigFileClicked(configFile));
         if (serverListData.isShowLatencyInBar()) {

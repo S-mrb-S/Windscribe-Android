@@ -3,15 +3,21 @@ package sp.windscribe.mobile.welcome.viewmodal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
-import sp.windscribe.vpn.backend.VPNState.Status.*
-import sp.windscribe.vpn.backend.utils.WindVpnController
-import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
+import sp.windscribe.vpn.backend.VPNState.Status.Connected
+import sp.windscribe.vpn.backend.VPNState.Status.Connecting
+import sp.windscribe.vpn.backend.VPNState.Status.Disconnected
+import sp.windscribe.vpn.backend.VPNState.Status.Disconnecting
+import sp.windscribe.vpn.backend.VPNState.Status.RequiresUserInput
+import sp.windscribe.vpn.backend.utils.WindVpnController
+import sp.windscribe.vpn.state.VPNConnectionStateManager
 
 class EmergencyConnectViewModal(
     private val scope: CoroutineScope,

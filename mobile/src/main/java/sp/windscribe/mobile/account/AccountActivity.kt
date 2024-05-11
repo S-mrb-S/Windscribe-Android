@@ -22,6 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.base.BaseActivity
 import sp.windscribe.mobile.confirmemail.ConfirmActivity
@@ -37,11 +38,10 @@ import sp.windscribe.mobile.listeners.AccountFragmentCallback
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
+import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
-import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.qq.MmkvManager
-import sp.windscribe.vpn.ActivityInteractor
 import java.util.*
 import javax.inject.Inject
 
@@ -136,7 +136,7 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
         setupCustomLayoutDelegates()
     }
 
-    private fun setUpUserInfo(){
+    private fun setUpUserInfo() {
         // key name
         tvAccountEmail.text = MmkvManager.getLoginStorage().decodeString("key_login", "none")
         tvAccountEmail.setTextColor(interactor.getThemeColor(R.attr.wdSecondaryColor))

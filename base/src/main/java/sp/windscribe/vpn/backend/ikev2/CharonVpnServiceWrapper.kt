@@ -7,6 +7,10 @@ package sp.windscribe.vpn.backend.ikev2
 import android.app.Notification
 import android.content.Intent
 import android.net.VpnService
+import kotlinx.coroutines.CoroutineScope
+import org.slf4j.LoggerFactory
+import org.strongswan.android.data.VpnProfile
+import org.strongswan.android.logic.CharonVpnService
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.Util
@@ -15,10 +19,6 @@ import sp.windscribe.vpn.backend.utils.WindNotificationBuilder
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.state.ShortcutStateManager
-import kotlinx.coroutines.CoroutineScope
-import org.slf4j.LoggerFactory
-import org.strongswan.android.data.VpnProfile
-import org.strongswan.android.logic.CharonVpnService
 import javax.inject.Inject
 
 class CharonVpnServiceWrapper : CharonVpnService() {

@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.holder.StaticRegionHolder;
 import sp.windscribe.vpn.commonutils.ThemeUtils;
@@ -22,8 +24,6 @@ import sp.windscribe.vpn.serverlist.entity.PingTime;
 import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.entity.StaticRegion;
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener;
-
-import java.util.List;
 
 
 public class StaticRegionAdapter extends RecyclerView.Adapter<StaticRegionHolder> {
@@ -36,7 +36,7 @@ public class StaticRegionAdapter extends RecyclerView.Adapter<StaticRegionHolder
 
 
     public StaticRegionAdapter(List<StaticRegion> mStaticIpList, ServerListData dataDetails,
-            ListViewClickListener mListener) {
+                               ListViewClickListener mListener) {
         this.mStaticIpList = mStaticIpList;
         this.dataDetails = dataDetails;
         this.mListener = mListener;

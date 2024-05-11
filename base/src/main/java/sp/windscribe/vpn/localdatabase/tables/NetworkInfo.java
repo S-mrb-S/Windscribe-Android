@@ -32,7 +32,7 @@ public class NetworkInfo {
     private String protocol;
 
     public NetworkInfo(@NonNull String networkName, boolean isAutoSecureOn, boolean isPreferredOn, String protocol,
-            String port) {
+                       String port) {
         this.networkName = networkName;
         this.isAutoSecureOn = isAutoSecureOn;
         this.isPreferredOn = isPreferredOn;

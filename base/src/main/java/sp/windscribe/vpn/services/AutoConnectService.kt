@@ -8,6 +8,13 @@ import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.autoconnection.AutoConnectionManager
@@ -21,13 +28,6 @@ import sp.windscribe.vpn.repository.UserRepository
 import sp.windscribe.vpn.state.NetworkInfoListener
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class AutoConnectService : Service(), NetworkInfoListener {
@@ -89,7 +89,8 @@ class AutoConnectService : Service(), NetworkInfoListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = windNotificationBuilder.buildNotification(VPNState.Status.UnsecuredNetwork)
+        val notification =
+            windNotificationBuilder.buildNotification(VPNState.Status.UnsecuredNetwork)
         notification.contentIntent = null
         notification.actions = null
         startForeground(NotificationConstants.AUTO_CONNECT_SERVICE_NOTIFICATION_ID, notification)
@@ -140,6 +141,7 @@ fun Context.canAccessNetworkName(): Boolean {
     } else {
         return true
     }
-    val isForegroundPermissionGranted = checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    val isForegroundPermissionGranted =
+        checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     return isBackgroundPermissionGranted && isForegroundPermissionGranted
 }

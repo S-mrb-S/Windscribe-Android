@@ -12,21 +12,29 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.base.BaseActivity
-import sp.windscribe.mobile.custom_view.preferences.*
+import sp.windscribe.mobile.custom_view.preferences.ConnectionModeView
+import sp.windscribe.mobile.custom_view.preferences.DecoyTrafficView
+import sp.windscribe.mobile.custom_view.preferences.ExpandableDropDownView
+import sp.windscribe.mobile.custom_view.preferences.ExpandableToggleView
+import sp.windscribe.mobile.custom_view.preferences.KeepAliveView
+import sp.windscribe.mobile.custom_view.preferences.PacketSizeView
+import sp.windscribe.mobile.custom_view.preferences.ToggleView
 import sp.windscribe.mobile.di.ActivityModule
-import sp.windscribe.mobile.dialogs.*
+import sp.windscribe.mobile.dialogs.ExtraDataUseWarningDialog
+import sp.windscribe.mobile.dialogs.ExtraDataUseWarningDialogCallBack
 import sp.windscribe.mobile.gpsspoofing.GpsSpoofingSettingsActivity
 import sp.windscribe.mobile.networksecurity.NetworkSecurityActivity
 import sp.windscribe.mobile.splittunneling.SplitTunnelingActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.vpn.constants.FeatureExplainer
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView, ExtraDataUseWarningDialogCallBack {
+class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
+    ExtraDataUseWarningDialogCallBack {
 
     private val logger = LoggerFactory.getLogger(TAG)
 
@@ -242,12 +250,14 @@ class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView, Extra
             override fun onToggleClick() {
                 presenter.onAntiCensorshipClick()
             }
+
             override fun onExplainClick() {}
         }
         clAutoConnectToggleView.delegate = object : ToggleView.Delegate {
             override fun onToggleClick() {
                 presenter.onAutoConnectClick()
             }
+
             override fun onExplainClick() {}
         }
     }

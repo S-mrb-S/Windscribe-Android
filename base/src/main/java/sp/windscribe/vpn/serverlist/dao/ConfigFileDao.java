@@ -10,12 +10,11 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.serverlist.entity.ConfigFile;
-
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import sp.windscribe.vpn.serverlist.entity.ConfigFile;
 
 @Dao
 abstract public class ConfigFileDao {

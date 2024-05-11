@@ -33,6 +33,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.adapter.ExpandedAdapter;
 import sp.windscribe.mobile.adapter.SearchRegionsAdapter;
@@ -43,14 +51,6 @@ import sp.windscribe.vpn.serverlist.entity.City;
 import sp.windscribe.vpn.serverlist.entity.Group;
 import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 @SuppressWarnings("rawtypes")
@@ -88,12 +88,12 @@ public class SearchFragment extends Fragment {
     private SearchRegionsAdapter regionsAdapter;
 
     public static SearchFragment newInstance(List<? extends ExpandableGroup> groups, ServerListData dataDetails,
-            ListViewClickListener listViewClickListener) {
+                                             ListViewClickListener listViewClickListener) {
         return new SearchFragment(groups, dataDetails, listViewClickListener);
     }
 
     public SearchFragment(List<? extends ExpandableGroup> groups, ServerListData serverListData,
-            ListViewClickListener listViewClickListener) {
+                          ListViewClickListener listViewClickListener) {
         super();
         this.groups = groups;
         this.serverListData = serverListData;
@@ -107,7 +107,7 @@ public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         if (getActivity() != null) {
             View view = inflater.inflate(R.layout.search_layout, container, false);
             ButterKnife.bind(this, view);

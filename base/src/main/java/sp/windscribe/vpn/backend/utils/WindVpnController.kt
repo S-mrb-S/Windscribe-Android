@@ -9,6 +9,12 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.net.VpnService
 import androidx.work.Data
+import dagger.Lazy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.BuildConfig.DEV
 import sp.windscribe.vpn.R
 import sp.windscribe.vpn.ServiceInteractor
@@ -47,12 +53,6 @@ import sp.windscribe.vpn.services.NetworkWhiteListService
 import sp.windscribe.vpn.services.canAccessNetworkName
 import sp.windscribe.vpn.services.startAutoConnectService
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -84,9 +84,11 @@ open class WindVpnController @Inject constructor(
             CityLocation -> createVpnProfileFromCity(
                 interactor.preferenceHelper.selectedCity, protocolInformation, attempt
             )
+
             StaticIp -> createVpnProfileFromStaticIp(
                 interactor.preferenceHelper.selectedCity, protocolInformation
             )
+
             else -> createProfileFromCustomConfig(interactor.preferenceHelper.selectedCity)
         }
     }
@@ -145,7 +147,7 @@ open class WindVpnController @Inject constructor(
         val nodes = city.getNodes()
         var randomIndex = Util.getRandomNode(lastUsedRandomIndex, attempt, nodes)
         val forcedNodeIndex = getForcedNodeIndex(city)
-        if (forcedNodeIndex != -1){
+        if (forcedNodeIndex != -1) {
             logger.debug("Forcing node to ${nodes[forcedNodeIndex]}")
             randomIndex = forcedNodeIndex
         }
@@ -175,11 +177,13 @@ open class WindVpnController @Inject constructor(
                     location, vpnParameters, config
                 )
             }
+
             PROTO_WIRE_GUARD -> {
                 return vpnProfileCreator.createVpnProfileFromWireGuardProfile(
                     location, vpnParameters, config
                 )
             }
+
             else -> {
                 return vpnProfileCreator.createOpenVpnProfile(
                     location, vpnParameters, config
@@ -214,11 +218,13 @@ open class WindVpnController @Inject constructor(
                     location, vpnParameters, protocolInformation
                 )
             }
+
             PROTO_WIRE_GUARD -> {
                 return vpnProfileCreator.createVpnProfileFromWireGuardProfile(
                     location, vpnParameters, protocolInformation
                 )
             }
+
             else -> {
                 return vpnProfileCreator.createOpenVpnProfile(
                     location, vpnParameters, protocolInformation
@@ -271,6 +277,7 @@ open class WindVpnController @Inject constructor(
                     connectionId, protocolInformation, attempt
                 )
             }
+
             else -> {
                 // Make a fresh connection
                 createProfileAndLaunchService(
@@ -404,6 +411,7 @@ open class WindVpnController @Inject constructor(
             ERROR_UNABLE_TO_REACH_API, ERROR_UNEXPECTED_API_DATA -> {
                 disconnect()
             }
+
             ERROR_WG_KEY_LIMIT_EXCEEDED -> {
                 showRetryDialog(error.errorMessage, {
                     CoroutineScope(context).launch {
@@ -429,6 +437,7 @@ open class WindVpnController @Inject constructor(
                     }
                 })
             }
+
             ERROR_UNABLE_TO_SELECT_WIRE_GUARD_IP, ERROR_WG_UNABLE_TO_GENERATE_PSK -> {
                 disconnect(
                     error = VPNState.Error(
@@ -438,6 +447,7 @@ open class WindVpnController @Inject constructor(
                     )
                 )
             }
+
             ERROR_WG_INVALID_PUBLIC_KEY -> {
                 wgConfigRepository.deleteKeys()
                 disconnect(
@@ -448,6 +458,7 @@ open class WindVpnController @Inject constructor(
                     )
                 )
             }
+
             EXPIRED_OR_BANNED_ACCOUNT, ERROR_VALID_CONFIG_NOT_FOUND -> {
                 logger.debug("Forcing session update.")
                 val data = Data.Builder().putBoolean("forceUpdate", true).build()
@@ -472,31 +483,31 @@ open class WindVpnController @Inject constructor(
         return emergencyConnectRepository.getConnectionInfo().mapCatching { connectionInfo ->
             var connectionAttempt = 0
             vpnConnectionStateManager.state.takeWhile {
-                    it.status != VPNState.Status.Connected
-                }.collect { state ->
-                    logger.debug("$connectionAttempt ${state.status}")
-                    if (state.status == VPNState.Status.Disconnected && connectionAttempt < connectionInfo.size) {
-                        callback(interactor.getResourceString(R.string.connecting))
-                        vpnConnectionStateManager.setState(VPNState(status = VPNState.Status.Connecting))
-                        val connectionUUID = UUID.randomUUID()
-                        val openVPNInfo = connectionInfo[connectionAttempt]
-                        vpnProfileCreator.createOpenVPNProfile(openVPNInfo)
-                        val lastSelectedLocation = LastSelectedLocation(
-                            -1,
-                            nodeName = "Emergency",
-                            nickName = "Windscribe location"
-                        )
-                        Util.saveSelectedLocation(lastSelectedLocation)
-                        val protocolInformation = openVPNInfo.getProtocolInformation()
-                        autoConnectionManager.setSelectedProtocol(protocolInformation)
-                        launchVPNService(protocolInformation, connectionUUID)
-                        connectionAttempt++
-                    } else if (state.status != VPNState.Status.Connecting) {
-                        if (connectionAttempt >= connectionInfo.size) {
-                            throw WindScribeException("No more profiles left to connect.")
-                        }
+                it.status != VPNState.Status.Connected
+            }.collect { state ->
+                logger.debug("$connectionAttempt ${state.status}")
+                if (state.status == VPNState.Status.Disconnected && connectionAttempt < connectionInfo.size) {
+                    callback(interactor.getResourceString(R.string.connecting))
+                    vpnConnectionStateManager.setState(VPNState(status = VPNState.Status.Connecting))
+                    val connectionUUID = UUID.randomUUID()
+                    val openVPNInfo = connectionInfo[connectionAttempt]
+                    vpnProfileCreator.createOpenVPNProfile(openVPNInfo)
+                    val lastSelectedLocation = LastSelectedLocation(
+                        -1,
+                        nodeName = "Emergency",
+                        nickName = "Windscribe location"
+                    )
+                    Util.saveSelectedLocation(lastSelectedLocation)
+                    val protocolInformation = openVPNInfo.getProtocolInformation()
+                    autoConnectionManager.setSelectedProtocol(protocolInformation)
+                    launchVPNService(protocolInformation, connectionUUID)
+                    connectionAttempt++
+                } else if (state.status != VPNState.Status.Connecting) {
+                    if (connectionAttempt >= connectionInfo.size) {
+                        throw WindScribeException("No more profiles left to connect.")
                     }
                 }
+            }
         }
     }
 }

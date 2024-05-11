@@ -1,12 +1,12 @@
 package sp.windscribe.vpn.repository
 
 import com.google.common.hash.Hashing
+import okhttp3.internal.toImmutableList
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.BuildConfig
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.exceptions.WindScribeException
 import sp.windscribe.vpn.model.OpenVPNConnectionInfo
-import okhttp3.internal.toImmutableList
-import org.slf4j.LoggerFactory
 import java.io.InputStreamReader
 import java.net.Inet4Address
 import java.nio.charset.Charset

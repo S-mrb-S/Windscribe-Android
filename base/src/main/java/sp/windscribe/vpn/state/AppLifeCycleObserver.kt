@@ -4,19 +4,21 @@
 
 package sp.windscribe.vpn.state
 
-import androidx.lifecycle.Lifecycle.Event.*
+import androidx.lifecycle.Lifecycle.Event.ON_CREATE
+import androidx.lifecycle.Lifecycle.Event.ON_PAUSE
+import androidx.lifecycle.Lifecycle.Event.ON_RESUME
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.Windscribe.Companion.applicationScope
 import sp.windscribe.vpn.api.ApiCallType
 import sp.windscribe.vpn.api.DomainFailOverManager
 import sp.windscribe.vpn.api.response.PushNotificationAction
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton

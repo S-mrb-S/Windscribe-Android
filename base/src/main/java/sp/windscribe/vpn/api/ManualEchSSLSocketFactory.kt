@@ -1,9 +1,9 @@
 package sp.windscribe.vpn.api
 
 import android.util.Base64
-import sp.windscribe.vpn.BuildConfig
 import kotlinx.coroutines.*
 import org.conscrypt.Conscrypt
+import sp.windscribe.vpn.BuildConfig
 import java.io.IOException
 import java.net.InetAddress
 import java.net.Socket

@@ -1,6 +1,11 @@
 package sp.windscribe.mobile.help
 
 import android.content.Context
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.ApiErrorResponse
@@ -11,11 +16,6 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants.getWebsiteLink
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.constants.UserStatusConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class HelpPresenterImpl @Inject constructor(
@@ -81,7 +81,8 @@ class HelpPresenterImpl @Inject constructor(
                             appLogSubmissionResponse: GenericResponseClass<GenericSuccess?, ApiErrorResponse?>
                         ) {
                             helpView.showProgress(
-                                false, appLogSubmissionResponse.dataClass != null && appLogSubmissionResponse.dataClass?.isSuccessful == true
+                                false,
+                                appLogSubmissionResponse.dataClass != null && appLogSubmissionResponse.dataClass?.isSuccessful == true
                             )
                         }
                     })

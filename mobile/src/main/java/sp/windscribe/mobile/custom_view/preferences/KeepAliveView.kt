@@ -11,9 +11,11 @@ import sp.windscribe.mobile.R
 class KeepAliveView(childView: View) : BaseView(childView) {
     private val keepAliveEditText: EditText = childView.findViewById(R.id.keep_alive_edit_view)
     private val keepAliveButton: ImageView = childView.findViewById(R.id.keep_alive_edit_button)
+
     interface Delegate {
         fun onKeepAliveTimeChanged(time: String)
     }
+
     var delegate: Delegate? = null
 
     init {

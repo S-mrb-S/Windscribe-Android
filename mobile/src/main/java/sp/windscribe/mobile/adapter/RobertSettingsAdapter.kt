@@ -28,7 +28,8 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
     var settingUpdateInProgress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RobertSettingsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.robert_setting_item_view, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.robert_setting_item_view, parent, false)
         return RobertSettingsViewHolder(view)
     }
 
@@ -36,13 +37,17 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
         holder.toggle.setOnClickListener {
             if (settingUpdateInProgress) return@setOnClickListener
             val originalList = ArrayList(data.map { it.copy() })
-            if( data[holder.adapterPosition].status== 1){
+            if (data[holder.adapterPosition].status == 1) {
                 data[holder.adapterPosition].status = 0
-            }else{
+            } else {
                 data[holder.adapterPosition].status = 1
             }
             settingUpdateInProgress = true
-            robertAdapterListener.settingChanged(originalList,data[holder.adapterPosition], holder.adapterPosition)
+            robertAdapterListener.settingChanged(
+                originalList,
+                data[holder.adapterPosition],
+                holder.adapterPosition
+            )
             notifyItemChanged(holder.adapterPosition)
         }
         holder.bind(data[position])
@@ -93,7 +98,7 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
             }
             iconMap[robertSetting.id]?.let {
                 icon.setImageResource(it)
-            }?: kotlin.run { 
+            } ?: kotlin.run {
                 icon.setImageResource(R.drawable.ic_preference_placeholder)
             }
             filter.text = robertSetting.title

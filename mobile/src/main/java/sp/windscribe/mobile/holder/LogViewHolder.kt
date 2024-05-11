@@ -8,7 +8,7 @@ import sp.windscribe.mobile.R
 
 class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(log: String){
+    fun bind(log: String) {
         val view = itemView.findViewById<TextView>(R.id.debugViewLabel)
         view.text = log
     }

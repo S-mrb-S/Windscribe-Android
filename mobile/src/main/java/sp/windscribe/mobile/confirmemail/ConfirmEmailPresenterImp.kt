@@ -1,5 +1,9 @@
 package sp.windscribe.mobile.confirmemail
 
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.AddEmailResponse
@@ -7,10 +11,6 @@ import sp.windscribe.vpn.api.response.ApiErrorResponse
 import sp.windscribe.vpn.api.response.GenericResponseClass
 import sp.windscribe.vpn.constants.UserStatusConstants
 import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class ConfirmEmailPresenterImp @Inject constructor(
@@ -56,6 +56,7 @@ class ConfirmEmailPresenterImp @Inject constructor(
                                 confirmEmailView.showToast(result.errorMessage)
                                 mPresenterLog.debug("Server returned error. $result")
                             }
+
                             is CallResult.Success -> {
                                 confirmEmailView.showToast(interactor.getResourceString(R.string.email_confirmation_sent_successfully))
                                 mPresenterLog.info("Email confirmation sent successfully...")

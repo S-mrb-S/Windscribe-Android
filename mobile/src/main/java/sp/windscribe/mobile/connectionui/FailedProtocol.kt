@@ -44,7 +44,7 @@ open class FailedProtocol(
     override val progressRingResource: Drawable?
         get() = getDrawable(R.drawable.progressbardrawble_error)
 
-    override val progressRingTag : Int = R.drawable.progressbardrawble_error
+    override val progressRingTag: Int = R.drawable.progressbardrawble_error
 
     override val progressRingVisibility: Int
         get() = ConstraintSet.VISIBLE

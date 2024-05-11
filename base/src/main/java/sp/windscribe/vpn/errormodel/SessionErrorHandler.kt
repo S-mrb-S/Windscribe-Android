@@ -18,6 +18,7 @@ class SessionErrorHandler private constructor() {
             NetworkErrorCodes.ERROR_RESPONSE_ARGUMENT_INVALID -> appContext.resources.getString(
                 R.string.password_too_short
             )
+
             else -> apiErrorResponse.errorMessage
         }
     }
@@ -29,6 +30,7 @@ class SessionErrorHandler private constructor() {
             NetworkErrorCodes.ERROR_RESPONSE_ARGUMENT_INVALID -> appContext.resources.getString(
                 R.string.password_too_short
             )
+
             else -> error
         }
     }

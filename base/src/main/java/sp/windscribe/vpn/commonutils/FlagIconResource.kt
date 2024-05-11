@@ -1,15 +1,13 @@
 package sp.windscribe.vpn.commonutils
 
 import sp.windscribe.vpn.R
-import sp.windscribe.vpn.commonutils.FlagIconResource
-import java.util.HashMap
 
 /**
  * Created by Mustafizur on 2018-03-05.
  */
 object FlagIconResource {
     fun getFlag(countryCode: String?): Int {
-        return flagIcons[countryCode]?:R.drawable.dummy_flag
+        return flagIcons[countryCode] ?: R.drawable.dummy_flag
     }
 
     val flagIcons: Map<String, Int>

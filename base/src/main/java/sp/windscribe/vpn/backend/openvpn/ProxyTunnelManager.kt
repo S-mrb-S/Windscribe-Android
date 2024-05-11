@@ -2,13 +2,13 @@ package sp.windscribe.vpn.backend.openvpn
 
 import com.windscribe.proxy.Proxy.*
 import com.windscribe.proxy.TunnelCallBack
-import sp.windscribe.vpn.BuildConfig
-import sp.windscribe.vpn.Windscribe.Companion.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.BuildConfig
+import sp.windscribe.vpn.Windscribe.Companion.appContext
 import java.io.File
 
 class ProxyTunnelManager(val scope: CoroutineScope, val vpnBackend: OpenVPNBackend) {

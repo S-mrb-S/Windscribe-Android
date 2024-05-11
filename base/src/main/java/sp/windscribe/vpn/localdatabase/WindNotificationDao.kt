@@ -8,9 +8,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import io.reactivex.Completable
 import io.reactivex.Single
+import sp.windscribe.vpn.localdatabase.tables.WindNotification
 
 @Dao
 interface WindNotificationDao {

@@ -21,15 +21,16 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.fragments.FeatureFragments
 import sp.windscribe.mobile.fragments.FeaturePageTransformer
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.mobile.welcome.viewmodal.EmergencyConnectViewModal
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 
 class WelcomeFragment : Fragment(), OnPageChangeListener {
     @BindView(R.id.logo)

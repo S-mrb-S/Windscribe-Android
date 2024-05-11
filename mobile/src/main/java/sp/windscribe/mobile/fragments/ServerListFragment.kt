@@ -118,56 +118,56 @@ class ServerListFragment : Fragment() {
 
     fun addSwipeListener() {
         ItemTouchHelper(object :
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-                override fun getSwipeDirs(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder
-                ): Int {
-                    if (viewHolder is ConfigViewHolder) {
-                        return ItemTouchHelper.LEFT
-                    }
-                    return if (viewHolder is RemoveConfigHolder) {
-                        ItemTouchHelper.RIGHT
-                    } else super.getSwipeDirs(recyclerView, viewHolder)
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun getSwipeDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                if (viewHolder is ConfigViewHolder) {
+                    return ItemTouchHelper.LEFT
                 }
+                return if (viewHolder is RemoveConfigHolder) {
+                    ItemTouchHelper.RIGHT
+                } else super.getSwipeDirs(recyclerView, viewHolder)
+            }
 
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (recyclerView?.isComputingLayout == true) {
+                    return
                 }
-
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    if (recyclerView?.isComputingLayout == true) {
-                        return
+                val adapter = recyclerView?.adapter
+                if (adapter is ConfigAdapter) {
+                    val configFiles = adapter.configFiles
+                    if (direction == ItemTouchHelper.LEFT && configFiles.size > 0) {
+                        for (configFile in configFiles) {
+                            configFile.type = 1
+                        }
+                        val type = configFiles[viewHolder.adapterPosition].type
+                        if (type == 1) {
+                            configFiles[viewHolder.adapterPosition].type = 2
+                        }
+                        adapter.notifyDataSetChanged()
                     }
-                    val adapter = recyclerView?.adapter
-                    if (adapter is ConfigAdapter) {
-                        val configFiles = adapter.configFiles
-                        if (direction == ItemTouchHelper.LEFT && configFiles.size > 0) {
-                            for (configFile in configFiles) {
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        for (configFile in configFiles) {
+                            if (configFile.type == 2) {
                                 configFile.type = 1
                             }
-                            val type = configFiles[viewHolder.adapterPosition].type
-                            if (type == 1) {
-                                configFiles[viewHolder.adapterPosition].type = 2
-                            }
-                            adapter.notifyDataSetChanged()
                         }
-                        if (direction == ItemTouchHelper.RIGHT) {
-                            for (configFile in configFiles) {
-                                if (configFile.type == 2) {
-                                    configFile.type = 1
-                                }
-                            }
-                            adapter.notifyDataSetChanged()
-                        }
+                        adapter.notifyDataSetChanged()
                     }
                 }
-            }).attachToRecyclerView(recyclerView)
+            }
+        }).attachToRecyclerView(recyclerView)
     }
 
     fun clearErrors() {

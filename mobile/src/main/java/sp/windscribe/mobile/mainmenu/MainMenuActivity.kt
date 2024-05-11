@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.BuildConfig
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.about.AboutActivity
@@ -32,9 +33,8 @@ import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.alert.showAlertDialog
 import sp.windscribe.vpn.backend.utils.WindVpnController
-import sp.windscribe.vpn.state.PreferenceChangeObserver
-import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.state.PreferenceChangeObserver
 import javax.inject.Inject
 
 class MainMenuActivity : BaseActivity(), MainMenuView {
@@ -154,7 +154,7 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
         }
         logoutView.onClick {
             performHapticFeedback(it)
-           // presenter.onSignOutClicked()
+            // presenter.onSignOutClicked()
             MmkvManager.getLoginStorage().encode("is_login", false)
 
             logger.info("Navigating to login activity...")

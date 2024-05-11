@@ -9,6 +9,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
+import kotlinx.coroutines.rx2.await
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.api.response.UserSessionResponse
@@ -26,12 +29,10 @@ import sp.windscribe.vpn.repository.WgConfigRepository
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import kotlinx.coroutines.rx2.await
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-class SessionWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
+class SessionWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
 
     val logger: Logger = LoggerFactory.getLogger("session_worker")
 
@@ -70,7 +71,7 @@ class SessionWorker(context: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     override suspend fun doWork(): Result {
-        if(!userRepository.loggedIn())return Result.failure()
+        if (!userRepository.loggedIn()) return Result.failure()
         return try {
             val userSession = getSession()
             val changed = userRepository.whatChanged(userSession)
@@ -88,7 +89,10 @@ class SessionWorker(context: Context, workerParams: WorkerParameters) : Coroutin
         }
     }
 
-    private suspend fun updateIfRequired(changed: List<Boolean>, userSessionResponse: UserSessionResponse) {
+    private suspend fun updateIfRequired(
+        changed: List<Boolean>,
+        userSessionResponse: UserSessionResponse
+    ) {
         userRepository.reload(userSessionResponse) {
             if (changed[0]) {
                 workManager.updateServerList()
@@ -124,10 +128,10 @@ class SessionWorker(context: Context, workerParams: WorkerParameters) : Coroutin
         } ?: throw Exception("Unexpected data returned")
     }
 
-    private suspend fun handleAccountStatusChange(user: User){
+    private suspend fun handleAccountStatusChange(user: User) {
         logger.debug("User account status: ${user.accountStatus} is VPN Connected: ${vpnStateManager.isVPNConnected()}")
-        if (user.accountStatus!=User.AccountStatus.Okay) {
-            if(vpnStateManager.isVPNConnected()){
+        if (user.accountStatus != User.AccountStatus.Okay) {
+            if (vpnStateManager.isVPNConnected()) {
                 logger.debug("Disconnecting...")
                 vpnController.disconnectAsync()
             }

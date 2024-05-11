@@ -1,6 +1,8 @@
 package sp.windscribe.vpn.backend.openvpn
 
 import android.content.Context
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.constants.VpnPreferenceConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
@@ -11,14 +13,12 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 object WindStunnelUtility {
     var logger: Logger = LoggerFactory.getLogger("wind_stunnel_util")
     val isStunnelRunning: Boolean
         get() = File(appContext.filesDir.path + "/" + VpnPreferenceConstants.STUNNEL_PID)
-                .exists()
+            .exists()
 
     /**
      * Starts Stunnel binary process
@@ -27,11 +27,13 @@ object WindStunnelUtility {
     fun startLocalTun(): Boolean {
         return if (!isStunnelRunning) {
             val filePath = appContext.filesDir.path + "/"
-            val sTunnelLibPath = File(appContext.applicationInfo.nativeLibraryDir,
-                    "libstunnel_42.so").path
+            val sTunnelLibPath = File(
+                appContext.applicationInfo.nativeLibraryDir,
+                "libstunnel_42.so"
+            ).path
             try {
                 val process = Runtime.getRuntime()
-                        .exec(sTunnelLibPath + " " + filePath + VpnPreferenceConstants.STUNNEL_CONFIG_FILE)
+                    .exec(sTunnelLibPath + " " + filePath + VpnPreferenceConstants.STUNNEL_CONFIG_FILE)
                 process.waitFor()
                 // Log if there is any error opening the tunnel
                 val inReader = InputStreamReader(process.errorStream)

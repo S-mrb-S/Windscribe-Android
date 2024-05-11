@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.mobile.holder.FavoriteViewHolder;
 import sp.windscribe.vpn.commonutils.ThemeUtils;
@@ -26,9 +29,6 @@ import sp.windscribe.vpn.serverlist.entity.Favourite;
 import sp.windscribe.vpn.serverlist.entity.PingTime;
 import sp.windscribe.vpn.serverlist.entity.ServerListData;
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
