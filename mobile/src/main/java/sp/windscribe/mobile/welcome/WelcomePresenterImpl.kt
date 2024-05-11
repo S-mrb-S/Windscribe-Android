@@ -197,15 +197,16 @@ class WelcomePresenterImpl @Inject constructor(
 
     private fun navigateToHome(){
         try{
-            interactor.getWorkManager().onAppStart()
-            interactor.getWorkManager().onAppMovedToForeground()
-            interactor.getWorkManager().updateNodeLatencies()
-            welcomeView.gotoHomeActivity(true)
+            try{
+                interactor.getWorkManager().onAppStart()
+                interactor.getWorkManager().onAppMovedToForeground()
+                interactor.getWorkManager().updateNodeLatencies()
+                welcomeView.gotoHomeActivity(true)
+            } finally {
+                MmkvManager.getLoginStorage().encode("is_login", true)
+            }
         }catch (e: Exception){
-            Log.d("ERR 1", e.toString())
-            Log.d("MRBT", "Step 3 catch!")
-        }finally {
-            MmkvManager.getLoginStorage().encode("is_login", true)
+            onLoginFailedWithNoError()
         }
     }
 
@@ -230,9 +231,7 @@ class WelcomePresenterImpl @Inject constructor(
                             }
 
                             override fun onFailure(errors: List<Error>?) {
-                                // برخورد با خطا
                                 Log.d("Failure", errors.toString())
-//                                onLoginFailedWithNoError()
                                 onLoginResponseError(400, "Wrong key")
                             }
 

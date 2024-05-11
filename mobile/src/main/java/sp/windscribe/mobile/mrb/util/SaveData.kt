@@ -22,19 +22,16 @@ suspend fun getAllServers(key:String, saveTo: (GetServersQuery.Data?) -> Unit, f
                         try{
                             saveTo(data)
                         }catch (e:Exception){
-                            Log.d("MRT", "ERR catch2: " + e.toString())
                             failTo()
                         }
                     }
 
                     override fun onFailure(errors: List<Error>?) {
-                        Log.d("MRT", "ERR failer" + errors.toString())
                         failTo()
                     }
 
                 })
         }catch (e: Exception){
-            Log.d("MRT", "ERR catch: " + e.toString())
             failTo()
         }
     }

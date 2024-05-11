@@ -75,7 +75,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-     fun navigateToHome() {
+     private fun navigateToHome() {
         logger.info("Navigating to home activity...")
         val homeIntent = Intent(this, WindscribeActivity::class.java)
         if (intent.extras != null) {
@@ -86,7 +86,7 @@ class SplashActivity : AppCompatActivity() {
         finish()
     }
 
-     fun navigateToLogin() {
+     private fun navigateToLogin() {
         logger.info("Navigating to login activity...")
         val loginIntent = Intent(this, WelcomeActivity::class.java)
         startActivity(loginIntent)
