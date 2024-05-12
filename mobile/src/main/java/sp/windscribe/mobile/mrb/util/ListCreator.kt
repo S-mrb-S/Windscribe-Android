@@ -188,8 +188,24 @@ fun createExample(): String {
         groupsChild
     )
 
+    val groupsHeadV2ray = Server(
+        10,
+        "V2ray",
+        "US",
+        1,
+        0,
+        "US",
+        1,
+        "America/Toronto",
+        "-5,EST",
+        "normal",
+        "ca.windscribe.com",
+        groupsChild
+    )
+
     val groupsHeadArray = listOf(
-        groupsHead
+        groupsHead,
+        groupsHeadV2ray
     )
 
     val gson = Gson()
