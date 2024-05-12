@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair
 import android.view.View
 import android.widget.Toast
@@ -690,7 +691,7 @@ class WindscribePresenterImpl @Inject constructor(
         selectedLocation?.cityId?.let {
             if (it == cityId && (interactor.getVpnConnectionStateManager()
                     .isVPNActive() || connectingFromServerList)
-            ) {
+            ) { // openvpn
                 return@let
             }
             connectingFromServerList = true
@@ -1666,6 +1667,11 @@ class WindscribePresenterImpl @Inject constructor(
                     }
 
                     override fun onSuccess(cityAndRegion: CityAndRegion) {
+
+                        // cisco
+                        Log.d("MRB CLI", cityAndRegion.city.nickName)
+                        Log.d("MRB CLI", cityAndRegion.city.ovpnX509)
+
                         val serverStatus = cityAndRegion.region.status
                         val eligibleToConnect = checkEligibility(
                             cityAndRegion.city.pro, false, serverStatus
