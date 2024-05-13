@@ -1735,6 +1735,12 @@ class WindscribePresenterImpl @Inject constructor(
                                 }
 
                                 return /// end v2ray
+                            }else if(cityAndRegion.city.nickName == "openvpn"){
+                                interactor.getMainScope().launch {
+
+                                }
+
+                                return /// end openvpn
                             }
 
                             // openvpn
