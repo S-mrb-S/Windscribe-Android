@@ -1125,6 +1125,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         textViewIpAddress?.alpha = 0.5f
         textViewConnectedNetworkName?.alpha = 0.5f
         autoSecureDivider?.visibility = View.GONE
+        if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
+            changeProtocolArrow?.visibility = View.GONE
+        }
         clAutoSecure?.visibility = View.GONE
         clPreferred?.visibility = View.GONE
         clProtocol?.visibility = View.GONE
@@ -2031,22 +2034,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     @OnClick(R.id.img_protocol_change_arrow)
     fun onProtocolChangeClick() {
-        if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
-            presenter.onProtocolChangeClick()
-        } else {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("نوع پروتکل را انتخاب کنید")
-            builder.setSingleChoiceItems(
-                Data.item_options,
-                Data.defaultItemDialog
-            ) { dialog, which ->
-                Data.settingsStorage.putInt("default_connection_type", which)
-                Handler().postDelayed(dialog::dismiss, 100)
-                Data.defaultItemDialog = which
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
+        presenter.onProtocolChangeClick()
     }
 
     override fun setCensorShipIconVisibility(visible: Int) {
