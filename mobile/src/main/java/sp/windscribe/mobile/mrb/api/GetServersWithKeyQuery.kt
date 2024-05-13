@@ -29,7 +29,7 @@ class GetServersWithKeyQuery {
                 callback.onFailure(response.errors)
             }
 
-        }catch (e: Exception){
+        } catch (e: Exception) {
             callback.onFailure(null)
         }
     }

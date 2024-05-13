@@ -15,6 +15,10 @@ interface WindscribePresenter {
     val isHapticFeedbackEnabled: Boolean
     fun loadConfigLocations()
     fun logoutFromCurrentSession()
+    // v2ray
+    fun startVpnUi()
+    fun stopVpnUi()
+    fun connectionVpnUi()
     suspend fun observeNextProtocolToConnect()
     suspend fun observeVPNState()
     fun onAddConfigLocation()
@@ -23,10 +27,10 @@ interface WindscribePresenter {
     fun onAutoSecureToggleClick()
     fun onCheckNodeStatusClick()
     fun onConfigFileContentReceived(
-            name: String,
-            content: String,
-            username: String,
-            password: String
+        name: String,
+        content: String,
+        username: String,
+        password: String
     )
 
     fun onConnectClicked()

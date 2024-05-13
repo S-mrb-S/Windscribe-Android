@@ -5,6 +5,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import dagger.Module
+import dagger.Provides
+import kotlinx.coroutines.CoroutineScope
 import sp.windscribe.mobile.about.AboutPresenter
 import sp.windscribe.mobile.about.AboutPresenterImpl
 import sp.windscribe.mobile.about.AboutView
@@ -87,15 +90,13 @@ import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.repository.StaticIpRepository
 import sp.windscribe.vpn.repository.UserRepository
 import sp.windscribe.vpn.services.FirebaseManager
+import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import sp.windscribe.vpn.services.ReceiptValidator
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import dagger.Module
-import dagger.Provides
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Named
+
 @Module
 open class BaseActivityModule {
     lateinit var activity: AppCompatActivity
@@ -162,7 +163,7 @@ open class BaseActivityModule {
 
     @Provides
     fun provideConfirmEmailPresenter(
-            confirmEmailView: ConfirmEmailView, activityInteractor: ActivityInteractor
+        confirmEmailView: ConfirmEmailView, activityInteractor: ActivityInteractor
     ): ConfirmEmailPresenter {
         return ConfirmEmailPresenterImp(confirmEmailView, activityInteractor)
     }
@@ -174,10 +175,14 @@ open class BaseActivityModule {
 
     @Provides
     fun provideConnectionPresenter(
-            activityInteractor: ActivityInteractor,
-            permissionManager: PermissionManager
+        activityInteractor: ActivityInteractor,
+        permissionManager: PermissionManager
     ): ConnectionSettingsPresenter {
-        return ConnectionSettingsPresenterImpl(connectionSettingsView, activityInteractor, permissionManager)
+        return ConnectionSettingsPresenterImpl(
+            connectionSettingsView,
+            activityInteractor,
+            permissionManager
+        )
     }
 
     @Provides
@@ -197,7 +202,7 @@ open class BaseActivityModule {
 
     @Provides
     fun provideGeneralSettingsPresenter(
-            activityInteractor: ActivityInteractor
+        activityInteractor: ActivityInteractor
     ): GeneralSettingsPresenter {
         return GeneralSettingsPresenterImpl(generalSettingsView, activityInteractor)
     }
@@ -234,7 +239,7 @@ open class BaseActivityModule {
 
     @Provides
     fun provideMenuPresenter(
-            activityInteractor: ActivityInteractor
+        activityInteractor: ActivityInteractor
     ): MainMenuPresenter {
         return MainMenuPresenterImpl(mainMenuView, activityInteractor)
     }
@@ -306,7 +311,7 @@ open class BaseActivityModule {
 
     @Provides
     fun provideSplitPresenter(
-            activityInteractor: ActivityInteractor
+        activityInteractor: ActivityInteractor
     ): SplitTunnelingPresenter {
         return SplitTunnelingPresenterImpl(splitTunnelingView, activityInteractor)
     }
@@ -328,8 +333,8 @@ open class BaseActivityModule {
 
     @Provides
     fun provideWindscribePresenter(
-            activityInteractor: ActivityInteractor,
-            permissionManager: PermissionManager
+        activityInteractor: ActivityInteractor,
+        permissionManager: PermissionManager
     ): WindscribePresenter {
         return WindscribePresenterImpl(windscribeView, activityInteractor, permissionManager)
     }
@@ -358,62 +363,62 @@ open class BaseActivityModule {
     @Provides
     @PerActivity
     fun provideActivityInteractor(
-            activityScope: LifecycleCoroutineScope,
-            coroutineScope: CoroutineScope,
-            prefHelper: PreferencesHelper,
-            apiCallManager: IApiCallManager,
-            localDbInterface: LocalDbInterface,
-            vpnConnectionStateManager: VPNConnectionStateManager,
-            userRepository: UserRepository,
-            networkInfoManager: NetworkInfoManager,
-            locationRepository: LocationRepository,
-            vpnController: WindVpnController,
-            connectionDataRepository: ConnectionDataRepository,
-            serverListRepository: ServerListRepository,
-            staticListUpdate: StaticIpRepository,
-            preferenceChangeObserver: PreferenceChangeObserver,
-            notificationRepository: NotificationRepository,
-            workManager: WindScribeWorkManager,
-            decoyTrafficController: DecoyTrafficController,
-            trafficCounter: TrafficCounter,
-            autoConnectionManager: AutoConnectionManager,
-            latencyRepository: LatencyRepository,
-            receiptValidator: ReceiptValidator,
-            firebaseManager: FirebaseManager
+        activityScope: LifecycleCoroutineScope,
+        coroutineScope: CoroutineScope,
+        prefHelper: PreferencesHelper,
+        apiCallManager: IApiCallManager,
+        localDbInterface: LocalDbInterface,
+        vpnConnectionStateManager: VPNConnectionStateManager,
+        userRepository: UserRepository,
+        networkInfoManager: NetworkInfoManager,
+        locationRepository: LocationRepository,
+        vpnController: WindVpnController,
+        connectionDataRepository: ConnectionDataRepository,
+        serverListRepository: ServerListRepository,
+        staticListUpdate: StaticIpRepository,
+        preferenceChangeObserver: PreferenceChangeObserver,
+        notificationRepository: NotificationRepository,
+        workManager: WindScribeWorkManager,
+        decoyTrafficController: DecoyTrafficController,
+        trafficCounter: TrafficCounter,
+        autoConnectionManager: AutoConnectionManager,
+        latencyRepository: LatencyRepository,
+        receiptValidator: ReceiptValidator,
+        firebaseManager: FirebaseManager
     ): ActivityInteractor {
         return ActivityInteractorImpl(
-                activityScope,
-                coroutineScope,
-                prefHelper,
-                apiCallManager,
-                localDbInterface,
-                vpnConnectionStateManager,
-                userRepository,
-                networkInfoManager,
-                locationRepository,
-                vpnController,
-                connectionDataRepository,
-                serverListRepository,
-                staticListUpdate,
-                preferenceChangeObserver,
-                notificationRepository,
-                workManager,
-                decoyTrafficController,
-                trafficCounter,
-                autoConnectionManager, latencyRepository, receiptValidator,
-                firebaseManager
+            activityScope,
+            coroutineScope,
+            prefHelper,
+            apiCallManager,
+            localDbInterface,
+            vpnConnectionStateManager,
+            userRepository,
+            networkInfoManager,
+            locationRepository,
+            vpnController,
+            connectionDataRepository,
+            serverListRepository,
+            staticListUpdate,
+            preferenceChangeObserver,
+            notificationRepository,
+            workManager,
+            decoyTrafficController,
+            trafficCounter,
+            autoConnectionManager, latencyRepository, receiptValidator,
+            firebaseManager
         )
     }
 
     @Provides
     fun providesEmergencyConnectViewModal(
-            scope: CoroutineScope,
-            windVpnController: WindVpnController,
-            vpnConnectionStateManager: VPNConnectionStateManager
+        scope: CoroutineScope,
+        windVpnController: WindVpnController,
+        vpnConnectionStateManager: VPNConnectionStateManager
     ): Lazy<EmergencyConnectViewModal> {
         return activity.viewModels {
             return@viewModels EmergencyConnectViewModal.provideFactory(
-                    scope, windVpnController, vpnConnectionStateManager
+                scope, windVpnController, vpnConnectionStateManager
             )
         }
     }

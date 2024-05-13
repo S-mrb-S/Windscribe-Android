@@ -22,7 +22,8 @@ class SingleLinkExplainView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.SingleLinkExplainView)
+    private val attributes: TypedArray =
+        context.obtainStyledAttributes(attrs, R.styleable.SingleLinkExplainView)
     private val view: View = View.inflate(context, R.layout.lable_link_explain_view, this)
 
     init {
@@ -60,7 +61,7 @@ class SingleLinkExplainView @JvmOverloads constructor(
         }
     }
 
-    fun onClick(click: OnClickListener){
+    fun onClick(click: OnClickListener) {
         view.findViewById<ConstraintLayout>(R.id.container).setOnClickListener(click)
         view.findViewById<ImageView>(R.id.clip_corner_background).setOnClickListener(click)
     }

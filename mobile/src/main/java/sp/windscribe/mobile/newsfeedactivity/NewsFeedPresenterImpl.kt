@@ -1,13 +1,13 @@
 package sp.windscribe.mobile.newsfeedactivity
 
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.adapter.NewsFeedAdapter
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.PushNotificationAction
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NewsFeedPresenterImpl @Inject constructor(

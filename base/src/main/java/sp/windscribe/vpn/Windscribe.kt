@@ -15,6 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
+import de.blinkt.openvpn.core.PRNGFixes
+import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.conscrypt.Conscrypt
+import org.slf4j.LoggerFactory
+import org.strongswan.android.logic.StrongSwanApplication
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.autoconnection.AutoConnectionModeCallback
 import sp.windscribe.vpn.autoconnection.FragmentType
@@ -40,14 +48,6 @@ import sp.windscribe.vpn.state.AppLifeCycleObserver
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 import sp.windscribe.vpn.workers.WindScribeWorkManager
-import de.blinkt.openvpn.core.PRNGFixes
-import io.reactivex.plugins.RxJavaPlugins
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import org.conscrypt.Conscrypt
-import org.slf4j.LoggerFactory
-import org.strongswan.android.logic.StrongSwanApplication
 import java.security.Security
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -67,10 +67,10 @@ open class Windscribe : MultiDexApplication() {
         val isTV: Boolean
         fun setTheme()
         fun launchFragment(
-                protocolInformationList: List<ProtocolInformation>,
-                fragmentType: FragmentType,
-                autoConnectionModeCallback: AutoConnectionModeCallback,
-                protocolInformation: ProtocolInformation? = null
+            protocolInformationList: List<ProtocolInformation>,
+            fragmentType: FragmentType,
+            autoConnectionModeCallback: AutoConnectionModeCallback,
+            protocolInformation: ProtocolInformation? = null
         ): Boolean
     }
 
@@ -120,8 +120,8 @@ open class Windscribe : MultiDexApplication() {
         applicationComponent = getApplicationModuleComponent()
         applicationComponent.inject(this)
         activityComponent = DaggerActivityComponent.builder()
-                .applicationComponent(applicationComponent)
-                .build()
+            .applicationComponent(applicationComponent)
+            .build()
         serviceComponent = serviceComponent()
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLifeCycleObserver)
         preference.isNewApplicationInstance = true
@@ -183,15 +183,15 @@ open class Windscribe : MultiDexApplication() {
     private fun setUpNewInstallation() {
         if (preference.getResponseString(PreferencesKeyConstants.NEW_INSTALLATION) == null) {
             preference.saveResponseStringData(
-                    PreferencesKeyConstants.NEW_INSTALLATION,
-                    PreferencesKeyConstants.I_OLD
+                PreferencesKeyConstants.NEW_INSTALLATION,
+                PreferencesKeyConstants.I_OLD
             )
             // This will be true for legacy app but not beta version users
             if (preference.getResponseString(PreferencesKeyConstants.CONNECTION_STATUS) == null) {
                 // Only Recording for legacy to new version
                 preference.saveResponseStringData(
-                        PreferencesKeyConstants.NEW_INSTALLATION,
-                        PreferencesKeyConstants.I_NEW
+                    PreferencesKeyConstants.NEW_INSTALLATION,
+                    PreferencesKeyConstants.I_NEW
                 )
                 preference.removeResponseData(PreferencesKeyConstants.SESSION_HASH)
             }
@@ -204,20 +204,20 @@ open class Windscribe : MultiDexApplication() {
     private fun setupStrictMode() {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             StrictMode.setThreadPolicy(
-                    Builder()
-                            .detectAll()
-                            .permitDiskReads()
-                            .permitDiskWrites()
-                            .permitUnbufferedIo()
-                            .penaltyLog()
-                            .build()
+                Builder()
+                    .detectAll()
+                    .permitDiskReads()
+                    .permitDiskWrites()
+                    .permitUnbufferedIo()
+                    .penaltyLog()
+                    .build()
             )
             StrictMode.setVmPolicy(
-                    VmPolicy.Builder()
-                            .detectLeakedSqlLiteObjects()
-                            .detectLeakedClosableObjects().detectActivityLeaks().detectFileUriExposure()
-                            .detectLeakedRegistrationObjects().detectContentUriWithoutPermission()
-                            .penaltyLog().build()
+                VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects().detectActivityLeaks().detectFileUriExposure()
+                    .detectLeakedRegistrationObjects().detectContentUriWithoutPermission()
+                    .penaltyLog().build()
             )
         }
     }
@@ -225,7 +225,7 @@ open class Windscribe : MultiDexApplication() {
     private fun setupConscrypt() {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             Security.insertProviderAt(
-                    Conscrypt.newProviderBuilder().defaultTlsProtocol("TLSv1.3").build(), 1
+                Conscrypt.newProviderBuilder().defaultTlsProtocol("TLSv1.3").build(), 1
             )
             Security.removeProvider("AndroidOpenSSL")
         }
@@ -248,14 +248,14 @@ open class Windscribe : MultiDexApplication() {
 
     open fun getApplicationModuleComponent(): ApplicationComponent {
         return DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this)).build()
+            .applicationModule(ApplicationModule(this)).build()
     }
 
     private fun serviceComponent(): ServiceComponent {
         return DaggerServiceComponent.builder()
-                .serviceModule(ServiceModule())
-                .applicationComponent(applicationComponent)
-                .build()
+            .serviceModule(ServiceModule())
+            .applicationComponent(applicationComponent)
+            .build()
     }
 
     override fun onLowMemory() {

@@ -2,12 +2,20 @@ package sp.windscribe.mobile.account
 
 import android.content.Context
 import android.widget.Toast
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.CreateHashMap.createVerifyExpressLoginMap
 import sp.windscribe.vpn.api.CreateHashMap.createWebSessionMap
-import sp.windscribe.vpn.api.response.*
+import sp.windscribe.vpn.api.response.ApiErrorResponse
+import sp.windscribe.vpn.api.response.GenericResponseClass
+import sp.windscribe.vpn.api.response.UserSessionResponse
+import sp.windscribe.vpn.api.response.VerifyExpressLoginResponse
+import sp.windscribe.vpn.api.response.WebSession
 import sp.windscribe.vpn.constants.NetworkErrorCodes
 import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.NetworkKeyConstants.getWebsiteLink
@@ -16,16 +24,14 @@ import sp.windscribe.vpn.constants.UserStatusConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.model.User.EmailStatus
-import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.repository.CallResult
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.Objects
 import javax.inject.Inject
 
 class AccountPresenterImpl @Inject constructor(
@@ -86,6 +92,7 @@ class AccountPresenterImpl @Inject constructor(
                                     accountView.showErrorDialog("Failed to verify lazy login code.")
                                 }
                             }
+
                             is CallResult.Success -> {
                                 logger.debug("Successfully verified login code")
                                 accountView.showSuccessDialog(
@@ -130,6 +137,7 @@ class AccountPresenterImpl @Inject constructor(
                                     accountView.showErrorDialog(result.errorMessage)
                                 }
                             }
+
                             is CallResult.Success -> {
                                 accountView.openEditAccountInBrowser(
                                     getWebsiteLink(NetworkKeyConstants.URL_MY_ACCOUNT) + result.data.tempSession
@@ -138,7 +146,7 @@ class AccountPresenterImpl @Inject constructor(
                         }
                     }
                 })
-            )
+        )
     }
 
     override fun onResendEmail() {
@@ -238,6 +246,7 @@ class AccountPresenterImpl @Inject constructor(
                 R.drawable.ic_email_attention,
                 R.drawable.confirmed_email_container_background
             )
+
             EmailStatus.EmailProvided -> user.email?.let {
                 accountView.setEmailConfirm(
                     it, interactor.getResourceString(
@@ -249,6 +258,7 @@ class AccountPresenterImpl @Inject constructor(
                     ), R.drawable.ic_warning_icon, R.drawable.attention_container_background
                 )
             }
+
             EmailStatus.Confirmed -> user.email?.let {
                 accountView.setEmailConfirmed(
                     it,

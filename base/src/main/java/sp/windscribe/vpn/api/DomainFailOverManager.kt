@@ -1,10 +1,10 @@
 package sp.windscribe.vpn.api
 
-import sp.windscribe.vpn.Windscribe
-import sp.windscribe.vpn.apppreference.PreferencesHelper
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import sp.windscribe.vpn.Windscribe
+import sp.windscribe.vpn.apppreference.PreferencesHelper
 
 class DomainFailOverManager(private val preferencesHelper: PreferencesHelper) {
     private var failedStates = mutableMapOf<String, Boolean>()

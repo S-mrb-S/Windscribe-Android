@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
+
 import sp.windscribe.mobile.R;
 
 public class CityViewHolder extends ChildViewHolder implements View.OnClickListener {

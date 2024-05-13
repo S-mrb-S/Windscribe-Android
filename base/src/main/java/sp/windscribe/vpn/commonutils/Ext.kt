@@ -3,15 +3,20 @@ package sp.windscribe.vpn.commonutils
 import android.content.Context
 import android.util.TypedValue
 import androidx.work.ListenableWorker
+import io.reactivex.Completable
+import io.reactivex.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.withContext
 import sp.windscribe.vpn.api.response.GenericResponseClass
 import sp.windscribe.vpn.constants.NetworkErrorCodes
 import sp.windscribe.vpn.decoytraffic.FakeTrafficVolume
 import sp.windscribe.vpn.errormodel.WindError
 import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.Completable
-import io.reactivex.Single
-import kotlinx.coroutines.*
-import kotlinx.coroutines.rx2.await
 
 object Ext {
     suspend fun Completable.result(callback: (successful: Boolean, error: String?) -> Unit): ListenableWorker.Result {

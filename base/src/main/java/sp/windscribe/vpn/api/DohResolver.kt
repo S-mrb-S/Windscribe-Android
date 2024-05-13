@@ -2,11 +2,11 @@ package sp.windscribe.vpn.api
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import io.reactivex.Single
+import kotlinx.coroutines.rx2.await
 import sp.windscribe.vpn.api.response.DOHTxtRecord
 import sp.windscribe.vpn.api.response.TxtAnswer
 import sp.windscribe.vpn.constants.NetworkKeyConstants
-import io.reactivex.Single
-import kotlinx.coroutines.rx2.await
 
 class DohResolver(private val apiFactory: EchApiFactory) {
 
@@ -20,24 +20,25 @@ class DohResolver(private val apiFactory: EchApiFactory) {
         queryMap["type"] = "TXT"
         return apiFactory.createApi(NetworkKeyConstants.CLOUDFLARE_DOH)
             .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
-            if (googleAsBackupResolver) {
-                return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
-                    .getGoogleDOHTxtRecord(queryMap)
-            } else {
-                throw it
-            }
-        }.flatMap {
-            try {
-                val response = it.string()
-                return@flatMap Single.fromCallable {
-                    val answer = Gson().fromJson(response, DOHTxtRecord::class.java).answer.first()
-                    cache[hostname] = answer
-                    return@fromCallable answer
+                if (googleAsBackupResolver) {
+                    return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
+                        .getGoogleDOHTxtRecord(queryMap)
+                } else {
+                    throw it
                 }
-            } catch (e: JsonSyntaxException) {
-                throw e
+            }.flatMap {
+                try {
+                    val response = it.string()
+                    return@flatMap Single.fromCallable {
+                        val answer =
+                            Gson().fromJson(response, DOHTxtRecord::class.java).answer.first()
+                        cache[hostname] = answer
+                        return@fromCallable answer
+                    }
+                } catch (e: JsonSyntaxException) {
+                    throw e
+                }
             }
-        }
     }
 
     suspend fun getTxtAnswer(

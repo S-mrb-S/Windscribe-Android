@@ -9,13 +9,13 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.databinding.FragmentEmergencyConnectBinding
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.mobile.welcome.viewmodal.EmergencyConnectViewModal
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class EmergencyConnectFragment : Fragment() {
     private var _binding: FragmentEmergencyConnectBinding? = null
@@ -55,12 +55,14 @@ class EmergencyConnectFragment : Fragment() {
                             _binding?.ok?.text = getString(R.string.connect)
 
                         }
+
                         EmergencyConnectUIState.Connecting -> {
                             _binding?.tvDescription?.visibility = View.INVISIBLE
                             _binding?.tvStatus?.visibility = View.VISIBLE
                             _binding?.progressBar?.visibility = View.VISIBLE
                             _binding?.ok?.text = getString(R.string.disconnect)
                         }
+
                         EmergencyConnectUIState.Connected -> {
                             _binding?.tvDescription?.visibility = View.VISIBLE
                             _binding?.tvStatus?.visibility = View.INVISIBLE

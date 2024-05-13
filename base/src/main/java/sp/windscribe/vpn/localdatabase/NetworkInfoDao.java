@@ -10,12 +10,11 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import sp.windscribe.vpn.localdatabase.tables.NetworkInfo;
-
 import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import sp.windscribe.vpn.localdatabase.tables.NetworkInfo;
 
 @Dao
 public abstract class NetworkInfoDao {

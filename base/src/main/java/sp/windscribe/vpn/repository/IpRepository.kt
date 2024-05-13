@@ -1,5 +1,10 @@
 package sp.windscribe.vpn.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.api.IApiCallManager
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.backend.VPNState
@@ -7,11 +12,6 @@ import sp.windscribe.vpn.commonutils.Ext.toResult
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 
 class IpRepository(
     private val scope: CoroutineScope,

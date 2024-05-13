@@ -16,12 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sp.windscribe.mobile.R;
 import sp.windscribe.vpn.Windscribe;
 import sp.windscribe.vpn.api.response.InstalledAppsData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InstalledAppsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -9,10 +9,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.localdatabase.tables.ServerStatusUpdateTable;
-
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import sp.windscribe.vpn.localdatabase.tables.ServerStatusUpdateTable;
 
 @Dao
 public interface ServerStatusDao {

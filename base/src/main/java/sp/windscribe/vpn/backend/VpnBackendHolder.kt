@@ -4,6 +4,11 @@
 
 package sp.windscribe.vpn.backend
 
+import de.blinkt.openvpn.VpnProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.apppreference.AppPreferenceHelper
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.backend.ikev2.IKev2VpnBackend
@@ -16,21 +21,16 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_TCP
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_UDP
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_WIRE_GUARD
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_WS_TUNNEL
-import de.blinkt.openvpn.VpnProfile
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.UUID
 import javax.inject.Singleton
 
 @Singleton
 class VpnBackendHolder(
-        val scope: CoroutineScope,
-        private val preferenceHelper: AppPreferenceHelper,
-        private val iKev2VpnBackend: IKev2VpnBackend,
-        private val wireguardBackend: WireguardBackend,
-        private val openVPNBackend: OpenVPNBackend
+    val scope: CoroutineScope,
+    private val preferenceHelper: AppPreferenceHelper,
+    private val iKev2VpnBackend: IKev2VpnBackend,
+    private val wireguardBackend: WireguardBackend,
+    private val openVPNBackend: OpenVPNBackend
 ) {
 
     var activeBackend: VpnBackend? = null
@@ -47,18 +47,21 @@ class VpnBackendHolder(
                 }
                 return null
             }
+
             PROTO_IKev2 -> {
                 if (Util.getProfile<org.strongswan.android.data.VpnProfile>() != null) {
                     return iKev2VpnBackend
                 }
                 return null
             }
+
             PROTO_WIRE_GUARD -> {
                 if (Util.getProfile<WireGuardVpnProfile>() != null) {
                     return wireguardBackend
                 }
                 return null
             }
+
             else -> {
                 null
             }

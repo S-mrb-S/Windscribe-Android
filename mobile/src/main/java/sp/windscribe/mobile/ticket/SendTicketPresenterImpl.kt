@@ -2,6 +2,9 @@ package sp.windscribe.mobile.ticket
 
 import android.content.Context
 import android.util.Patterns
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.buildTicketMap
@@ -12,9 +15,6 @@ import sp.windscribe.vpn.api.response.TicketResponse
 import sp.windscribe.vpn.constants.NetworkErrorCodes
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.repository.CallResult
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SendTicketPresenterImpl @Inject constructor(
@@ -72,6 +72,7 @@ class SendTicketPresenterImpl @Inject constructor(
                                             sendTicketView.setErrorLayout(result.errorMessage)
                                         }
                                     }
+
                                     is CallResult.Success -> sendTicketView.setSuccessLayout("Sweet, we’ll get back to you as soon as one of our agents is back from lunch.")
                                 }
                             }

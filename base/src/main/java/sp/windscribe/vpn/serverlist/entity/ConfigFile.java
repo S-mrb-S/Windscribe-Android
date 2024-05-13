@@ -40,7 +40,7 @@ public class ConfigFile implements Serializable {
     private String username;
 
     public ConfigFile(int primaryKey, String name, String content, String username, String password,
-            boolean remember) {
+                      boolean remember) {
         this.primaryKey = primaryKey;
         this.content = content;
         this.username = username;

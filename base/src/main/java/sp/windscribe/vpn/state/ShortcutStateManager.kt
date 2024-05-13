@@ -1,14 +1,14 @@
 package sp.windscribe.vpn.state
 
+import dagger.Lazy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.autoconnection.AutoConnectionManager
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.repository.UserRepository
-import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 
 class ShortcutStateManager(
     private var scope: CoroutineScope,

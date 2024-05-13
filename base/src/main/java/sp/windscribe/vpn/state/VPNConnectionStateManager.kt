@@ -5,6 +5,13 @@
 package sp.windscribe.vpn.state
 
 import android.os.Build
+import dagger.Lazy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.R
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.apppreference.PreferencesHelper
@@ -14,18 +21,16 @@ import sp.windscribe.vpn.backend.VPNState.Status.Connected
 import sp.windscribe.vpn.backend.VPNState.Status.Disconnected
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.repository.UserRepository
-import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Singleton
 
 @Singleton
-class VPNConnectionStateManager(val scope: CoroutineScope, val autoConnectionManager: AutoConnectionManager, val preferencesHelper: PreferencesHelper, val userRepository: Lazy<UserRepository>) {
+class VPNConnectionStateManager(
+    val scope: CoroutineScope,
+    val autoConnectionManager: AutoConnectionManager,
+    val preferencesHelper: PreferencesHelper,
+    val userRepository: Lazy<UserRepository>
+) {
     private val logger = LoggerFactory.getLogger("vpn_backend")
 
     private val _events = MutableStateFlow(VPNState(Disconnected))
@@ -71,7 +76,7 @@ class VPNConnectionStateManager(val scope: CoroutineScope, val autoConnectionMan
                     )
                     logger.info(logFile)
                     logger.debug("VPN state initialized with ${it.status}")
-                    if (autoConnectionManager.listOfProtocols.isEmpty()){
+                    if (autoConnectionManager.listOfProtocols.isEmpty()) {
                         autoConnectionManager.reset()
                     }
                 }

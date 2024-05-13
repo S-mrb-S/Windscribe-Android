@@ -26,10 +26,10 @@ object HashDomainGenerator {
                             (calendar[Calendar.MONTH] + 1) + calendar[Calendar.YEAR]
                     )
             hashCode = Hashing.sha1()
-                    .hashString(
-                            backUpAPIEndPoint,
-                            Charset.forName(BACKUP_HASH_CHAR_SET)
-                    )
+                .hashString(
+                    backUpAPIEndPoint,
+                    Charset.forName(BACKUP_HASH_CHAR_SET)
+                )
             backUpUrl = "$urlHost$hashCode.com"
             backupApiEndpointList.add(backUpUrl)
         }

@@ -12,13 +12,12 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import sp.windscribe.mobile.R;
-import sp.windscribe.mobile.gpsspoofing.GpsSpoofingFragmentListener;
-
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import sp.windscribe.mobile.R;
+import sp.windscribe.mobile.gpsspoofing.GpsSpoofingFragmentListener;
 
 
 public class GpsSpoofingSuccess extends Fragment {
@@ -39,7 +38,7 @@ public class GpsSpoofingSuccess extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.gps_spoofing_success, container, false);
         ButterKnife.bind(this, view);

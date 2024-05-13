@@ -6,6 +6,11 @@ package sp.windscribe.vpn.backend
 
 import android.app.Activity
 import android.content.Context
+import com.wireguard.config.BadConfigException
+import com.wireguard.config.Config
+import inet.ipaddr.AddressStringException
+import inet.ipaddr.IPAddressString
+import io.reactivex.Single
 import sp.windscribe.vpn.R
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.Windscribe.Companion.appContext
@@ -17,11 +22,6 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_WIRE_GUARD
 import sp.windscribe.vpn.exceptions.WindScribeException
 import sp.windscribe.vpn.serverlist.entity.Node
-import com.wireguard.config.BadConfigException
-import com.wireguard.config.Config
-import inet.ipaddr.AddressStringException
-import inet.ipaddr.IPAddressString
-import io.reactivex.Single
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -54,13 +54,13 @@ object Util {
         return Single.fromCallable {
             try {
                 ObjectInputStream(Windscribe.appContext.openFileInput(LAST_SELECTED_LOCATION)).use {
-                        val obj = it.readObject()
-                        if (obj is LastSelectedLocation) {
-                            return@use obj
-                        } else {
-                            throw WindScribeException("Invalid location found.")
-                        }
+                    val obj = it.readObject()
+                    if (obj is LastSelectedLocation) {
+                        return@use obj
+                    } else {
+                        throw WindScribeException("Invalid location found.")
                     }
+                }
             } catch (ignored: FileNotFoundException) {
                 throw WindScribeException("No saved location")
             }

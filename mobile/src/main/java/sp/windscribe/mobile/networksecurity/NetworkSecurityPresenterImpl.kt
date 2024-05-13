@@ -1,16 +1,16 @@
 package sp.windscribe.mobile.networksecurity
 
 import android.content.Context
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subscribers.DisposableSubscriber
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.state.NetworkInfoListener
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.DisposableSubscriber
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NetworkSecurityPresenterImpl @Inject constructor(
@@ -99,7 +99,7 @@ class NetworkSecurityPresenterImpl @Inject constructor(
     }
 
     override fun onNetworkInfoUpdate(networkInfo: NetworkInfo?, userReload: Boolean) {
-        if(networkInfo != null){
+        if (networkInfo != null) {
             networkSecurityView.setupCurrentNetwork(networkInfo)
         } else {
             networkSecurityView.hideCurrentNetwork()

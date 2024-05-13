@@ -5,9 +5,9 @@ import android.icu.util.TimeZone
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.telephony.TelephonyManager.PHONE_TYPE_CDMA
-import sp.windscribe.vpn.Windscribe.Companion.appContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.Windscribe.Companion.appContext
 
 object RegionLocator {
 

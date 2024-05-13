@@ -63,6 +63,7 @@ class PreferenceChangeObserver {
     fun postShowLocationHealthChange() {
         showLocationHealthChange.postValue(true)
     }
+
     fun postAntiCensorShipStatusChange() {
         antiCenterShipStatus.postValue(true)
     }

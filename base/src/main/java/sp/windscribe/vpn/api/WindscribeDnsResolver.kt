@@ -2,15 +2,18 @@ package sp.windscribe.vpn.api
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import sp.windscribe.vpn.apppreference.PreferencesHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.Dns
 import okio.ByteString.Companion.encodeUtf8
+import sp.windscribe.vpn.apppreference.PreferencesHelper
 import java.net.InetAddress
 import java.net.UnknownHostException
 
-class WindscribeDnsResolver(private val mainScope: CoroutineScope, private val preferenceHelper: PreferencesHelper) : Dns {
+class WindscribeDnsResolver(
+    private val mainScope: CoroutineScope,
+    private val preferenceHelper: PreferencesHelper
+) : Dns {
     var memoryCache = mutableMapOf<String, String>()
 
     fun addToCache(host: String, ip: String) {

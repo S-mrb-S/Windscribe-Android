@@ -1,10 +1,22 @@
 package sp.windscribe.vpn.localdatabase
 
-import sp.windscribe.vpn.localdatabase.tables.*
-import sp.windscribe.vpn.serverlist.entity.*
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
+import sp.windscribe.vpn.localdatabase.tables.PingTestResults
+import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
+import sp.windscribe.vpn.localdatabase.tables.ServerStatusUpdateTable
+import sp.windscribe.vpn.localdatabase.tables.UserStatusTable
+import sp.windscribe.vpn.localdatabase.tables.WindNotification
+import sp.windscribe.vpn.serverlist.entity.City
+import sp.windscribe.vpn.serverlist.entity.CityAndRegion
+import sp.windscribe.vpn.serverlist.entity.ConfigFile
+import sp.windscribe.vpn.serverlist.entity.Favourite
+import sp.windscribe.vpn.serverlist.entity.PingTime
+import sp.windscribe.vpn.serverlist.entity.Region
+import sp.windscribe.vpn.serverlist.entity.RegionAndCities
+import sp.windscribe.vpn.serverlist.entity.StaticRegion
 
 interface LocalDbInterface {
     fun addConfig(configFile: ConfigFile): Completable

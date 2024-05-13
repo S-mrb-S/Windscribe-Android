@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.cancel
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ItemSelectListener
 import sp.windscribe.mobile.adapter.ProtocolInformationAdapter
 import sp.windscribe.vpn.autoconnection.AutoConnectionModeCallback
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.commonutils.Ext.launchPeriodicAsync
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.cancel
 
 class ConnectionFailureFragment : DialogFragment(), ItemSelectListener {
 

@@ -10,14 +10,13 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import sp.windscribe.vpn.serverlist.entity.StaticRegion;
-
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import sp.windscribe.vpn.serverlist.entity.StaticRegion;
 
 @Dao
 abstract public class StaticRegionDao {

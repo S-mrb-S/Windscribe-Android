@@ -1,7 +1,32 @@
 package sp.windscribe.vpn.api
 
-import sp.windscribe.vpn.api.response.*
 import io.reactivex.Single
+import sp.windscribe.vpn.api.response.AddEmailResponse
+import sp.windscribe.vpn.api.response.ApiErrorResponse
+import sp.windscribe.vpn.api.response.BestLocationResponse
+import sp.windscribe.vpn.api.response.BillingPlanResponse
+import sp.windscribe.vpn.api.response.ClaimAccountResponse
+import sp.windscribe.vpn.api.response.GenericResponseClass
+import sp.windscribe.vpn.api.response.GenericSuccess
+import sp.windscribe.vpn.api.response.GetMyIpResponse
+import sp.windscribe.vpn.api.response.Latency
+import sp.windscribe.vpn.api.response.NewsFeedNotification
+import sp.windscribe.vpn.api.response.PortMapResponse
+import sp.windscribe.vpn.api.response.RegToken
+import sp.windscribe.vpn.api.response.RobertFilterResponse
+import sp.windscribe.vpn.api.response.RobertSettingsResponse
+import sp.windscribe.vpn.api.response.ServerCredentialsResponse
+import sp.windscribe.vpn.api.response.StaticIPResponse
+import sp.windscribe.vpn.api.response.TicketResponse
+import sp.windscribe.vpn.api.response.UserLoginResponse
+import sp.windscribe.vpn.api.response.UserRegistrationResponse
+import sp.windscribe.vpn.api.response.UserSessionResponse
+import sp.windscribe.vpn.api.response.VerifyExpressLoginResponse
+import sp.windscribe.vpn.api.response.WebSession
+import sp.windscribe.vpn.api.response.WgConnectResponse
+import sp.windscribe.vpn.api.response.WgInitResponse
+import sp.windscribe.vpn.api.response.XPressLoginCodeResponse
+import sp.windscribe.vpn.api.response.XPressLoginVerifyResponse
 
 interface IApiCallManager {
 
@@ -21,14 +46,18 @@ interface IApiCallManager {
     fun getServerCredentials(extraParams: Map<String, String>? = null): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>>
     fun getServerCredentialsForIKev2(extraParams: Map<String, String>? = null): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>>
     fun getServerList(
-            extraParams: Map<String, String>? = null,
-            billingPlan: String?,
-            locHash: String?,
-            alcList: String?,
-            overriddenCountryCode: String?
+        extraParams: Map<String, String>? = null,
+        billingPlan: String?,
+        locHash: String?,
+        alcList: String?,
+        overriddenCountryCode: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>>
 
-    fun getSessionGeneric(extraParams: Map<String, String>? = null, protect: Boolean = false): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
+    fun getSessionGeneric(
+        extraParams: Map<String, String>? = null,
+        protect: Boolean = false
+    ): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
+
     fun getSessionGeneric(extraParams: Map<String, String>? = null): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
     fun getSessionGenericInConnectedState(extraParams: Map<String, String>? = null): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
     fun getStaticIpList(extraParams: Map<String, String>? = null): Single<GenericResponseClass<StaticIPResponse?, ApiErrorResponse?>>
@@ -49,13 +78,24 @@ interface IApiCallManager {
     fun updateRobertSettings(extraParams: Map<String, String>? = null): Single<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>
     fun syncRobert(extraParams: Map<String, String>? = null): Single<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>
     fun deleteSession(extraParams: Map<String, String>? = null): Single<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>
-    fun wgInit(extraParams: Map<String, String>? = null, protect: Boolean): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>>
-    fun wgConnect(extraParams: Map<String, String>? = null, protect: Boolean): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>>
+    fun wgInit(
+        extraParams: Map<String, String>? = null,
+        protect: Boolean
+    ): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>>
+
+    fun wgConnect(
+        extraParams: Map<String, String>? = null,
+        protect: Boolean
+    ): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>>
+
     fun sendDecoyTraffic(
         url: String,
         data: String,
         sizeToReceive: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>>
 
-    suspend fun getLatency(url: String, ip: String): Result<GenericResponseClass<Latency?, ApiErrorResponse?>>
+    suspend fun getLatency(
+        url: String,
+        ip: String
+    ): Result<GenericResponseClass<Latency?, ApiErrorResponse?>>
 }

@@ -49,18 +49,18 @@ open class ConnectedAnimationState(
             return getDrawable(if (splitRouting) R.drawable.ic_connected_split_ring else R.drawable.ic_connected_ring)
         }
 
-    override val progressRingTag : Int
-    get() {
-        val splitRouting = appContext.preference.lastConnectedUsingSplit
-        return if (splitRouting) R.drawable.ic_connected_split_ring else R.drawable.ic_connected_ring
-    }
+    override val progressRingTag: Int
+        get() {
+            val splitRouting = appContext.preference.lastConnectedUsingSplit
+            return if (splitRouting) R.drawable.ic_connected_split_ring else R.drawable.ic_connected_ring
+        }
     override val progressRingVisibility: Int
         get() = ConstraintSet.VISIBLE
 
     override val decoyTrafficBadgeVisibility: Int
-        get(){
+        get() {
             val decoyTrafficOn = appContext.preference.isDecoyTrafficOn
-            return if(decoyTrafficOn){
+            return if (decoyTrafficOn) {
                 View.VISIBLE
             } else {
                 View.GONE

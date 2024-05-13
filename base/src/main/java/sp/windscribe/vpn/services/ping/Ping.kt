@@ -115,12 +115,12 @@ open class Ping {
         } else {
             try {
                 val method = Os::class.java.getMethod(
-                        "setsockoptInt",
-                        FileDescriptor::class.java,
-                        Int::class.javaPrimitiveType,
-                        Int::class.javaPrimitiveType,
-                        Int::class.javaPrimitiveType
-                    )
+                    "setsockoptInt",
+                    FileDescriptor::class.java,
+                    Int::class.javaPrimitiveType,
+                    Int::class.javaPrimitiveType,
+                    Int::class.javaPrimitiveType
+                )
                 method.invoke(null, fd, OsConstants.IPPROTO_IP, OsConstants.IP_TOS, ipTosLowDelay)
             } catch (ignored: Exception) {
             }

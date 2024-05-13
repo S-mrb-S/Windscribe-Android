@@ -6,6 +6,10 @@ package sp.windscribe.vpn.backend.openvpn
 
 import android.content.Intent
 import android.net.VpnService
+import de.blinkt.openvpn.VpnProfile
+import de.blinkt.openvpn.core.OpenVPNService
+import de.blinkt.openvpn.core.VpnStatus.StateListener
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.backend.Util
@@ -15,10 +19,6 @@ import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.state.ShortcutStateManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import de.blinkt.openvpn.VpnProfile
-import de.blinkt.openvpn.core.OpenVPNService
-import de.blinkt.openvpn.core.VpnStatus.StateListener
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class OpenVPNWrapperService : OpenVPNService(), StateListener {

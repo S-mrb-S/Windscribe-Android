@@ -3,6 +3,12 @@ package sp.windscribe.vpn.api
 import android.os.Build
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import io.reactivex.Single
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import org.slf4j.LoggerFactory
+import retrofit2.HttpException
+import retrofit2.Response
 import sp.windscribe.vpn.BuildConfig
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.api.response.*
@@ -17,18 +23,21 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants.API_HOST_GENERIC
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.errormodel.WindError
 import sp.windscribe.vpn.exceptions.WindScribeException
-import io.reactivex.Single
-import okhttp3.ResponseBody
-import org.json.JSONObject
-import org.slf4j.LoggerFactory
-import retrofit2.HttpException
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
-open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFactory, private val customApiFactory: WindCustomApiFactory, private val hashedDomain: String, private val authorizationGenerator: AuthorizationGenerator, private var accessIps: List<String>?, private var primaryApiEndpoints: Map<HostType, String>, private var secondaryApiEndpoints: Map<HostType, String>, private val domainFailOverManager: DomainFailOverManager) : IApiCallManager {
+open class ApiCallManager @Inject constructor(
+    private val apiFactory: WindApiFactory,
+    private val customApiFactory: WindCustomApiFactory,
+    private val hashedDomain: String,
+    private val authorizationGenerator: AuthorizationGenerator,
+    private var accessIps: List<String>?,
+    private var primaryApiEndpoints: Map<HostType, String>,
+    private var secondaryApiEndpoints: Map<HostType, String>,
+    private val domainFailOverManager: DomainFailOverManager
+) : IApiCallManager {
 
     private val logger = LoggerFactory.getLogger("api_call")
 
@@ -38,7 +47,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
      * @param authRequired if true adds authentication params
      * @return params to attach to http call
      */
-    private fun createQueryMap(extraParams: Map<String, String>? = null, authRequired: Boolean = true): Map<String, String> {
+    private fun createQueryMap(
+        extraParams: Map<String, String>? = null,
+        authRequired: Boolean = true
+    ): Map<String, String> {
         val paramMap = mutableMapOf<String, String>()
         paramMap[PLATFORM] = "android"
         paramMap[APP_VERSION] = WindUtilities.getVersionName()
@@ -66,11 +78,13 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
      */
     private fun getAccessIp(accessIpMap: Map<String, String>?): Single<GenericResponseClass<AccessIpResponse?, ApiErrorResponse?>> {
         val params = createQueryMap(accessIpMap, true)
-        return (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_1).getAccessIps(params)).onErrorResumeNext {
-                    return@onErrorResumeNext (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_2).getAccessIps(params))
-                }.flatMap {
-                    responseToModel(it, AccessIpResponse::class.java)
-                }
+        return (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_1)
+            .getAccessIps(params)).onErrorResumeNext {
+            return@onErrorResumeNext (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_2)
+                .getAccessIps(params))
+        }.flatMap {
+            responseToModel(it, AccessIpResponse::class.java)
+        }
     }
 
     /**
@@ -80,23 +94,35 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     private fun getApiServicesWithAccessIp(params: Map<String, String>): Single<List<ApiService>> {
         return Single.fromCallable {
             return@fromCallable accessIps?.let {
-                listOf(customApiFactory.createCustomCertApi("https://${it[0]}"), customApiFactory.createCustomCertApi("https://${it[1]}"))
+                listOf(
+                    customApiFactory.createCustomCertApi("https://${it[0]}"),
+                    customApiFactory.createCustomCertApi("https://${it[1]}")
+                )
             } ?: run {
                 throw Exception("No Previously Saved access ip available. Now trying Api.")
             }
         }.onErrorResumeNext {
             return@onErrorResumeNext getAccessIp(params).flatMap { access ->
-                        access.dataClass?.let {
-                            return@flatMap Single.fromCallable {
-                                accessIps = mutableListOf(it.hosts[0], it.hosts[1])
-                                appContext.preference.setStaticAccessIp(PreferencesKeyConstants.ACCESS_API_IP_1, it.hosts[0])
-                                appContext.preference.setStaticAccessIp(PreferencesKeyConstants.ACCESS_API_IP_2, it.hosts[1])
-                                listOf(customApiFactory.createCustomCertApi("https://${it.hosts[0]}"), customApiFactory.createCustomCertApi("https://${it.hosts[1]}"))
-                            }
-                        } ?: kotlin.run {
-                            throw Exception("Api returned no access ip.")
-                        }
+                access.dataClass?.let {
+                    return@flatMap Single.fromCallable {
+                        accessIps = mutableListOf(it.hosts[0], it.hosts[1])
+                        appContext.preference.setStaticAccessIp(
+                            PreferencesKeyConstants.ACCESS_API_IP_1,
+                            it.hosts[0]
+                        )
+                        appContext.preference.setStaticAccessIp(
+                            PreferencesKeyConstants.ACCESS_API_IP_2,
+                            it.hosts[1]
+                        )
+                        listOf(
+                            customApiFactory.createCustomCertApi("https://${it.hosts[0]}"),
+                            customApiFactory.createCustomCertApi("https://${it.hosts[1]}")
+                        )
                     }
+                } ?: kotlin.run {
+                    throw Exception("Api returned no access ip.")
+                }
+            }
         }
     }
 
@@ -106,19 +132,26 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
      * @param modelType Class type for data if String is provided raw response is returned .
      * @return Optional Generic Class with either data or ApiErrorResponse
      */
-    private fun <T> responseToModel(responseBody: ResponseBody, modelType: Class<T>): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
+    private fun <T> responseToModel(
+        responseBody: ResponseBody,
+        modelType: Class<T>
+    ): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
         val responseDataString = responseBody.string()
         responseBody.close()
         return Single.fromCallable<GenericResponseClass<T?, ApiErrorResponse?>> {
             if (modelType.simpleName.equals("String")) {
                 return@fromCallable (GenericResponseClass(responseDataString as T, null))
             } else {
-                val dataObject = JsonResponseConverter.getResponseClass(JSONObject(responseDataString), modelType)
+                val dataObject = JsonResponseConverter.getResponseClass(
+                    JSONObject(responseDataString),
+                    modelType
+                )
                 return@fromCallable (GenericResponseClass(dataObject, null))
             }
         }.onErrorResumeNext {
             return@onErrorResumeNext Single.fromCallable {
-                val errorObject = JsonResponseConverter.getErrorClass(JSONObject(responseDataString))
+                val errorObject =
+                    JsonResponseConverter.getErrorClass(JSONObject(responseDataString))
                 return@fromCallable GenericResponseClass(null, errorObject)
             }
         }
@@ -137,7 +170,15 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
      *@param service suspend function which returns Response body from Api service Interface.
      * @return optional GenericResponseClass<T, ApiErrorResponse>
      */
-    fun <T> call(extraParams: Map<String, String>? = null, authRequired: Boolean = true, hostType: HostType = HostType.API, modelType: Class<T>, protect: Boolean = false, apiCallType: ApiCallType = ApiCallType.Other, service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
+    fun <T> call(
+        extraParams: Map<String, String>? = null,
+        authRequired: Boolean = true,
+        hostType: HostType = HostType.API,
+        modelType: Class<T>,
+        protect: Boolean = false,
+        apiCallType: ApiCallType = ApiCallType.Other,
+        service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>
+    ): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
         try {
             val params = createQueryMap(extraParams, authRequired)
             val primaryDomain = primaryApiEndpoints[hostType]
@@ -155,95 +196,130 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
                     hashedDomain
                 }
             }
-            return callOrSkip(apiCallType, service, DomainType.Primary, primaryDomain!!, protect, params).onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            domainFailOverManager.setDomainBlocked(DomainType.Primary, apiCallType)
-                            return@onErrorResumeNext (callOrSkip(apiCallType, service, DomainType.Secondary, secondaryDomain!!, protect, params))
+            return callOrSkip(
+                apiCallType,
+                service,
+                DomainType.Primary,
+                primaryDomain!!,
+                protect,
+                params
+            ).onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    domainFailOverManager.setDomainBlocked(DomainType.Primary, apiCallType)
+                    return@onErrorResumeNext (callOrSkip(
+                        apiCallType,
+                        service,
+                        DomainType.Secondary,
+                        secondaryDomain!!,
+                        protect,
+                        params
+                    ))
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    domainFailOverManager.setDomainBlocked(DomainType.Secondary, apiCallType)
+                    return@onErrorResumeNext (if (BuildConfig.DYNAMIC_DNS.isEmpty()) {
+                        throw WindScribeException("Dynamic doh disabled.")
+                    } else {
+                        getDynamicDohEndpoint(hostType).flatMap { dynamicEndpoint ->
+                            callOrSkip(
+                                apiCallType,
+                                service,
+                                DomainType.DYNAMIC_DOH,
+                                dynamicEndpoint,
+                                protect,
+                                params
+                            )
                         }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            domainFailOverManager.setDomainBlocked(DomainType.Secondary, apiCallType)
-                            return@onErrorResumeNext (if (BuildConfig.DYNAMIC_DNS.isEmpty()) {
-                                throw WindScribeException("Dynamic doh disabled.")
-                            } else {
-                                getDynamicDohEndpoint(hostType).flatMap { dynamicEndpoint ->
-                                    callOrSkip(apiCallType, service, DomainType.DYNAMIC_DOH, dynamicEndpoint, protect, params)
-                                }
-                            })
-                        }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            lastUsedDynamicEndpoint = null
-                            domainFailOverManager.setDomainBlocked(DomainType.DYNAMIC_DOH, apiCallType)
-                            return@onErrorResumeNext (if (BuildConfig.DEV || BuildConfig.BACKUP_API_ENDPOINT_STRING.isEmpty()) {
-                                throw WindScribeException("Hash domains are disabled.")
-                            } else {
-                                callOrSkip(apiCallType, service, DomainType.Hashed, randomHashedDomain, protect, params)
-                            })
-                        }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            domainFailOverManager.setDomainBlocked(DomainType.Hashed, apiCallType)
-                            return@onErrorResumeNext (if (BuildConfig.DEV || BuildConfig.ECH_DOMAIN.isEmpty() || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                                throw WindScribeException("Ech domain disabled.")
-                            } else {
-                                callOrSkip(apiCallType, service, DomainType.Ech, getEchDomain(hostType), protect, params)
-                            })
-                        }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            domainFailOverManager.setDomainBlocked(DomainType.Ech, apiCallType)
-                            if (BuildConfig.DEV || BuildConfig.API_STATIC_CERT.isEmpty()) {
-                                throw WindScribeException("Unsafe http client disabled.")
-                            } else {
-                                if (domainFailOverManager.isAccessible(DomainType.DirectIp1, apiCallType)) {
-                                    val services = getApiServicesWithAccessIp(params)
-                                    return@onErrorResumeNext services.flatMap { apiService ->
-                                        return@flatMap service.invoke(apiService[0], params, true)
-                                    }
-                                } else {
-                                    throw WindScribeException("Direct ip domain 1 blocked.")
-                                }
+                    })
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    lastUsedDynamicEndpoint = null
+                    domainFailOverManager.setDomainBlocked(DomainType.DYNAMIC_DOH, apiCallType)
+                    return@onErrorResumeNext (if (BuildConfig.DEV || BuildConfig.BACKUP_API_ENDPOINT_STRING.isEmpty()) {
+                        throw WindScribeException("Hash domains are disabled.")
+                    } else {
+                        callOrSkip(
+                            apiCallType,
+                            service,
+                            DomainType.Hashed,
+                            randomHashedDomain,
+                            protect,
+                            params
+                        )
+                    })
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    domainFailOverManager.setDomainBlocked(DomainType.Hashed, apiCallType)
+                    return@onErrorResumeNext (if (BuildConfig.DEV || BuildConfig.ECH_DOMAIN.isEmpty() || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        throw WindScribeException("Ech domain disabled.")
+                    } else {
+                        callOrSkip(
+                            apiCallType,
+                            service,
+                            DomainType.Ech,
+                            getEchDomain(hostType),
+                            protect,
+                            params
+                        )
+                    })
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    domainFailOverManager.setDomainBlocked(DomainType.Ech, apiCallType)
+                    if (BuildConfig.DEV || BuildConfig.API_STATIC_CERT.isEmpty()) {
+                        throw WindScribeException("Unsafe http client disabled.")
+                    } else {
+                        if (domainFailOverManager.isAccessible(DomainType.DirectIp1, apiCallType)) {
+                            val services = getApiServicesWithAccessIp(params)
+                            return@onErrorResumeNext services.flatMap { apiService ->
+                                return@flatMap service.invoke(apiService[0], params, true)
                             }
-                        }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
                         } else {
-                            if (BuildConfig.DEV || BuildConfig.API_STATIC_CERT.isEmpty()) {
-                                throw WindScribeException("Unsafe http client disabled.")
-                            } else {
-                                domainFailOverManager.setDomainBlocked(DomainType.DirectIp1, apiCallType)
-                                if (domainFailOverManager.isAccessible(DomainType.DirectIp2, apiCallType)) {
-                                    val services = getApiServicesWithAccessIp(params)
-                                    return@onErrorResumeNext services.flatMap { apiService ->
-                                        return@flatMap service.invoke(apiService[1], params, true)
-                                    }
-                                } else {
-                                    throw WindScribeException("Direct ip domain 2 blocked.")
-                                }
-                            }
+                            throw WindScribeException("Direct ip domain 1 blocked.")
                         }
-                    }.onErrorResumeNext {
-                        if (it is HttpException && isErrorBodyValid(it)) {
-                            return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
-                        } else {
-                            domainFailOverManager.reset(apiCallType)
-                            throw WindScribeException("No more endpoints left to try. Giving up.")
-                        }
-                    }.flatMap {
-                        responseToModel(it, modelType)
                     }
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    if (BuildConfig.DEV || BuildConfig.API_STATIC_CERT.isEmpty()) {
+                        throw WindScribeException("Unsafe http client disabled.")
+                    } else {
+                        domainFailOverManager.setDomainBlocked(DomainType.DirectIp1, apiCallType)
+                        if (domainFailOverManager.isAccessible(DomainType.DirectIp2, apiCallType)) {
+                            val services = getApiServicesWithAccessIp(params)
+                            return@onErrorResumeNext services.flatMap { apiService ->
+                                return@flatMap service.invoke(apiService[1], params, true)
+                            }
+                        } else {
+                            throw WindScribeException("Direct ip domain 2 blocked.")
+                        }
+                    }
+                }
+            }.onErrorResumeNext {
+                if (it is HttpException && isErrorBodyValid(it)) {
+                    return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
+                } else {
+                    domainFailOverManager.reset(apiCallType)
+                    throw WindScribeException("No more endpoints left to try. Giving up.")
+                }
+            }.flatMap {
+                responseToModel(it, modelType)
+            }
         } catch (e: Exception) {
             val apiErrorResponse = ApiErrorResponse()
             apiErrorResponse.errorCode = NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API
@@ -258,7 +334,14 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
         } ?: false
     }
 
-    private fun callOrSkip(apiCallType: ApiCallType, service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>, domainType: DomainType, domain: String, protect: Boolean, params: Map<String, String>): Single<ResponseBody> {
+    private fun callOrSkip(
+        apiCallType: ApiCallType,
+        service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>,
+        domainType: DomainType,
+        domain: String,
+        protect: Boolean,
+        params: Map<String, String>
+    ): Single<ResponseBody> {
         return if (domainFailOverManager.isAccessible(domainType, apiCallType)) {
             service.invoke(apiFactory.createApi(domain, protect), params, false)
         } else {
@@ -273,13 +356,20 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun addUserEmailAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = AddEmailResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = AddEmailResponse::class.java
+        ) { apiService, params, _ ->
             apiService.postUserEmailAddress(params)
         }
     }
 
     override fun checkConnectivityAndIpAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
-        return call(authRequired = true, hostType = HostType.CHECK_IP, modelType = String::class.java) { apiService, _, directIp ->
+        return call(
+            authRequired = true,
+            hostType = HostType.CHECK_IP,
+            modelType = String::class.java
+        ) { apiService, _, directIp ->
             if (directIp) {
                 apiService.connectivityTestAndIpDirectIp()
             } else {
@@ -289,19 +379,28 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun claimAccount(extraParams: Map<String, String>?): Single<GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = ClaimAccountResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = ClaimAccountResponse::class.java
+        ) { apiService, params, _ ->
             apiService.claimAccount(params)
         }
     }
 
     override fun getBestLocation(extraParams: Map<String, String>?): Single<GenericResponseClass<BestLocationResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = BestLocationResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = BestLocationResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getBestLocation(params)
         }
     }
 
     override fun getBillingPlans(extraParams: Map<String, String>?): Single<GenericResponseClass<BillingPlanResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = BillingPlanResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = BillingPlanResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getBillingPlans(params)
         }
     }
@@ -313,7 +412,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun getNotifications(extraParams: Map<String, String>?): Single<GenericResponseClass<NewsFeedNotification?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = NewsFeedNotification::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = NewsFeedNotification::class.java
+        ) { apiService, params, _ ->
             apiService.getNotifications(params)
         }
     }
@@ -337,56 +439,92 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun getServerCredentials(extraParams: Map<String, String>?): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = ServerCredentialsResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = ServerCredentialsResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getServerCredentials(params)
         }
     }
 
     override fun getServerCredentialsForIKev2(extraParams: Map<String, String>?): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = ServerCredentialsResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = ServerCredentialsResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getServerCredentialsForIKev2(params)
         }
     }
 
-    override fun getServerList(extraParams: Map<String, String>?, billingPlan: String?, locHash: String?, alcList: String?, overriddenCountryCode: String?): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
-        return call(hostType = HostType.ASSET, modelType = String::class.java) { apiService, _, directIp ->
+    override fun getServerList(
+        extraParams: Map<String, String>?,
+        billingPlan: String?,
+        locHash: String?,
+        alcList: String?,
+        overriddenCountryCode: String?
+    ): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
+        return call(
+            hostType = HostType.ASSET,
+            modelType = String::class.java
+        ) { apiService, _, directIp ->
             if (directIp) {
-                apiService.getServerListDirectIp(billingPlan, locHash, alcList, overriddenCountryCode)
+                apiService.getServerListDirectIp(
+                    billingPlan,
+                    locHash,
+                    alcList,
+                    overriddenCountryCode
+                )
             } else {
                 apiService.getServerList(billingPlan, locHash, alcList, overriddenCountryCode)
             }
         }
     }
 
-    override fun getSessionGeneric(extraParams: Map<String, String>?, protect: Boolean): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = UserSessionResponse::class.java, protect = protect) { apiService, params, _ ->
+    override fun getSessionGeneric(
+        extraParams: Map<String, String>?,
+        protect: Boolean
+    ): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
+        return call(
+            extraParams,
+            modelType = UserSessionResponse::class.java,
+            protect = protect
+        ) { apiService, params, _ ->
             apiService.getSession(params)
         }
     }
 
     override fun getSessionGeneric(extraParams: Map<String, String>?): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
         return call(
-                extraParams,
-                modelType = UserSessionResponse::class.java,
+            extraParams,
+            modelType = UserSessionResponse::class.java,
         ) { apiService, params, _ ->
             apiService.getSession(params)
         }
     }
 
     override fun getSessionGenericInConnectedState(extraParams: Map<String, String>?): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = UserSessionResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = UserSessionResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getSession(params)
         }
     }
 
     override fun getStaticIpList(extraParams: Map<String, String>?): Single<GenericResponseClass<StaticIPResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = StaticIPResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = StaticIPResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getStaticIPList(params)
         }
     }
 
     override fun logUserIn(extraParams: Map<String, String>?): Single<GenericResponseClass<UserLoginResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = UserLoginResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = UserLoginResponse::class.java
+        ) { apiService, params, _ ->
             apiService.userLogin(params)
         }
     }
@@ -398,7 +536,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun resendUserEmailAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = AddEmailResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = AddEmailResponse::class.java
+        ) { apiService, params, _ ->
             apiService.resendUserEmailAddress(params)
         }
     }
@@ -410,7 +551,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun signUserIn(extraParams: Map<String, String>?): Single<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = UserRegistrationResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = UserRegistrationResponse::class.java
+        ) { apiService, params, _ ->
             apiService.userRegistration(params)
         }
     }
@@ -422,19 +566,28 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun verifyExpressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<VerifyExpressLoginResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = VerifyExpressLoginResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = VerifyExpressLoginResponse::class.java
+        ) { apiService, params, _ ->
             apiService.verifyExpressLoginCode(params)
         }
     }
 
     override fun generateXPressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<XPressLoginCodeResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = XPressLoginCodeResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = XPressLoginCodeResponse::class.java
+        ) { apiService, params, _ ->
             apiService.generateXPressLoginCode(params)
         }
     }
 
     override fun verifyXPressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<XPressLoginVerifyResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = XPressLoginVerifyResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = XPressLoginVerifyResponse::class.java
+        ) { apiService, params, _ ->
             apiService.verifyXPressLoginCode(params)
         }
     }
@@ -464,13 +617,19 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
     }
 
     override fun getRobertSettings(extraParams: Map<String, String>?): Single<GenericResponseClass<RobertSettingsResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = RobertSettingsResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = RobertSettingsResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getRobertSettings(params)
         }
     }
 
     override fun getRobertFilters(extraParams: Map<String, String>?): Single<GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = RobertFilterResponse::class.java) { apiService, params, _ ->
+        return call(
+            extraParams,
+            modelType = RobertFilterResponse::class.java
+        ) { apiService, params, _ ->
             apiService.getRobertFilters(params)
         }
     }
@@ -481,28 +640,51 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
         }
     }
 
-    override fun wgConnect(extraParams: Map<String, String>?, protect: Boolean): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = WgConnectResponse::class.java, protect = protect, apiCallType = ApiCallType.WgConnect) { apiService, params, _ ->
+    override fun wgConnect(
+        extraParams: Map<String, String>?,
+        protect: Boolean
+    ): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>> {
+        return call(
+            extraParams,
+            modelType = WgConnectResponse::class.java,
+            protect = protect,
+            apiCallType = ApiCallType.WgConnect
+        ) { apiService, params, _ ->
             apiService.wgConnect(params)
         }
     }
 
-    override fun wgInit(extraParams: Map<String, String>?, protect: Boolean): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>> {
-        return call(extraParams, modelType = WgInitResponse::class.java, protect = protect, apiCallType = ApiCallType.WgConnect) { apiService, params, _ ->
+    override fun wgInit(
+        extraParams: Map<String, String>?,
+        protect: Boolean
+    ): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>> {
+        return call(
+            extraParams,
+            modelType = WgInitResponse::class.java,
+            protect = protect,
+            apiCallType = ApiCallType.WgConnect
+        ) { apiService, params, _ ->
             apiService.wgInit(params)
         }
     }
 
-    override fun sendDecoyTraffic(url: String, data: String, sizeToReceive: String?): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
+    override fun sendDecoyTraffic(
+        url: String,
+        data: String,
+        sizeToReceive: String?
+    ): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
         try {
             return sizeToReceive?.let {
-                return apiFactory.createApi(url).sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain", sizeToReceive).flatMap {
-                            responseToModel(it, String::class.java)
-                        }
+                return apiFactory.createApi(url)
+                    .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain", sizeToReceive)
+                    .flatMap {
+                        responseToModel(it, String::class.java)
+                    }
             }
-                    ?: apiFactory.createApi(url).sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain").flatMap {
-                                responseToModel(it, String::class.java)
-                            }
+                ?: apiFactory.createApi(url)
+                    .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain").flatMap {
+                    responseToModel(it, String::class.java)
+                }
         } catch (e: Exception) {
             val apiErrorResponse = ApiErrorResponse()
             apiErrorResponse.errorCode = NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API
@@ -525,14 +707,19 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
         val queryMap = mutableMapOf<String, String>()
         queryMap["name"] = BuildConfig.DYNAMIC_DNS
         queryMap["type"] = "TXT"
-        return apiFactory.createApi(NetworkKeyConstants.CLOUDFLARE_DOH).getCloudflareTxtRecord(queryMap).onErrorResumeNext {
+        return apiFactory.createApi(NetworkKeyConstants.CLOUDFLARE_DOH)
+            .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
             logger.info("Using google doh resolver")
-            return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH).getGoogleDOHTxtRecord(queryMap)
+            return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
+                .getGoogleDOHTxtRecord(queryMap)
         }.flatMap {
             try {
                 val response = it.string()
                 return@flatMap Single.fromCallable {
-                    return@fromCallable Gson().fromJson<DOHTxtRecord?>(response, DOHTxtRecord::class.java).answer.first<TxtAnswer>()
+                    return@fromCallable Gson().fromJson<DOHTxtRecord?>(
+                        response,
+                        DOHTxtRecord::class.java
+                    ).answer.first<TxtAnswer>()
                 }
             } catch (e: JsonSyntaxException) {
                 throw e
@@ -548,7 +735,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
         }
     }
 
-    override suspend fun getLatency(url: String, ip: String): Result<GenericResponseClass<Latency?, ApiErrorResponse?>> {
+    override suspend fun getLatency(
+        url: String,
+        ip: String
+    ): Result<GenericResponseClass<Latency?, ApiErrorResponse?>> {
         return kotlin.runCatching {
             return@runCatching apiFactory.createApi("$url/", ip = ip).getLatency().map()
         }
@@ -558,7 +748,10 @@ open class ApiCallManager @Inject constructor(private val apiFactory: WindApiFac
         body()?.let {
             return GenericResponseClass(it, null)
         } ?: errorBody()?.let {
-            return GenericResponseClass(null, Gson().fromJson(it.string(), ApiErrorResponse::class.java))
+            return GenericResponseClass(
+                null,
+                Gson().fromJson(it.string(), ApiErrorResponse::class.java)
+            )
         } ?: kotlin.run {
             return GenericResponseClass(null, null)
         }

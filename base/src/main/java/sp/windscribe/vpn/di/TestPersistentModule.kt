@@ -1,12 +1,12 @@
 package sp.windscribe.vpn.di
 
+import dagger.Module
+import dagger.Provides
+import net.grandcentrix.tray.AppPreferences
 import sp.windscribe.vpn.apppreference.AppPreferenceHelper
 import sp.windscribe.vpn.apppreference.PreferencesHelper
 import sp.windscribe.vpn.apppreference.SecurePreferences
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import dagger.Module
-import dagger.Provides
-import net.grandcentrix.tray.AppPreferences
 import javax.inject.Singleton
 
 @Module

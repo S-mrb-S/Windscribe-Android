@@ -85,15 +85,16 @@ open class ConnectionUiState internal constructor(
     open val progressRingVisibility: Int
         get() = View.INVISIBLE
 
-    open val progressRingTag : Int = R.drawable.progressbardrawble
+    open val progressRingTag: Int = R.drawable.progressbardrawble
 
     open fun rotateConnectingIcon(): Boolean {
         return true
     }
+
     open fun setConnectedPortAndProtocol(protocol: TextView, port: TextView) {}
 
     val isCustomBackgroundEnabled: Boolean
-    get() = appContext.preference.isCustomBackground
+        get() = appContext.preference.isCustomBackground
 
     open val decoyTrafficBadgeVisibility: Int = View.GONE
 

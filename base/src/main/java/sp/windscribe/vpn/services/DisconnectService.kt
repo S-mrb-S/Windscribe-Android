@@ -6,13 +6,13 @@ package sp.windscribe.vpn.services
 
 import android.app.IntentService
 import android.content.Intent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class DisconnectService : IntentService("DisconnectService") {

@@ -7,13 +7,13 @@ package sp.windscribe.vpn.workers.worker
 import android.content.Context
 import androidx.work.RxWorker
 import androidx.work.WorkerParameters
+import io.reactivex.Single
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
-import io.reactivex.Single
 import javax.inject.Inject
 
 class RobertSyncWorker(context: Context, workerParameters: WorkerParameters) :
-        RxWorker(context, workerParameters) {
+    RxWorker(context, workerParameters) {
 
     @Inject
     lateinit var interactor: ServiceInteractor
@@ -24,18 +24,20 @@ class RobertSyncWorker(context: Context, workerParameters: WorkerParameters) :
 
     override fun createWork(): Single<Result> {
         return interactor.apiManager.syncRobert()
-                .flatMap {
-                    when {
-                        it.dataClass != null -> {
-                            return@flatMap Single.just(Result.success())
-                        }
-                        it.errorClass != null -> {
-                            return@flatMap Single.just(Result.failure())
-                        }
-                        else -> {
-                            return@flatMap Single.just(Result.retry())
-                        }
+            .flatMap {
+                when {
+                    it.dataClass != null -> {
+                        return@flatMap Single.just(Result.success())
                     }
-                }.onErrorReturnItem(Result.retry())
+
+                    it.errorClass != null -> {
+                        return@flatMap Single.just(Result.failure())
+                    }
+
+                    else -> {
+                        return@flatMap Single.just(Result.retry())
+                    }
+                }
+            }.onErrorReturnItem(Result.retry())
     }
 }

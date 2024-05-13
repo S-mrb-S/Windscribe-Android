@@ -1,5 +1,7 @@
 package sp.windscribe.mobile.windscribe
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -24,6 +26,8 @@ interface WindscribeView {
     val flagViewWidth: Int
     val networkLayoutState: NetworkLayoutState?
     val uiConnectionState: ConnectionUiState?
+    var winActivity: WindscribeActivity?
+    var winContext: Context?
     fun gotoLoginRegistrationActivity()
     fun handleRateView()
     fun hideProgressView()

@@ -7,11 +7,10 @@ package sp.windscribe.vpn.commonutils;
 
 import androidx.annotation.Keep;
 
-import sp.windscribe.vpn.constants.VpnPreferenceConstants;
-
 import java.io.File;
 
 import ch.qos.logback.core.util.FileSize;
+import sp.windscribe.vpn.constants.VpnPreferenceConstants;
 
 @Keep
 public class SizeBasedTriggerForLog<E> extends ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy<E> {

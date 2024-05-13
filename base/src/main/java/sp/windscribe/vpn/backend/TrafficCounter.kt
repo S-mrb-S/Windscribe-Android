@@ -5,6 +5,11 @@
 package sp.windscribe.vpn.backend
 
 import android.net.TrafficStats
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.apppreference.PreferencesHelper
@@ -12,11 +17,6 @@ import sp.windscribe.vpn.commonutils.Ext.launchPeriodicAsync
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Singleton
 
 /**

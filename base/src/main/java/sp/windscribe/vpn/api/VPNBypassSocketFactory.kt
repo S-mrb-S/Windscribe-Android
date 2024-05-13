@@ -1,9 +1,9 @@
 package sp.windscribe.vpn.api
 
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.backend.wireguard.WireguardBackend
 import sp.windscribe.vpn.exceptions.WindScribeException
-import org.slf4j.LoggerFactory
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -33,7 +33,12 @@ class VPNBypassSocketFactory : SocketFactory() {
         throw WindScribeException("Not supported")
     }
 
-    override fun createSocket(host: String?, port: Int, localHost: InetAddress?, localPort: Int): Socket {
+    override fun createSocket(
+        host: String?,
+        port: Int,
+        localHost: InetAddress?,
+        localPort: Int
+    ): Socket {
         throw WindScribeException("Not supported")
     }
 
@@ -41,7 +46,12 @@ class VPNBypassSocketFactory : SocketFactory() {
         throw WindScribeException("Not supported")
     }
 
-    override fun createSocket(address: InetAddress?, port: Int, localAddress: InetAddress?, localPort: Int): Socket {
+    override fun createSocket(
+        address: InetAddress?,
+        port: Int,
+        localAddress: InetAddress?,
+        localPort: Int
+    ): Socket {
         throw WindScribeException("Not supported")
     }
 }

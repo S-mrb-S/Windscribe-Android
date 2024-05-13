@@ -4,6 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.InstalledAppsAdapter
 import sp.windscribe.vpn.ActivityInteractor
@@ -12,12 +17,7 @@ import sp.windscribe.vpn.api.response.InstalledAppsData
 import sp.windscribe.vpn.commonutils.SortByName
 import sp.windscribe.vpn.commonutils.SortBySelected
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
-import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Collections
 import javax.inject.Inject
 
 class SplitTunnelingPresenterImpl @Inject constructor(

@@ -1,5 +1,6 @@
 package sp.windscribe.vpn.di
 
+import dagger.Component
 import sp.windscribe.vpn.backend.ikev2.CharonVpnServiceWrapper
 import sp.windscribe.vpn.backend.openvpn.OpenVPNWrapperService
 import sp.windscribe.vpn.backend.wireguard.WireGuardWrapperService
@@ -9,7 +10,6 @@ import sp.windscribe.vpn.services.DeviceStateService
 import sp.windscribe.vpn.services.DisconnectService
 import sp.windscribe.vpn.services.NetworkWhiteListService
 import sp.windscribe.vpn.services.VpnTileService
-import dagger.Component
 
 @PerService
 @Component(dependencies = [ApplicationComponent::class], modules = [ServiceModule::class])

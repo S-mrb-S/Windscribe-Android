@@ -12,17 +12,17 @@ import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
+import de.blinkt.openvpn.core.Preferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.R.layout
 import sp.windscribe.vpn.Windscribe
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.backend.VpnBackendHolder
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import de.blinkt.openvpn.core.Preferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class VPNPermissionActivity : Activity() {

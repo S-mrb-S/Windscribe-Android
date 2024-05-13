@@ -18,12 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import sp.windscribe.mobile.R;
-import sp.windscribe.mobile.listeners.AccountFragmentCallback;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import sp.windscribe.mobile.R;
+import sp.windscribe.mobile.listeners.AccountFragmentCallback;
 
 
 public class GhostMostAccountFragment extends Fragment {
@@ -58,7 +57,7 @@ public class GhostMostAccountFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ghost_account, container, false);
         ButterKnife.bind(this, view);
         return view;

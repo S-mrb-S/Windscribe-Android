@@ -1,10 +1,10 @@
 package sp.windscribe.vpn.di
 
+import dagger.Module
+import dagger.Provides
 import sp.windscribe.vpn.BuildConfig
 import sp.windscribe.vpn.api.HostType
 import sp.windscribe.vpn.constants.NetworkKeyConstants
-import dagger.Module
-import dagger.Provides
 import javax.inject.Named
 
 @Module

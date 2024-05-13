@@ -5,7 +5,6 @@ import android.content.res.TypedArray
 import android.transition.Fade
 import android.transition.Transition
 import android.transition.TransitionManager
-import android.transition.Visibility
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -18,10 +17,10 @@ import sp.windscribe.mobile.R
 
 
 class ExpandableToggleView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr){
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     interface Delegate {
         fun onToggleClick()
@@ -34,15 +33,19 @@ class ExpandableToggleView @JvmOverloads constructor(
 
     var delegate: Delegate? = null
     private var toggle: ImageView? = null
-    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandableToggleView)
+    private val attributes: TypedArray =
+        context.obtainStyledAttributes(attrs, R.styleable.ExpandableToggleView)
     private val view: View = inflate(context, R.layout.expandable_toggle_view, this)
     var childView: BaseView? = null
 
     init {
-        view.findViewById<TextView>(R.id.description).text = attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewDescription)
+        view.findViewById<TextView>(R.id.description).text =
+            attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewDescription)
         toggle = view.findViewById(R.id.toggle)
-        view.findViewById<TextView>(R.id.label).text = attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewTitle)
-        val leftIcon = attributes.getResourceIdOrThrow(R.styleable.ExpandableToggleView_ExpandableToggleViewLeftIcon)
+        view.findViewById<TextView>(R.id.label).text =
+            attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewTitle)
+        val leftIcon =
+            attributes.getResourceIdOrThrow(R.styleable.ExpandableToggleView_ExpandableToggleViewLeftIcon)
         view.findViewById<ImageView>(R.id.left_icon).setImageResource(leftIcon)
         view.findViewById<ImageView>(R.id.right_icon).setOnClickListener {
             delegate?.onExplainClick()
@@ -50,14 +53,21 @@ class ExpandableToggleView @JvmOverloads constructor(
         toggle?.setOnClickListener {
             delegate?.onToggleClick()
         }
-        if (attributes.getBoolean(R.styleable.ExpandableToggleView_ExpandableToggleShowRightIcon, true).not()) {
+        if (attributes.getBoolean(
+                R.styleable.ExpandableToggleView_ExpandableToggleShowRightIcon,
+                true
+            ).not()
+        ) {
             view.findViewById<ImageView>(R.id.right_icon).visibility = INVISIBLE
         }
         attachChildView()
     }
 
     private fun animateVisibilityChange(active: Boolean) {
-        val hideExplainViewOnCollapse = attributes.getBoolean(R.styleable.ExpandableToggleView_ExpandableToggleHideExplainViewOnCollapse, false)
+        val hideExplainViewOnCollapse = attributes.getBoolean(
+            R.styleable.ExpandableToggleView_ExpandableToggleHideExplainViewOnCollapse,
+            false
+        )
         val visibility = if (active) {
             VISIBLE
         } else {
@@ -73,13 +83,17 @@ class ExpandableToggleView @JvmOverloads constructor(
         childView?.setVisibility(visibility)
         if (hideExplainViewOnCollapse) {
             setExplainViewVisibility(visibility, active)
-            if (attributes.getBoolean(R.styleable.ExpandableToggleView_ExpandableToggleShowRightIcon, true).not()) {
+            if (attributes.getBoolean(
+                    R.styleable.ExpandableToggleView_ExpandableToggleShowRightIcon,
+                    true
+                ).not()
+            ) {
                 view.findViewById<ImageView>(R.id.right_icon).visibility = INVISIBLE
             }
         }
     }
 
-    private fun setExplainViewVisibility(visibility: Int, active: Boolean){
+    private fun setExplainViewVisibility(visibility: Int, active: Boolean) {
         view.findViewById<TextView>(R.id.description).visibility = visibility
         view.findViewById<ImageView>(R.id.right_icon).visibility = visibility
         view.findViewById<ImageView>(R.id.bottom_background).visibility = visibility
@@ -103,17 +117,33 @@ class ExpandableToggleView @JvmOverloads constructor(
 
     private fun attachChildView() {
         val placeHolder = view.findViewById<FrameLayout>(R.id.place_holder_view)
-        val type = attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewChildType)?.let { ChildType.valueOf(it) }
+        val type =
+            attributes.getString(R.styleable.ExpandableToggleView_ExpandableToggleViewChildType)
+                ?.let { ChildType.valueOf(it) }
                 ?: ChildType.DecoyTraffic
         childView = when (type) {
             ChildType.DecoyTraffic -> {
-                DecoyTrafficView(inflate(context, R.layout.connection_decoy_traffic_tab, placeHolder))
+                DecoyTrafficView(
+                    inflate(
+                        context,
+                        R.layout.connection_decoy_traffic_tab,
+                        placeHolder
+                    )
+                )
             }
+
             ChildType.PreferredProtocol -> {
                 ConnectionModeView(inflate(context, R.layout.auto_manual_mode_view, placeHolder))
             }
+
             else -> {
-                SplitRoutingModeView(inflate(context, R.layout.split_routing_mode_view, placeHolder))
+                SplitRoutingModeView(
+                    inflate(
+                        context,
+                        R.layout.split_routing_mode_view,
+                        placeHolder
+                    )
+                )
             }
         }
     }

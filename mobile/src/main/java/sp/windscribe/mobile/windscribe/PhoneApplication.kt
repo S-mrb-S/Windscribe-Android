@@ -6,7 +6,11 @@ import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.tencent.mmkv.MMKV
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.connectionmode.*
+import sp.windscribe.mobile.connectionmode.AllProtocolFailedFragment
+import sp.windscribe.mobile.connectionmode.ConnectionChangeFragment
+import sp.windscribe.mobile.connectionmode.ConnectionFailureFragment
+import sp.windscribe.mobile.connectionmode.DebugLogSentFragment
+import sp.windscribe.mobile.connectionmode.SetupPreferredProtocolFragment
 import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.welcome.WelcomeActivity
@@ -61,15 +65,19 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
                     FragmentType.ConnectionFailure -> ConnectionFailureFragment.newInstance(
                         protocolInformationList, autoConnectionModeCallback
                     )
+
                     FragmentType.ConnectionChange -> ConnectionChangeFragment.newInstance(
                         protocolInformationList, autoConnectionModeCallback
                     )
+
                     FragmentType.SetupAsPreferredProtocol -> SetupPreferredProtocolFragment.newInstance(
                         protocolInformation, autoConnectionModeCallback
                     )
+
                     FragmentType.DebugLogSent -> DebugLogSentFragment.newInstance(
                         autoConnectionModeCallback
                     )
+
                     FragmentType.AllProtocolFailed -> AllProtocolFailedFragment.newInstance(
                         autoConnectionModeCallback
                     )

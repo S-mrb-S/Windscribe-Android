@@ -7,20 +7,25 @@ package sp.windscribe.vpn.mocklocation
 import android.content.Context
 import android.location.LocationManager
 import android.provider.Settings.Global
-import sp.windscribe.vpn.apppreference.PreferencesHelper
-import sp.windscribe.vpn.backend.Util
-import sp.windscribe.vpn.backend.VPNState
-import sp.windscribe.vpn.state.VPNConnectionStateManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import sp.windscribe.vpn.apppreference.PreferencesHelper
+import sp.windscribe.vpn.backend.Util
+import sp.windscribe.vpn.backend.VPNState
+import sp.windscribe.vpn.state.VPNConnectionStateManager
 import javax.inject.Singleton
 
 @Singleton
-class MockLocationManager(val context: Context, val scope: CoroutineScope, val vpnConnectionStateManager: VPNConnectionStateManager, val preferencesHelper: PreferencesHelper) {
+class MockLocationManager(
+    val context: Context,
+    val scope: CoroutineScope,
+    val vpnConnectionStateManager: VPNConnectionStateManager,
+    val preferencesHelper: PreferencesHelper
+) {
 
     private val logger = LoggerFactory.getLogger("mock_location")
     private var mockGps: MockLocationProvider? = null
@@ -99,8 +104,8 @@ class MockLocationManager(val context: Context, val scope: CoroutineScope, val v
         @JvmStatic
         fun isDevModeOn(applicationContext: Context): Boolean {
             return Global.getInt(
-                    applicationContext.contentResolver,
-                    Global.DEVELOPMENT_SETTINGS_ENABLED, 0
+                applicationContext.contentResolver,
+                Global.DEVELOPMENT_SETTINGS_ENABLED, 0
             ) != 0
         }
     }

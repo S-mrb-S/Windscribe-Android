@@ -2,6 +2,8 @@ package sp.windscribe.mobile.mrb.util
 
 import android.util.Log
 import com.google.gson.Gson
+import okhttp3.internal.toImmutableList
+import sp.windscribe.mobile.GetServersQuery
 
 
 data class Server(
@@ -24,14 +26,14 @@ data class Group(
     val city: String,
     val nick: String,
     val pro: Int,
-    val gps: String,
-    val tz: String,
-    val wg_pubkey: String,
-    val wg_endpoint: String,
-    val ovpn_x509: String,
-    val ping_ip: String,
-    val ping_host: String,
-    val link_speed: String,
+    val gps: String?,
+    val tz: String?,
+    val wg_pubkey: String?,
+    val wg_endpoint: String?,
+    val ovpn_x509: String?,
+    val ping_ip: String?,
+    val ping_host: String?,
+    val link_speed: String?,
     val nodes: List<Node>?,
     val health: Int
 )
@@ -44,6 +46,96 @@ data class Node(
     val weight: Int,
     val health: Int
 )
+
+class ListCreator(var data: GetServersQuery.Data) {
+
+    fun createAndGet(): String {
+        try{
+            val res = listOf(
+                createV2ray()
+            )
+
+            val gson = Gson()
+            return gson.toJson(res)
+        }catch (e: Exception){
+            Log.d("MRB S", "EX")
+        }
+        return ""
+    }
+
+    private fun getChildV2ray(): List<Group> {
+        var num = 0
+
+        val childrens: List<Group> = ArrayList()
+        val chil = childrens.toMutableList()
+
+        if(data.servers != null) {
+            for (data in data.servers!!) {
+                if (
+                    data?.serverType == "V2Ray"
+                ) {
+                    chil.add(
+                        Group(
+                            num,
+                            data.name.toString(),
+                            "v2ray",
+                            0,
+                            "44.46,-63.61",
+                            "America/Halifax",
+                            "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+                            "yhz-386-wg.whiskergalaxy.com",
+                            data.url,
+                            "23.191.80.2",
+                            "https://ca-021.whiskergalaxy.com:6363/latency",
+                            "1000",
+                            listOf(
+                                Node(
+                                    "172.98.68.238",
+                                    "172.98.68.239",
+                                    "172.98.68.240",
+                                    "ca-055.whiskergalaxy.com",
+                                    1,
+                                    2
+                                ),
+                                Node(
+                                    "172.98.68.227",
+                                    "172.98.68.228",
+                                    "172.98.68.229",
+                                    "ca-054.whiskergalaxy.com",
+                                    1,
+                                    2
+                                )
+                            ),
+                            0
+                        )
+                    )
+                    ++num
+                }
+            }
+        }
+
+        return chil.toImmutableList()
+    }
+
+    private fun createV2ray(): Server {
+        return Server(
+            1,
+            "V2ray",
+            "V2",
+            1,
+            0,
+            "CA",
+            1,
+            "America/Toronto",
+            "-5,EST",
+            "normal",
+            "ca.windscribe.com",
+            getChildV2ray()
+        )
+    }
+
+}
+
 
 fun createExample(): String {
 
@@ -188,8 +280,24 @@ fun createExample(): String {
         groupsChild
     )
 
+    val groupsHeadV2ray = Server(
+        10,
+        "V2ray",
+        "US",
+        1,
+        0,
+        "US",
+        1,
+        "America/Toronto",
+        "-5,EST",
+        "normal",
+        "ca.windscribe.com",
+        groupsChild
+    )
+
     val groupsHeadArray = listOf(
-        groupsHead
+        groupsHead,
+        groupsHeadV2ray
     )
 
     val gson = Gson()
@@ -198,11 +306,4 @@ fun createExample(): String {
     longLog(json)
 
     return json
-}
-
-fun longLog(str: String) {
-    if (str.length > 4000) {
-        Log.d("mrbt", str.substring(0, 4000))
-        longLog(str.substring(4000))
-    } else Log.d("", str)
 }

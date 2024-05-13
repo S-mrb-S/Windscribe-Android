@@ -9,11 +9,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
+import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.base.BaseActivity
 import sp.windscribe.mobile.custom_view.preferences.IconLinkView
 import sp.windscribe.mobile.di.ActivityModule
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class AboutActivity : BaseActivity(), AboutView {

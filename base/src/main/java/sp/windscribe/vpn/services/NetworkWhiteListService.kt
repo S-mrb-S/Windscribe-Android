@@ -11,6 +11,9 @@ import android.os.Binder
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.IBinder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.VPNState.Status.UnsecuredNetwork
@@ -21,9 +24,6 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.state.NetworkInfoListener
 import sp.windscribe.vpn.state.NetworkInfoManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class NetworkWhiteListService : Service(), NetworkInfoListener {
@@ -86,13 +86,19 @@ class NetworkWhiteListService : Service(), NetworkInfoListener {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        startForeground(NotificationConstants.SERVICE_NOTIFICATION_ID, notificationBuilder.buildNotification(UnsecuredNetwork))
+        startForeground(
+            NotificationConstants.SERVICE_NOTIFICATION_ID,
+            notificationBuilder.buildNotification(UnsecuredNetwork)
+        )
         if (intent.action != null && intent.action == DISCONNECT_ACTION) {
             stopService()
             return START_NOT_STICKY
         }
         if (intent.action != null && intent.action == UNSECURED_NETWORK_ACTION) {
-            startForeground(NotificationConstants.SERVICE_NOTIFICATION_ID, notificationBuilder.buildNotification(UnsecuredNetwork))
+            startForeground(
+                NotificationConstants.SERVICE_NOTIFICATION_ID,
+                notificationBuilder.buildNotification(UnsecuredNetwork)
+            )
             networkInfoManager.addNetworkInfoListener(this)
             return START_NOT_STICKY
         }
