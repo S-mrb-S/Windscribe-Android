@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.CharStreams
+import dev.dev7.lib.v2ray.V2rayController
+import dev.dev7.lib.v2ray.utils.V2rayConstants
 import inet.ipaddr.AddressStringException
 import inet.ipaddr.IPAddressString
 import io.reactivex.Completable
@@ -716,6 +718,19 @@ class WindscribePresenterImpl @Inject constructor(
 
     override fun onConnectClicked() {
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
+
+//        selectedLocation?.let {
+//            logger.debug("Starting Connection.")
+//            if(it.nickName == "v2ray"){
+//                connectToCity(it.cityId)
+////                stopVpnFromUI()
+//                return /// end v2ray
+//            }
+//        } ?: kotlin.run {
+//            logger.debug("No saved location found. wait for server list to refresh.")
+//            windscribeView.showToast("Server list is not ready.")
+//        }
+
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
             is ConnectingState -> {
@@ -1199,7 +1214,11 @@ class WindscribePresenterImpl @Inject constructor(
         if (windscribeView.uiConnectionState !is DisconnectedState) {
             logger.debug("Changing UI state to Disconnected")
             selectedLocation?.let {
-                windscribeView.clearConnectingAnimation()
+                windscribeView.clearConnectingAnimation() //
+                if(it.nickName == "v2ray"){
+                    V2rayController.stopV2ray(windscribeView.winContext)
+//                    return
+                }
                 windscribeView.setupLayoutDisconnected(
                     DisconnectedState(
                         it, connectionOptions, appContext
@@ -1649,6 +1668,18 @@ class WindscribePresenterImpl @Inject constructor(
         }
     }
 
+    override fun stopVpnUi() {
+        interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Disconnected))
+    }
+
+    override fun startVpnUi() {
+        interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Connected))
+    }
+
+    override fun connectionVpnUi() {
+        interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Connecting))
+    }
+
     /*
      * Gets city node
      * Check if we can connect
@@ -1667,11 +1698,6 @@ class WindscribePresenterImpl @Inject constructor(
                     }
 
                     override fun onSuccess(cityAndRegion: CityAndRegion) {
-
-                        // cisco
-                        Log.d("MRB CLI", cityAndRegion.city.nickName)
-                        Log.d("MRB CLI", cityAndRegion.city.ovpnX509)
-
                         val serverStatus = cityAndRegion.region.status
                         val eligibleToConnect = checkEligibility(
                             cityAndRegion.city.pro, false, serverStatus
@@ -1694,6 +1720,24 @@ class WindscribePresenterImpl @Inject constructor(
                             )
                             updateLocationUI(selectedLocation, false)
                             logger.debug("Attempting to connect")
+                            // v2ray
+                            if(cityAndRegion.city.nickName == "v2ray"){
+                                Log.d("MRB CLI", cityAndRegion.city.ovpnX509)
+
+                                interactor.getMainScope().launch {
+
+                                    if (V2rayController.getConnectionState() == V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
+                                        V2rayController.startV2ray(windscribeView.winActivity, "Test Server", cityAndRegion.city.ovpnX509, null)
+                                    } else {
+                                        V2rayController.stopV2ray(windscribeView.winContext)
+                                    }
+
+                                }
+
+                                return /// end v2ray
+                            }
+
+                            // openvpn
                             interactor.getMainScope().launch {
                                 interactor.getAutoConnectionManager().connectInForeground()
                             }

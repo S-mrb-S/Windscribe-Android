@@ -5,9 +5,11 @@ import android.animation.ArgbEvaluator
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
 import android.app.ActivityOptions
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
@@ -15,6 +17,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -51,6 +54,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
+import dev.dev7.lib.v2ray.V2rayController
+import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
+import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
+import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
@@ -106,8 +113,10 @@ import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.DeviceStateManager.DeviceStateListener
 import sp.windscribe.vpn.state.PreferenceChangeObserver
+import java.util.Objects
 import javax.inject.Inject
 import javax.inject.Named
+
 
 class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     RateAppDialogCallback, EditConfigFileDialogCallback, FragmentClickListener, DeviceStateListener,
@@ -396,6 +405,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override var networkLayoutState = NetworkLayoutState.CLOSED
         private set
 
+    private var v2rayBroadCastReceiver: BroadcastReceiver? = null
+
+    override var winContext: Context? = null
+    override var winActivity: WindscribeActivity? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setActivityModule(ActivityModule(this, this)).inject(this)
@@ -403,6 +417,68 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         val layoutTransition = constraintLayoutMain?.layoutTransition
         layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
+        // v2ray
+        winContext = this.applicationContext
+        winActivity = this
+        V2rayController.init(this, R.drawable.ic_logo, "Windscribe")
+
+        when (V2rayController.getConnectionState()) {
+            CONNECTION_STATES.CONNECTED -> {
+                presenter.startVpnUi()
+            }
+
+            CONNECTION_STATES.DISCONNECTED -> {
+                presenter.stopVpnUi()
+            }
+            CONNECTION_STATES.CONNECTING -> {
+                presenter.connectionVpnUi()
+            }
+            else -> {}
+        }
+        v2rayBroadCastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                runOnUiThread {
+//                    connection_time.setText(
+//                        "connection time : " + Objects.requireNonNull(intent.extras)
+//                            .getString(SERVICE_DURATION_BROADCAST_EXTRA)
+//                    )
+//                    connection_speed.setText(
+//                        "connection speed : " + intent.extras!!
+//                            .getString(SERVICE_UPLOAD_SPEED_BROADCAST_EXTRA) + " | " + intent.extras!!
+//                            .getString(SERVICE_DOWNLOAD_SPEED_BROADCAST_EXTRA)
+//                    )
+//                    connection_traffic.setText(
+//                        "connection traffic : " + intent.extras!!
+//                            .getString(SERVICE_UPLOAD_TRAFFIC_BROADCAST_EXTRA) + " | " + intent.extras!!
+//                            .getString(SERVICE_DOWNLOAD_TRAFFIC_BROADCAST_EXTRA)
+//                    )
+//                    connection_mode.setText("connection mode : " + V2rayConfigs.serviceMode.toString())
+                    when (Objects.requireNonNull(
+                        intent.extras!!
+                            .getSerializable(SERVICE_CONNECTION_STATE_BROADCAST_EXTRA)
+                    )) {
+                        CONNECTION_STATES.CONNECTED -> {
+                            presenter.startVpnUi()
+                        }
+                        CONNECTION_STATES.DISCONNECTED -> {
+                            presenter.stopVpnUi()
+                        }
+
+                        CONNECTION_STATES.CONNECTING -> {
+                            presenter.connectionVpnUi()
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT))
+        }
+
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -472,6 +548,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         presenter.onDestroy()
         super.onDestroy()
+        if (v2rayBroadCastReceiver != null){
+            unregisterReceiver(v2rayBroadCastReceiver)
+        }
     }
 
     fun adjustToolBarHeight(adjustBy: Int) {
