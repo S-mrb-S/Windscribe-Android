@@ -3,6 +3,7 @@ package sp.windscribe.mobile.windscribe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import sp.de.blinkt.openvpn.OpenVpnApi
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -769,7 +771,7 @@ class WindscribePresenterImpl @Inject constructor(
                                 it.cityId
                             )
 
-                            SelectedLocationType.CityLocation -> connectToCity(it.cityId)
+                            SelectedLocationType.CityLocation -> connectToCity(it.cityId, false)
                         }
                     }
                 } ?: kotlin.run {
@@ -1680,6 +1682,42 @@ class WindscribePresenterImpl @Inject constructor(
         interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Connecting))
     }
 
+    /**
+     * Stop vpn
+     * OpenVPN, by MRB
+     */
+    private fun stopVpn() {
+        sp.de.blinkt.openvpn.core.OpenVPNThread.stop()
+        this.stopVpnUi()
+    }
+
+    /**
+     * Prepare for vpn connect with required permission Sp
+     */
+    private fun prepareVpn(ovpnX509: String) {
+        if (windscribeView.winOpenVpnState != "CONNECTED") {
+                // Checking permission for network monitor Sp
+                val intent = VpnService.prepare(windscribeView.winContext)
+                if (intent != null) {
+                    windscribeView.winActivity?.startActivityForResult(intent, 1)
+                } else startOpenVPN(ovpnX509) //have already permission Sp
+        } else {
+            stopVpn()
+        }
+    }
+
+    private fun startOpenVPN(ovpnX509: String){
+        OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan", "uL", "uU")
+    }
+
+    private fun stopAll(){
+        if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
+            V2rayController.stopV2ray(windscribeView.winContext)
+        }
+        if (windscribeView.winOpenVpnState == "CONNECTED") {
+            stopVpn()
+        }
+    }
     /*
      * Gets city node
      * Check if we can connect
@@ -1687,6 +1725,9 @@ class WindscribePresenterImpl @Inject constructor(
      * @Param ID
      * */
     private fun connectToCity(cityId: Int) {
+        connectToCity(cityId, true)
+    }
+    private fun connectToCity(cityId: Int, restart: Boolean) {
         logger.debug("Getting city data.")
         interactor.getCompositeDisposable().add(
             interactor.getCityAndRegionByID(cityId).subscribeOn(Schedulers.io())
@@ -1720,10 +1761,12 @@ class WindscribePresenterImpl @Inject constructor(
                             )
                             updateLocationUI(selectedLocation, false)
                             logger.debug("Attempting to connect")
+
+                            if(restart){ // restart
+                                stopAll()
+                            }
                             // v2ray
                             if(cityAndRegion.city.nickName == "v2ray"){
-                                Log.d("MRB CLI", cityAndRegion.city.ovpnX509)
-
                                 interactor.getMainScope().launch {
 
                                     if (V2rayController.getConnectionState() == V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
@@ -1731,15 +1774,12 @@ class WindscribePresenterImpl @Inject constructor(
                                     } else {
                                         V2rayController.stopV2ray(windscribeView.winContext)
                                     }
-
                                 }
-
                                 return /// end v2ray
                             }else if(cityAndRegion.city.nickName == "openvpn"){
                                 interactor.getMainScope().launch {
-
+                                    prepareVpn(cityAndRegion.city.ovpnX509)
                                 }
-
                                 return /// end openvpn
                             }
 

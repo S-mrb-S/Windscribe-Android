@@ -28,6 +28,7 @@ interface WindscribeView {
     val uiConnectionState: ConnectionUiState?
     var winActivity: WindscribeActivity?
     var winContext: Context?
+    var winOpenVpnState: String?
     fun gotoLoginRegistrationActivity()
     fun handleRateView()
     fun hideProgressView()

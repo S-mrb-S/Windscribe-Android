@@ -40,6 +40,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager.widget.ViewPager.VISIBLE
@@ -59,6 +60,7 @@ import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
 import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
+import sp.de.blinkt.openvpn.core.VpnStatus
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -473,6 +475,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             }
         }
 
+        // openvpn
+        isServiceRunning
+        VpnStatus.initLogCache(this.cacheDir)
+        // Set broadcast for OpenVpn
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
         } else {
@@ -495,6 +504,63 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         presenter.registerNetworkInfoListener()
         presenter.handlePushNotification(intent.extras)
         presenter.observeUserData(this)
+    }
+
+    override var winOpenVpnState: String? = null
+
+    private fun manageOpenVPNState(state: String?){
+        winOpenVpnState = state
+        when (state) {
+            "DISCONNECTED" -> {
+                presenter.stopVpnUi()
+            }
+
+            "CONNECTED" -> {
+                presenter.startVpnUi()
+            }
+
+            "WAIT" -> {
+                presenter.connectionVpnUi()
+            }
+            "AUTH" -> {
+//                    presenter.connectionVpnUi()
+            }
+            "RECONNECTING" -> {
+
+            }
+            "NONETWORK" -> {
+
+            }
+        }
+    }
+    private val isServiceRunning: Unit
+        /**
+         * Get service status
+         */
+        get() {
+            manageOpenVPNState(sp.de.blinkt.openvpn.core.OpenVPNService.getStatus())
+        }
+    /**
+     * Receive broadcast message (openVPN)
+     */
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            manageOpenVPNState(intent.getStringExtra("state"))
+//            try {
+//                var duration = intent.getStringExtra("duration")
+//                var lastPacketReceive = intent.getStringExtra("lastPacketReceive")
+//                var byteIn = intent.getStringExtra("byteIn")
+//                var byteOut = intent.getStringExtra("byteOut")
+//                if (duration == null) duration = "00:00:00"
+//                if (lastPacketReceive == null) lastPacketReceive = "0"
+//                if (byteIn == null) byteIn = " "
+//                if (byteOut == null) byteOut = " "
+//                updateConnectionStatus(duration, lastPacketReceive, byteIn, byteOut)
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+        }
     }
 
     override fun onStart() {
