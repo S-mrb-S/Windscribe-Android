@@ -102,6 +102,11 @@ android {
     installation {
         installOptions '-g'
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -118,6 +123,7 @@ dependencies {
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdk"
     //Core Module
     implementation project(path: ':base')
+    implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
     //Kapt
     kapt "com.github.bumptech.glide:compiler:$glide"
     kapt "com.jakewharton:butterknife-compiler:$butterknife"

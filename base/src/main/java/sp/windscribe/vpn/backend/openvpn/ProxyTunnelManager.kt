@@ -1,7 +1,7 @@
 package sp.windscribe.vpn.backend.openvpn
 
-import com.windscribe.proxy.Proxy.*
-import com.windscribe.proxy.TunnelCallBack
+//import com.windscribe.proxy.Proxy.*
+//import com.windscribe.proxy.TunnelCallBack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -25,16 +25,16 @@ class ProxyTunnelManager(val scope: CoroutineScope, val vpnBackend: OpenVPNBacke
                 appContext.preference.packetSize.toLong()
             }
             val logFile = File(appContext.filesDir, PROXY_LOG).path
-            initialise(BuildConfig.DEV, logFile)
-            registerTunnelCallback(callback)
+//            initialise(BuildConfig.DEV, logFile)
+//            registerTunnelCallback(callback)
             if (isWSTunnel) {
                 val remote =
                     "wss://$ip:$port/$PROXY_TUNNEL_PROTOCOL/$PROXY_TUNNEL_ADDRESS/$WS_TUNNEL_PORT"
-                startProxy(":$PROXY_TUNNEL_PORT", remote, 1, mtu, false)
+//                startProxy(":$PROXY_TUNNEL_PORT", remote, 1, mtu, false)
             } else {
                 val remote = "https://$ip:$port"
                 val antiCensorship = appContext.preference.isAntiCensorshipOn
-                startProxy(":$PROXY_TUNNEL_PORT", remote, 2, mtu, antiCensorship)
+//                startProxy(":$PROXY_TUNNEL_PORT", remote, 2, mtu, antiCensorship)
             }
             logger.debug("Exiting tunnel proxy.")
         }
@@ -43,13 +43,13 @@ class ProxyTunnelManager(val scope: CoroutineScope, val vpnBackend: OpenVPNBacke
     fun stopProxyTunnel() {
         logger.debug("Stopping proxy.")
         proxyJob?.cancel()
-        registerTunnelCallback(null)
+//        registerTunnelCallback(null)
     }
 
-    private var callback = TunnelCallBack { fd ->
-        vpnBackend.service?.protect(fd.toInt())
-        logger.debug("Protecting proxy socket $fd.")
-    }
+//    private var callback = TunnelCallBack { fd ->
+//        vpnBackend.service?.protect(fd.toInt())
+//        logger.debug("Protecting proxy socket $fd.")
+//    }
 
     companion object {
         const val WS_TUNNEL_PORT = "1194"
