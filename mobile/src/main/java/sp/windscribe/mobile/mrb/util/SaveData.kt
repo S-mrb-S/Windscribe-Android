@@ -47,7 +47,6 @@ fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Unit, failT
                 return
             }
             val res = ListCreator(data).createAndGet()
-            Log.d("MRB S", "s: " + res)
             Data.dataString = res
         } finally {
             navigateTo()
