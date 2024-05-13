@@ -16,3 +16,4 @@
 /dga/build
 /dga/.cxx
 *.apk
+/mobile/fdroid/release/*.apk
