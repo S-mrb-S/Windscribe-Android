@@ -48,6 +48,7 @@ import sp.windscribe.mobile.connectionui.DisconnectedState
 import sp.windscribe.mobile.connectionui.FailedProtocol
 import sp.windscribe.mobile.connectionui.UnsecuredProtocol
 import sp.windscribe.mobile.listeners.ProtocolClickListener
+import sp.windscribe.mobile.mrb.util.fetchOvpnConfig
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
 import sp.windscribe.mobile.windscribe.WindscribeActivity.NetworkLayoutState
@@ -431,7 +432,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     private fun loadServerList(regions: MutableList<RegionAndCities>) {
         logger.info("Loading server list from disk.")
-        Toast.makeText(appContext, "geter", Toast.LENGTH_SHORT).show()
+        windscribeView.showToast("geter")
         windscribeView.showRecyclerViewProgressBar()
         val serverListData = ServerListData()
         val oneTimeCompositeDisposable = CompositeDisposable()
@@ -1688,35 +1689,50 @@ class WindscribePresenterImpl @Inject constructor(
      * OpenVPN, by MRB
      */
     private fun stopVpn() {
-        sp.de.blinkt.openvpn.core.OpenVPNThread.stop()
-        this.stopVpnUi()
+        try{
+            sp.de.blinkt.openvpn.core.OpenVPNThread.stop()
+            this.stopVpnUi()
+        }catch (ignore: Exception){}
     }
 
     /**
      * Prepare for vpn connect with required permission Sp
      */
     private fun prepareVpn(ovpnX509: String) {
-        if (windscribeView.winOpenVpnState != "CONNECTED") {
+        Log.d("OOO 2", windscribeView.winOpenVpnState.toString())
+        try{
+            if (windscribeView.winOpenVpnState != "CONNECTED") {
                 // Checking permission for network monitor Sp
                 val intent = VpnService.prepare(windscribeView.winContext)
                 if (intent != null) {
                     windscribeView.winActivity?.startActivityForResult(intent, 1)
                 } else startOpenVPN(ovpnX509) //have already permission Sp
-        } else {
-            stopVpn()
+            } else {
+                stopVpn()
+            }
+        }catch (e: Exception){
+            Log.d("OOO 3", "C: " + e.toString())
+            windscribeView.showToast("Catch!")
         }
     }
 
     private fun startOpenVPN(ovpnX509: String){
-        OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
-            MmkvManager.getLoginStorage().getString(
-                "username_ovpn",
-                ""
-            ),
-            MmkvManager.getLoginStorage().getString(
-                "password_ovpn",
-                ""
-            ))
+        Log.d("OOO 2", "START")
+        try{
+//            windscribeView.showToast("Start ovpn")
+            OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
+                MmkvManager.getLoginStorage().getString(
+                    "username_ovpn",
+                    ""
+                ),
+                MmkvManager.getLoginStorage().getString(
+                    "password_ovpn",
+                    ""
+                ))
+        }catch (e: Exception){
+            Log.d("OOO 4", "C: " + e.toString())
+            stopVpn()
+        }
     }
 
     private fun stopAll(){
@@ -1787,7 +1803,18 @@ class WindscribePresenterImpl @Inject constructor(
                                 return /// end v2ray
                             }else if(cityAndRegion.city.nickName == "openvpn"){
                                 interactor.getMainScope().launch {
-                                    prepareVpn(cityAndRegion.city.ovpnX509)
+                                    if(cityAndRegion.city.ovpnX509 != null){
+                                        val configContent = fetchOvpnConfig(cityAndRegion.city.ovpnX509.toString())
+
+                                        configContent?.let {
+                                            Log.d("OOO", it.toString())
+                                            prepareVpn(it)
+                                        } ?: run {
+                                            windscribeView.winActivity?.showToast("START FAILER")
+                                        }
+                                    }else{
+                                        windscribeView.winActivity?.showToast("START FAILER")
+                                    }
                                 }
                                 return /// end openvpn
                             }
