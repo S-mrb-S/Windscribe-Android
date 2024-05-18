@@ -24,10 +24,23 @@ class GetLoginWithKeyQuery {
             val response = apolloClient.query(GetLoginQuery(key = key))
                 .execute()
 
-            if (!response.hasErrors()) {
+            fun success() {
                 MmkvManager.getLoginStorage().encode("key_login", key)
                 callback.onSuccess(response.data)
-            } else {
+            }
+
+            try {
+                val name = response.data?.service?.name
+                if (!response.hasErrors()) {
+                    success()
+                } else {
+                    if (name == null) {
+                        callback.onFailure(response.errors)
+                    } else {
+                        success()
+                    }
+                }
+            } catch (e: Exception) {
                 callback.onFailure(response.errors)
             }
 
