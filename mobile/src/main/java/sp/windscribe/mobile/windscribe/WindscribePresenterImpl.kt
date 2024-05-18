@@ -85,6 +85,7 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import sp.windscribe.vpn.model.User
+import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.LatencyRepository
 import sp.windscribe.vpn.serverlist.entity.City
 import sp.windscribe.vpn.serverlist.entity.CityAndRegion
@@ -1707,7 +1708,15 @@ class WindscribePresenterImpl @Inject constructor(
     }
 
     private fun startOpenVPN(ovpnX509: String){
-        OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan", "uL", "uU")
+        OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
+            MmkvManager.getLoginStorage().getString(
+                "username_ovpn",
+                ""
+            ),
+            MmkvManager.getLoginStorage().getString(
+                "password_ovpn",
+                ""
+            ))
     }
 
     private fun stopAll(){

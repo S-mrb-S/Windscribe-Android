@@ -232,6 +232,14 @@ class WelcomePresenterImpl @Inject constructor(
                                     "reset_data",
                                     data?.service?.days.toString()
                                 )
+                                MmkvManager.getLoginStorage().putString(
+                                    "username_ovpn",
+                                    data?.service?.username.toString()
+                                )
+                                MmkvManager.getLoginStorage().putString(
+                                    "password_ovpn",
+                                    data?.service?.password.toString()
+                                )
 
                                 setup() // get servers
                             }
