@@ -37,7 +37,7 @@ android {
         jniLibs {
             excludes += ['lib/arm64-v8a/libwg-quick.so', 'lib/armeabi-v7a/libwg-quick.so', 'lib/x86/libwg-quick.so', 'lib/x86_64/libwg-quick.so'
             ]
-            useLegacyPackaging true
+            useLegacyPackaging = true
         }
     }
     lint {
@@ -66,10 +66,27 @@ android {
         }
     }
 
-    flavorDimensions = ['dim']
+    flavorDimensions "dim"
     productFlavors {
         fdroid {
-            dimension 'dim'
+            dimension "dim"
+            // Set extractNativeLibs to false to prevent extracting native libraries
+            ndk {
+                abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
+            }
+            packagingOptions {
+                doNotStrip "*/armeabi-v7a/*.so"
+                doNotStrip "*/x86/*.so"
+                doNotStrip "*/arm64-v8a/*.so"
+                doNotStrip "*/x86_64/*.so"
+            }
+            defaultConfig {
+                packagingOptions {
+                    jniLibs {
+                        useLegacyPackaging = true
+                    }
+                }
+            }
         }
     }
 }

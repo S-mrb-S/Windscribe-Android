@@ -11,7 +11,6 @@
         android:supportsRtl="false"
         android:largeHeap="true"
         android:theme="@style/DarkTheme"
-        android:extractNativeLibs="true"
         tools:targetApi="n"
         tools:ignore="DiscouragedApi">
         <activity
