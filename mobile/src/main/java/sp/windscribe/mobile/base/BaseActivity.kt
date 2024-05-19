@@ -62,7 +62,7 @@ abstract class BaseActivity : CiscoMainActivity() {
         return false
     }
 
-    override fun CiscoUpdateUI(p0: OpenVpnService?) {} // skip for other activities
+    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {} // skip for other activities
 
     override fun skipCertWarning(): Boolean {
         return true

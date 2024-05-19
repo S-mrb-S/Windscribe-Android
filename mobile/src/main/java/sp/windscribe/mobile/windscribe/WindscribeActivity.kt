@@ -574,14 +574,14 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     // cisco
     private var mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED
     override var winCiscoState: Boolean = false
-    override fun CiscoUpdateUI(p0: OpenVpnService?) {
-        val newState = p0!!.connectionState
+    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {
+        val newState = serviceState!!.connectionState
 
-        p0.startActiveDialog(this)
+        serviceState.startActiveDialog(this)
 
         Log.d("OPENCONNECT S", newState.toString())
 
-        if (mConnectionState !== newState) {
+        if (mConnectionState != newState) {
             if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
                 // stop
                 presenter.stopVpnUi()
