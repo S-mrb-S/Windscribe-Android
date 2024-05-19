@@ -24,9 +24,6 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
     override fun onCreate() {
-        sp.openconnect.Application()
-            .onCreate()
-
         applicationInterface = this
         super.onCreate()
         MMKV.initialize(this@PhoneApplication)
