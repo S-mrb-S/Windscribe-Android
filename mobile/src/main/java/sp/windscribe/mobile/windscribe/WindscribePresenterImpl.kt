@@ -1721,8 +1721,10 @@ class WindscribePresenterImpl @Inject constructor(
         }catch (e: Exception){
             Log.d("OOO 4", "C: " + e.toString())
             stopAll()
+
         }
     }
+
 
     private fun stopAll(){
         if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {

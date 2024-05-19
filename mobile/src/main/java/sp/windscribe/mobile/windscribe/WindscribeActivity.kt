@@ -598,6 +598,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     // cisco
     private var mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED
+    override var winCiscoState: Boolean = false
     override fun CiscoUpdateUI(service: OpenVpnService?) {
         val newState = service!!.connectionState
 
@@ -609,9 +610,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
                 // stop
                 presenter.stopVpnUi()
+                winCiscoState = false
             } else if (mConnectionState == OpenConnectManagementThread.STATE_DISCONNECTED) {
                 // start
                 presenter.startVpnUi()
+                winCiscoState = true
             }
             mConnectionState = newState
         }
@@ -621,6 +624,58 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         return true
     }
 
+    /**
+     * this is Cisco
+     */
+
+    fun ConnectToCisco(){
+        if (!winCiscoState) {
+
+//            try {
+//                try {
+//                    val file = GlobalData.connectionStorage.getString("fileC", null)
+//
+//                    if (file != null) {
+//                        setup?.setNewImage()
+//                        state?.setNewVpnState(1)
+//
+//                        val res: Boolean = CiscoCreateProfileWithHostName(file)
+//
+//                        if(!res){
+//                            Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT).show()
+//                            StopCisco()
+//                        }else{
+//                            Toast.makeText(this, "در حال اتصال ...", Toast.LENGTH_SHORT).show()
+//
+//                            windscribeView.CiscoStartVPNWithProfile()
+//                        }
+//
+//                    } else {
+//                        startServersActivity()
+//                        Toast.makeText(this, "ابتدا یک سرور را انتخاب کنید", Toast.LENGTH_SHORT).show()
+//                    }
+//                } catch (e: RemoteException) {
+//                    e.printStackTrace()
+//                }
+//
+//            } catch (e: Exception) {
+//                Log.d("CISCO", "BUG: $e")
+//                showToast("وصل نشد!")
+//                StopCisco()
+//            }
+        }else{
+            StopCisco()
+        }
+    }
+
+    fun StopCisco(){
+        try{
+            showToast(" قطع شد !")
+            CiscoStopForceVPN()
+        }catch (e: Exception){
+            showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
+        }
+    }
 
 
     override fun onStart() {

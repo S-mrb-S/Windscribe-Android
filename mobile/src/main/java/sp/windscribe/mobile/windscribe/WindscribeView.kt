@@ -29,6 +29,7 @@ interface WindscribeView {
     var winActivity: WindscribeActivity?
     var winContext: Context?
     var winOpenVpnState: String?
+    var winCiscoState: Boolean
     fun gotoLoginRegistrationActivity()
     fun handleRateView()
     fun hideProgressView()
