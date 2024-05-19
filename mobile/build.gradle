@@ -9,8 +9,8 @@ apply from: "$rootDir/config/config.gradle"
 apply from: "$rootDir/depedencycheck.gradle"
 
 // Versions
-def appVersionCode = 1331
-def appVersionName = "4.0.1"
+def appVersionCode = 1340
+def appVersionName = "5.0.0"
 
 android {
     namespace 'sp.windscribe.mobile'
