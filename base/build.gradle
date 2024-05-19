@@ -96,7 +96,7 @@ dependencies {
     //VPN
 //     implementation project(path: ':openvpn')
     // implementation project(path: ':strongswan')
-    implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
+    api fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
 
     api 'com.wireguard.android:tunnel:1.0.20230427'
 //    implementation 'com.github.Windscribe:wstunnel:1.0.3'

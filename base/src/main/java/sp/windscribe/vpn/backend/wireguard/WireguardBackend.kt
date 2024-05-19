@@ -92,7 +92,7 @@ class WireguardBackend(
             vpnLogger.debug("Network found.")
             healthJob?.cancel()
             healthJob = scope.launch {
-                vpnLogger.debug(checkTunnelHealth().getOrElse { it.message })
+//                vpnLogger.debug(checkTunnelHealth().getOrElse { it.message })
             }
         }
     }
@@ -278,55 +278,55 @@ class WireguardBackend(
         } ?: vpnLogger.debug("Unable to get handshake time from wg binary..")
     }
 
-    private suspend fun checkTunnelHealth(): Result<String> {
-        vpnLogger.debug("Requesting new interface address.")
-        return Util.getProfile<WireGuardVpnProfile>()?.content?.let {
-            vpnLogger.debug("Creating config from saved params")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                vpnLogger.debug(
-                    "Power options: Interactive:${powerManager.isInteractive} Power Save mode: ${powerManager.isPowerSaveMode} Ignore battery optimization: ${
-                        powerManager.isIgnoringBatteryOptimizations(
-                            appContext.packageName
-                        )
-                    } Device Idle: ${powerManager.isDeviceIdleMode}"
-                )
-            }
-            try {
-                val config = WireGuardVpnProfile.createConfigFromString(it)
-                when (val response = vpnProfileCreator.updateWireGuardConfig(config)) {
-                    is CallResult.Success -> {
-                        if (config.`interface`.addresses.first() != response.data.`interface`.addresses.first()) {
-                            vpnLogger.debug("${config.`interface`.addresses.first()} > ${response.data.`interface`.addresses.first()}")
-                            reconnecting = true
-                            try {
-                                backend.setState(testTunnel, UP, response.data)
-                                return Result.success("updated wg state with new interface address.")
-                            } catch (e: Exception) {
-                                reconnecting = false
-                                appContext.vpnController.connectAsync()
-                                return Result.failure(e)
-                            }
-                        } else {
-                            return Result.success("interface address unchanged.")
-                        }
-                    }
-
-                    is CallResult.Error -> {
-                        when (response.code) {
-                            EXPIRED_OR_BANNED_ACCOUNT -> {
-                                appContext.vpnController.disconnectAsync()
-                            }
-
-                            else -> {}
-                        }
-                        return Result.failure(Exception(response.errorMessage))
-                    }
-                }
-            } catch (e: Exception) {
-                return Result.failure(e)
-            }
-        } ?: return Result.failure(Exception("Failed to read wg profile from storage."))
-    }
+//    private suspend fun checkTunnelHealth(): Result<String> {
+//        vpnLogger.debug("Requesting new interface address.")
+//        return Util.getProfile<WireGuardVpnProfile>()?.content?.let {
+//            vpnLogger.debug("Creating config from saved params")
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                vpnLogger.debug(
+//                    "Power options: Interactive:${powerManager.isInteractive} Power Save mode: ${powerManager.isPowerSaveMode} Ignore battery optimization: ${
+//                        powerManager.isIgnoringBatteryOptimizations(
+//                            appContext.packageName
+//                        )
+//                    } Device Idle: ${powerManager.isDeviceIdleMode}"
+//                )
+//            }
+//            try {
+//                val config = WireGuardVpnProfile.createConfigFromString(it)
+//                when (val response = vpnProfileCreator.updateWireGuardConfig(config)) {
+//                    is CallResult.Success -> {
+//                        if (config.`interface`.addresses.first() != response.data.`interface`.addresses.first()) {
+//                            vpnLogger.debug("${config.`interface`.addresses.first()} > ${response.data.`interface`.addresses.first()}")
+//                            reconnecting = true
+//                            try {
+//                                backend.setState(testTunnel, UP, response.data)
+//                                return Result.success("updated wg state with new interface address.")
+//                            } catch (e: Exception) {
+//                                reconnecting = false
+//                                appContext.vpnController.connectAsync()
+//                                return Result.failure(e)
+//                            }
+//                        } else {
+//                            return Result.success("interface address unchanged.")
+//                        }
+//                    }
+//
+//                    is CallResult.Error -> {
+//                        when (response.code) {
+//                            EXPIRED_OR_BANNED_ACCOUNT -> {
+//                                appContext.vpnController.disconnectAsync()
+//                            }
+//
+//                            else -> {}
+//                        }
+//                        return Result.failure(Exception(response.errorMessage))
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                return Result.failure(e)
+//            }
+//        } ?: return Result.failure(Exception("Failed to read wg profile from storage."))
+//    }
 
     private fun GoBackend.handshakeNSecAgo(): Long? {
         val stats = getStatistics(testTunnel)

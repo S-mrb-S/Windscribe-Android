@@ -1,0 +1,138 @@
+type Query {
+  service(key: String): ServiceType
+
+  servers(key: String): [ServerType]
+
+  networkInfo: NetworkInfo
+}
+
+type ServiceType {
+  username: String!
+
+  password: String!
+
+  type: ServiceTypeType!
+
+  licenseKey: String!
+
+  dailyQuota: Float!
+
+  isActive: Boolean!
+
+  isTrial: Boolean!
+
+  uuid: String
+
+  name: String
+
+  days: Int
+
+  daysLeft: Int
+
+  quotaSum: Int
+
+  quotaLeft: Int
+
+  dailyQuotaLeft: Int
+}
+
+type ServiceTypeType {
+  """
+  Display name of the service type
+  """
+  displayName: String!
+
+  """
+  Is quota limited?
+  """
+  quotaLimited: Boolean!
+
+  """
+  Is quota limited to fair daily usage?
+  """
+  dailyQuotaLimited: Boolean!
+
+  """
+  Is service limited by time?
+  """
+  timeLimited: Boolean!
+
+  """
+  Is service limited by connection count?
+  """
+  connectionLimited: Boolean!
+}
+
+type ServerType {
+  serverType: String
+
+  url: String
+
+  flag: String
+
+  name: String
+}
+
+type NetworkInfo {
+  asn: String
+
+  ip: String
+}
+
+type Mutation {
+  createService(deviceId: UUID!, email: String!): ServiceMutation
+
+  """
+  Obtain JSON Web Token mutation
+  """
+  tokenAuth(username: String!, password: String!): ObtainJSONWebToken
+
+  verifyToken(token: String): Verify
+
+  refreshToken(token: String): Refresh
+}
+
+type ServiceMutation {
+  service: ServiceType
+}
+
+"""
+Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
+"""
+Obtain JSON Web Token mutation
+"""
+type ObtainJSONWebToken {
+  payload: GenericScalar!
+
+  refreshExpiresIn: Int!
+
+  token: String!
+}
+
+"""
+The `GenericScalar` scalar type represents a generic
+GraphQL scalar value that could be:
+String, Boolean, Int, Float, List or Object.
+"""
+scalar GenericScalar
+
+type Verify {
+  payload: GenericScalar!
+}
+
+type Refresh {
+  payload: GenericScalar!
+
+  refreshExpiresIn: Int!
+
+  token: String!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

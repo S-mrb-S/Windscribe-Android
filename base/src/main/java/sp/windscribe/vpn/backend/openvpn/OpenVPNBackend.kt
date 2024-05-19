@@ -70,7 +70,7 @@ class OpenVPNBackend(
             stickyDisconnectEvent = false
             vpnLogger.debug("Stopping Open VPN Service.")
             connectionJob?.cancel()
-            startOpenVPN(OpenVPNService.PAUSE_VPN)
+//            startOpenVPN(OpenVPNService.PAUSE_VPN)
             delay(DISCONNECT_DELAY)
             deactivate()
         }
@@ -119,14 +119,14 @@ class OpenVPNBackend(
                     testConnectivity()
                 }
 
-                ConnectionStatus.LEVEL_MULTI_USER_PERMISSION -> {
-                    updateState(
-                        VPNState(
-                            VPNState.Status.Disconnected,
-                            VPNState.Error(VPNState.ErrorType.GenericError)
-                        )
-                    )
-                }
+//                ConnectionStatus.LEVEL_MULTI_USER_PERMISSION -> {
+//                    updateState(
+//                        VPNState(
+//                            VPNState.Status.Disconnected,
+//                            VPNState.Error(VPNState.ErrorType.GenericError)
+//                        )
+//                    )
+//                }
 
                 ConnectionStatus.LEVEL_AUTH_FAILED -> {
                     serviceInteractor.preferenceHelper.isReconnecting = false

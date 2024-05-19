@@ -7,7 +7,13 @@ type Query {
 }
 
 type ServiceType {
+  username: String!
+
+  password: String!
+
   type: ServiceTypeType!
+
+  licenseKey: String!
 
   dailyQuota: Float!
 
@@ -74,6 +80,8 @@ type NetworkInfo {
 }
 
 type Mutation {
+  createService(deviceId: UUID!, email: String!): ServiceMutation
+
   """
   Obtain JSON Web Token mutation
   """
@@ -83,6 +91,16 @@ type Mutation {
 
   refreshToken(token: String): Refresh
 }
+
+type ServiceMutation {
+  service: ServiceType
+}
+
+"""
+Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
 
 """
 Obtain JSON Web Token mutation

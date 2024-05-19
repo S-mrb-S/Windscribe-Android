@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.tencent.mmkv.MMKV
+import de.blinkt.openvpn.core.App
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.connectionmode.AllProtocolFailedFragment
 import sp.windscribe.mobile.connectionmode.ConnectionChangeFragment
@@ -27,6 +28,7 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
         super.onCreate()
         MMKV.initialize(this@PhoneApplication)
         setTheme()
+        App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
     }
 
     override val homeIntent: Intent

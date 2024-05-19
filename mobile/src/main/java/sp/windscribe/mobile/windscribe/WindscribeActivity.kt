@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.app.ActivityOptions
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -23,6 +24,7 @@ import android.os.Handler
 import android.os.Looper
 import android.transition.AutoTransition
 import android.transition.Slide
+import android.util.Log
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -40,6 +42,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager.widget.ViewPager.VISIBLE
@@ -54,11 +57,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
+import de.blinkt.openvpn.OpenVpnApi
 import dev.dev7.lib.v2ray.V2rayController
 import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
 import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
+import de.blinkt.openvpn.core.VpnStatus
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -91,6 +96,7 @@ import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
+import sp.windscribe.mobile.mrb.util.StateStatic
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -106,6 +112,7 @@ import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.serverlist.entity.ServerListData
@@ -473,6 +480,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             }
         }
 
+        // openvpn
+        isServiceRunning
+        VpnStatus.initLogCache(this.cacheDir)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
         } else {
@@ -497,6 +508,63 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         presenter.observeUserData(this)
     }
 
+    override var winOpenVpnState: String? = null // no effect
+
+    private fun manageOpenVPNState(state: String?){
+        when (state) {
+            "DISCONNECTED" -> {
+                presenter.stopVpnUi()
+            }
+
+            "CONNECTED" -> {
+//                StateStatic.openvpn = true
+                presenter.startVpnUi()
+            }
+
+            "WAIT" -> {
+                presenter.connectionVpnUi()
+            }
+            "AUTH" -> {
+//                    presenter.connectionVpnUi()
+            }
+            "RECONNECTING" -> {
+
+            }
+            "NONETWORK" -> {
+
+            }
+        }
+    }
+    private val isServiceRunning: Unit
+        /**
+         * Get service status
+         */
+        get() {
+            manageOpenVPNState(de.blinkt.openvpn.core.OpenVPNService.getStatus())
+        }
+    /**
+     * Receive broadcast message (openVPN)
+     */
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            manageOpenVPNState(intent.getStringExtra("state"))
+//            try {
+//                var duration = intent.getStringExtra("duration")
+//                var lastPacketReceive = intent.getStringExtra("lastPacketReceive")
+//                var byteIn = intent.getStringExtra("byteIn")
+//                var byteOut = intent.getStringExtra("byteOut")
+//                if (duration == null) duration = "00:00:00"
+//                if (lastPacketReceive == null) lastPacketReceive = "0"
+//                if (byteIn == null) byteIn = " "
+//                if (byteOut == null) byteOut = " "
+//                updateConnectionStatus(duration, lastPacketReceive, byteIn, byteOut)
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         if (presenter.userHasAccess()) {
@@ -512,6 +580,42 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            33 -> {
+//                if (resultCode == Activity.RESULT_OK) {
+//                    // اطلاعاتی که از اکتیویتی دوم دریافت می‌کنید
+//                    val result = data?.getBooleanExtra("restart", false)
+//                    if (result == true) {
+//                        restartOpenVpnServer()
+//                    }
+//                    // انجام کار خاص با استفاده از callback
+//                }
+            }
+
+            else -> {
+                if (resultCode == RESULT_OK) {
+                    //Permission granted, start the VPN
+                    try{
+                        OpenVpnApi.startVpn(this.applicationContext,
+                            MmkvManager.getSettingsStorage().getString("ovpn", "")
+                            , "Japan",
+                            MmkvManager.getLoginStorage().getString(
+                                "username_ovpn",
+                                ""
+                            ),
+                            MmkvManager.getLoginStorage().getString(
+                                "password_ovpn",
+                                ""
+                            ))
+                    }catch (e: Exception){
+                        Log.d("OOO 4", "C: " + e.toString())
+                    }
+                } else {
+                    showToast("دسترسی رد شد !! ")
+                }
+            }
+        }
+
         if (requestCode == FILE_PICK_REQUEST && resultCode == RESULT_OK && data != null) {
             presenter.loadConfigFile(data)
         }
@@ -525,6 +629,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onResume() {
         super.onResume()
+
+        // Set broadcast for OpenVpn
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+
         if (!coldLoad.getAndSet(false)) {
             setLanguage()
             presenter.onHotStart()
@@ -1125,6 +1234,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         textViewIpAddress?.alpha = 0.5f
         textViewConnectedNetworkName?.alpha = 0.5f
         autoSecureDivider?.visibility = View.GONE
+        if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
+            changeProtocolArrow?.visibility = View.GONE
+        }
         clAutoSecure?.visibility = View.GONE
         clPreferred?.visibility = View.GONE
         clProtocol?.visibility = View.GONE
@@ -2031,22 +2143,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     @OnClick(R.id.img_protocol_change_arrow)
     fun onProtocolChangeClick() {
-        if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
-            presenter.onProtocolChangeClick()
-        } else {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("نوع پروتکل را انتخاب کنید")
-            builder.setSingleChoiceItems(
-                Data.item_options,
-                Data.defaultItemDialog
-            ) { dialog, which ->
-                Data.settingsStorage.putInt("default_connection_type", which)
-                Handler().postDelayed(dialog::dismiss, 100)
-                Data.defaultItemDialog = which
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
+        presenter.onProtocolChangeClick()
     }
 
     override fun setCensorShipIconVisibility(visible: Int) {

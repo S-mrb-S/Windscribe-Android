@@ -1,5 +1,7 @@
 query GetLoginQuery($key: String!) {
   service(key: $key) {
+      username
+      password
       dailyQuota
       isActive
       isTrial
