@@ -572,26 +572,21 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     // cisco
-    private var mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED
-    override var winCiscoState: Boolean = false
+    override var winCiscoState: Int? = OpenConnectManagementThread.STATE_DISCONNECTED
     override fun CiscoUpdateUI(serviceState: OpenVpnService?) {
         val newState = serviceState!!.connectionState
 
-        serviceState.startActiveDialog(this)
+        serviceState.startActiveDialog(this) // no effect but require
 
-        Log.d("OPENCONNECT S", newState.toString())
-
-        if (mConnectionState != newState) {
+        if (winCiscoState != newState) {
             if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
                 // stop
                 presenter.stopVpnUi()
-                winCiscoState = false
-            } else if (mConnectionState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+            } else if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
                 // start
                 presenter.startVpnUi()
-                winCiscoState = true
             }
-            mConnectionState = newState
+            winCiscoState = newState
         }
     }
 
@@ -600,8 +595,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
      */
 
     override fun ConnectToCisco(url: String?){
-        if (!winCiscoState) {
-
+        if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
             try {
                 if (url != null) {
                     val res: Boolean = CiscoCreateProfileWithHostName(url)

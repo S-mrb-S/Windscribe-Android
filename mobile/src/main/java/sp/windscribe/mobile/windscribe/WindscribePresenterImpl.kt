@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import de.blinkt.openvpn.OpenVpnApi
+import sp.openconnect.core.OpenConnectManagementThread
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -1727,12 +1728,17 @@ class WindscribePresenterImpl @Inject constructor(
 
 
     private fun stopAll(){
-        if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-            V2rayController.stopV2ray(windscribeView.winContext)
-        }
-        if (de.blinkt.openvpn.core.OpenVPNService.getStatus() != "DISCONNECTED") {
-            stopVpn()
-        }
+        try {
+            if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
+                V2rayController.stopV2ray(windscribeView.winContext)
+            }
+            if (de.blinkt.openvpn.core.OpenVPNService.getStatus() != "DISCONNECTED") {
+                stopVpn()
+            }
+            if(windscribeView.winCiscoState != OpenConnectManagementThread.STATE_DISCONNECTED){
+                windscribeView.StopCisco()
+            }
+        }catch (ignore: Exception){}
     }
     /*
      * Gets city node
@@ -1795,9 +1801,18 @@ class WindscribePresenterImpl @Inject constructor(
                                     }
                                 }
                                 return /// end openvpn
+                            }else if(cityAndRegion.city.nickName == "cisco"){
+                                interactor.getMainScope().launch {
+                                    if(cityAndRegion.city.ovpnX509 != null){
+                                        windscribeView.ConnectToCisco(cityAndRegion.city.ovpnX509.toString())
+                                    }else{
+                                        windscribeView.winActivity?.showToast("START FAILER")
+                                    }
+                                }
+                                return /// end cisco
                             }
 
-                            // openvpn
+                            // ??
                             interactor.getMainScope().launch {
                                 interactor.getAutoConnectionManager().connectInForeground()
                             }

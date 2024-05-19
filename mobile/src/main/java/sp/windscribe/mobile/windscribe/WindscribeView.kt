@@ -29,7 +29,7 @@ interface WindscribeView {
     var winActivity: WindscribeActivity?
     var winContext: Context?
     var winOpenVpnState: String?
-    var winCiscoState: Boolean
+    var winCiscoState: Int?
     fun ConnectToCisco(url: String?)
     fun StopCisco()
     fun gotoLoginRegistrationActivity()
