@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.app.ActivityOptions
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -22,6 +21,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.RemoteException
 import android.transition.AutoTransition
 import android.transition.Slide
 import android.util.Log
@@ -64,6 +64,8 @@ import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAS
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
 import de.blinkt.openvpn.core.VpnStatus
+import sp.openconnect.core.OpenConnectManagementThread
+import sp.openconnect.core.OpenVpnService
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -96,7 +98,6 @@ import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
-import sp.windscribe.mobile.mrb.util.StateStatic
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -111,7 +112,6 @@ import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
-import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
@@ -570,6 +570,64 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //            }
         }
     }
+
+    // cisco
+    override var winCiscoState: Int? = OpenConnectManagementThread.STATE_DISCONNECTED
+    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {
+        val newState = serviceState!!.connectionState
+
+        serviceState.startActiveDialog(this) // no effect but require
+
+        if (winCiscoState != newState) {
+            if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+                // stop
+                presenter.stopVpnUi()
+            } else if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+                // start
+                presenter.startVpnUi()
+            }
+            winCiscoState = newState
+        }
+    }
+
+    /**
+     * this is Cisco
+     */
+
+    override fun ConnectToCisco(url: String?){
+        if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+            try {
+                if (url != null) {
+                    val res: Boolean = CiscoCreateProfileWithHostName(url)
+
+                    if (!res) {
+                        Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT)
+                            .show()
+                        StopCisco()
+                    } else {
+                        CiscoStartVPNWithProfile()
+                    }
+
+                }
+            } catch (e: RemoteException) {
+                Log.d("CISCO", "BUG: $e")
+                showToast("وصل نشد!")
+                StopCisco()
+            }
+
+        }else{
+            StopCisco()
+        }
+    }
+
+    override fun StopCisco(){
+        try{
+            CiscoStopForceVPN()
+        }catch (e: Exception){
+            showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
+        }
+    }
+
 
     override fun onStart() {
         super.onStart()

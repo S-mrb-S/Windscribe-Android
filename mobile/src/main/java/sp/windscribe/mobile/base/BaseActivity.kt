@@ -18,6 +18,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import butterknife.ButterKnife
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import sp.openconnect.core.OpenVpnService
+import sp.openconnect.remote.CiscoMainActivity
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.di.ActivityComponent
 import sp.windscribe.mobile.di.ActivityModule
@@ -25,15 +27,45 @@ import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
+import sp.windscribe.vpn.qq.MmkvManager
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : CiscoMainActivity() {
     val coldLoad = AtomicBoolean()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setWindow()
         window.setFormat(PixelFormat.RGBA_8888)
+    }
+
+    // cisco
+    override fun CurrentUserName(): String {
+        var ul = MmkvManager.getLoginStorage().getString(
+            "username_ovpn",
+            ""
+        )
+        if(ul == null) ul = ""
+        return ul
+    }
+
+    override fun CurrentPassWord(): String {
+        var ul = MmkvManager.getLoginStorage().getString(
+            "password_ovpn",
+            ""
+        )
+        if(ul == null) ul = ""
+        return ul
+    }
+
+    override fun isEnableDialog(): Boolean {
+        return false
+    }
+
+    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {} // skip for other activities
+
+    override fun skipCertWarning(): Boolean {
+        return true
     }
 
     override fun onAttachedToWindow() {
