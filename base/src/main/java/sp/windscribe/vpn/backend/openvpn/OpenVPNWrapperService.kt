@@ -63,13 +63,13 @@ class OpenVPNWrapperService : OpenVPNService(), StateListener {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun getProfile(): VpnProfile? {
-        return Util.getProfile<VpnProfile>()
-    }
-
-    override fun onProcessRestore(): Boolean {
-        return serviceInteractor.preferenceHelper.globalUserConnectionPreference
-    }
+//    override fun getProfile(): VpnProfile? {
+//        return Util.getProfile<VpnProfile>()
+//    }
+//
+//    override fun onProcessRestore(): Boolean {
+//        return serviceInteractor.preferenceHelper.globalUserConnectionPreference
+//    }
 
     override fun onDestroy() {
         openVPNBackend.service = null

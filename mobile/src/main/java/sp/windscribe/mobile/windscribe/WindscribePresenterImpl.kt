@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
-import sp.de.blinkt.openvpn.OpenVpnApi
+import de.blinkt.openvpn.OpenVpnApi
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -48,6 +48,7 @@ import sp.windscribe.mobile.connectionui.DisconnectedState
 import sp.windscribe.mobile.connectionui.FailedProtocol
 import sp.windscribe.mobile.connectionui.UnsecuredProtocol
 import sp.windscribe.mobile.listeners.ProtocolClickListener
+import sp.windscribe.mobile.mrb.util.StateStatic
 import sp.windscribe.mobile.mrb.util.fetchOvpnConfig
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
@@ -694,6 +695,8 @@ class WindscribePresenterImpl @Inject constructor(
     override fun onCityClick(cityId: Int) {
         windscribeView.exitSearchLayout()
         logger.debug("User clicked on city.")
+        stopAll()
+        stopVpn()
         selectedLocation?.cityId?.let {
             if (it == cityId && (interactor.getVpnConnectionStateManager()
                     .isVPNActive() || connectingFromServerList)
@@ -723,17 +726,8 @@ class WindscribePresenterImpl @Inject constructor(
     override fun onConnectClicked() {
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
 
-//        selectedLocation?.let {
-//            logger.debug("Starting Connection.")
-//            if(it.nickName == "v2ray"){
-//                connectToCity(it.cityId)
-////                stopVpnFromUI()
-//                return /// end v2ray
-//            }
-//        } ?: kotlin.run {
-//            logger.debug("No saved location found. wait for server list to refresh.")
-//            windscribeView.showToast("Server list is not ready.")
-//        }
+        stopAll()
+        stopVpn()
 
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
@@ -773,7 +767,7 @@ class WindscribePresenterImpl @Inject constructor(
                                 it.cityId
                             )
 
-                            SelectedLocationType.CityLocation -> connectToCity(it.cityId, false)
+                            SelectedLocationType.CityLocation -> connectToCity(it.cityId)
                         }
                     }
                 } ?: kotlin.run {
@@ -1690,7 +1684,7 @@ class WindscribePresenterImpl @Inject constructor(
      */
     private fun stopVpn() {
         try{
-            sp.de.blinkt.openvpn.core.OpenVPNThread.stop()
+            de.blinkt.openvpn.core.OpenVPNThread.stop()
             this.stopVpnUi()
         }catch (ignore: Exception){}
     }
@@ -1699,17 +1693,18 @@ class WindscribePresenterImpl @Inject constructor(
      * Prepare for vpn connect with required permission Sp
      */
     private fun prepareVpn(ovpnX509: String) {
-        Log.d("OOO 2", windscribeView.winOpenVpnState.toString())
         try{
-            if (windscribeView.winOpenVpnState != "CONNECTED") {
+//            if (!StateStatic.openvpn) {
+            stopVpn()
                 // Checking permission for network monitor Sp
                 val intent = VpnService.prepare(windscribeView.winContext)
                 if (intent != null) {
+                    MmkvManager.getSettingsStorage().putString("ovpn", ovpnX509)
                     windscribeView.winActivity?.startActivityForResult(intent, 1)
                 } else startOpenVPN(ovpnX509) //have already permission Sp
-            } else {
-                stopVpn()
-            }
+//            } else {
+//                stopVpn()
+//            }
         }catch (e: Exception){
             Log.d("OOO 3", "C: " + e.toString())
             windscribeView.showToast("Catch!")
@@ -1739,9 +1734,12 @@ class WindscribePresenterImpl @Inject constructor(
         if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
             V2rayController.stopV2ray(windscribeView.winContext)
         }
-        if (windscribeView.winOpenVpnState == "CONNECTED") {
-            stopVpn()
-        }
+        // bug TODO()
+//        Log.d("STOP", "OO 1")
+//        if (StateStatic.openvpn) {
+//            Log.d("STOP", "OO")
+//            stopVpn()
+//        }
     }
     /*
      * Gets city node
@@ -1750,9 +1748,6 @@ class WindscribePresenterImpl @Inject constructor(
      * @Param ID
      * */
     private fun connectToCity(cityId: Int) {
-        connectToCity(cityId, true)
-    }
-    private fun connectToCity(cityId: Int, restart: Boolean) {
         logger.debug("Getting city data.")
         interactor.getCompositeDisposable().add(
             interactor.getCityAndRegionByID(cityId).subscribeOn(Schedulers.io())
@@ -1787,9 +1782,6 @@ class WindscribePresenterImpl @Inject constructor(
                             updateLocationUI(selectedLocation, false)
                             logger.debug("Attempting to connect")
 
-                            if(restart){ // restart
-                                stopAll()
-                            }
                             // v2ray
                             if(cityAndRegion.city.nickName == "v2ray"){
                                 interactor.getMainScope().launch {
@@ -1804,14 +1796,7 @@ class WindscribePresenterImpl @Inject constructor(
                             }else if(cityAndRegion.city.nickName == "openvpn"){
                                 interactor.getMainScope().launch {
                                     if(cityAndRegion.city.ovpnX509 != null){
-                                        val configContent = fetchOvpnConfig(cityAndRegion.city.ovpnX509.toString())
-
-                                        configContent?.let {
-                                            Log.d("OOO", it.toString())
-                                            prepareVpn(it)
-                                        } ?: run {
-                                            windscribeView.winActivity?.showToast("START FAILER")
-                                        }
+                                        prepareVpn(cityAndRegion.city.ovpnX509.toString())
                                     }else{
                                         windscribeView.winActivity?.showToast("START FAILER")
                                     }

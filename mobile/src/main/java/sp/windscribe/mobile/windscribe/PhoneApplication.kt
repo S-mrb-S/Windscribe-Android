@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
 import com.tencent.mmkv.MMKV
-import sp.de.blinkt.openvpn.core.App
+import de.blinkt.openvpn.core.App
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.connectionmode.AllProtocolFailedFragment
 import sp.windscribe.mobile.connectionmode.ConnectionChangeFragment

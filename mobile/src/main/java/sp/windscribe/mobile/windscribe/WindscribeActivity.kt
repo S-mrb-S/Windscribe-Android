@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.app.ActivityOptions
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -23,6 +24,7 @@ import android.os.Handler
 import android.os.Looper
 import android.transition.AutoTransition
 import android.transition.Slide
+import android.util.Log
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -55,12 +57,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
+import de.blinkt.openvpn.OpenVpnApi
 import dev.dev7.lib.v2ray.V2rayController
 import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
 import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
-import sp.de.blinkt.openvpn.core.VpnStatus
+import de.blinkt.openvpn.core.VpnStatus
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -93,6 +96,7 @@ import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
+import sp.windscribe.mobile.mrb.util.StateStatic
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -108,6 +112,7 @@ import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.serverlist.entity.ServerListData
@@ -478,9 +483,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         // openvpn
         isServiceRunning
         VpnStatus.initLogCache(this.cacheDir)
-        // Set broadcast for OpenVpn
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
@@ -506,16 +508,16 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         presenter.observeUserData(this)
     }
 
-    override var winOpenVpnState: String? = null
+    override var winOpenVpnState: String? = null // no effect
 
     private fun manageOpenVPNState(state: String?){
-        winOpenVpnState = state
         when (state) {
             "DISCONNECTED" -> {
                 presenter.stopVpnUi()
             }
 
             "CONNECTED" -> {
+//                StateStatic.openvpn = true
                 presenter.startVpnUi()
             }
 
@@ -538,7 +540,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
          * Get service status
          */
         get() {
-            manageOpenVPNState(sp.de.blinkt.openvpn.core.OpenVPNService.getStatus())
+            manageOpenVPNState(de.blinkt.openvpn.core.OpenVPNService.getStatus())
         }
     /**
      * Receive broadcast message (openVPN)
@@ -578,6 +580,42 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            33 -> {
+//                if (resultCode == Activity.RESULT_OK) {
+//                    // اطلاعاتی که از اکتیویتی دوم دریافت می‌کنید
+//                    val result = data?.getBooleanExtra("restart", false)
+//                    if (result == true) {
+//                        restartOpenVpnServer()
+//                    }
+//                    // انجام کار خاص با استفاده از callback
+//                }
+            }
+
+            else -> {
+                if (resultCode == RESULT_OK) {
+                    //Permission granted, start the VPN
+                    try{
+                        OpenVpnApi.startVpn(this.applicationContext,
+                            MmkvManager.getSettingsStorage().getString("ovpn", "")
+                            , "Japan",
+                            MmkvManager.getLoginStorage().getString(
+                                "username_ovpn",
+                                ""
+                            ),
+                            MmkvManager.getLoginStorage().getString(
+                                "password_ovpn",
+                                ""
+                            ))
+                    }catch (e: Exception){
+                        Log.d("OOO 4", "C: " + e.toString())
+                    }
+                } else {
+                    showToast("دسترسی رد شد !! ")
+                }
+            }
+        }
+
         if (requestCode == FILE_PICK_REQUEST && resultCode == RESULT_OK && data != null) {
             presenter.loadConfigFile(data)
         }
@@ -591,6 +629,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onResume() {
         super.onResume()
+
+        // Set broadcast for OpenVpn
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+
         if (!coldLoad.getAndSet(false)) {
             setLanguage()
             presenter.onHotStart()

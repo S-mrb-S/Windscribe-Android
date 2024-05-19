@@ -147,41 +147,48 @@ class ListCreator(var data: GetServersQuery.Data) {
                 if (
                     data?.serverType == "OpenVPN"
                 ) {
-                    chil.add(
-                        Group(
-                            num,
-                            data.name.toString(),
-                            "openvpn",
-                            0,
-                            "44.46,-63.61",
-                            "America/Halifax",
-                            "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-                            "yhz-386-wg.whiskergalaxy.com",
-                            data.url,
-                            "23.191.80.2",
-                            "https://ca-021.whiskergalaxy.com:6363/latency",
-                            "1000",
-                            listOf(
-                                Node(
-                                    "172.98.68.238",
-                                    "172.98.68.239",
-                                    "172.98.68.240",
-                                    "ca-055.whiskergalaxy.com",
-                                    1,
-                                    2
-                                ),
-                                Node(
-                                    "172.98.68.227",
-                                    "172.98.68.228",
-                                    "172.98.68.229",
-                                    "ca-054.whiskergalaxy.com",
-                                    1,
-                                    2
+                        val configContent = fetchOvpnConfig(data.url.toString())
+
+                        configContent?.let {
+                            chil.add(
+                                Group(
+                                    num,
+                                    data.name.toString(),
+                                    "openvpn",
+                                    0,
+                                    "44.46,-63.61",
+                                    "America/Halifax",
+                                    "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+                                    "yhz-386-wg.whiskergalaxy.com",
+                                    it, // content file
+                                    "23.191.80.2",
+                                    "https://ca-021.whiskergalaxy.com:6363/latency",
+                                    "1000",
+                                    listOf(
+                                        Node(
+                                            "172.98.68.238",
+                                            "172.98.68.239",
+                                            "172.98.68.240",
+                                            "ca-055.whiskergalaxy.com",
+                                            1,
+                                            2
+                                        ),
+                                        Node(
+                                            "172.98.68.227",
+                                            "172.98.68.228",
+                                            "172.98.68.229",
+                                            "ca-054.whiskergalaxy.com",
+                                            1,
+                                            2
+                                        )
+                                    ),
+                                    0
                                 )
-                            ),
-                            0
-                        )
-                    )
+                            )
+                        } ?: run {
+                            // no content file
+                        }
+
                     ++num
                 }
             }

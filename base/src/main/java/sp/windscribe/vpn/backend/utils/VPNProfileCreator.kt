@@ -172,159 +172,159 @@ class VPNProfileCreator @Inject constructor(
         return "$location"
     }
 
-    fun createOpenVpnProfile(
-        lastSelectedLocation: LastSelectedLocation,
-        vpnParameters: VPNParameters,
-        protocolInformation: ProtocolInformation
-    ): String {
-        logger.info("Creating open vpn profile.")
-        // Create a new profile
-        val profile = de.blinkt.openvpn.VpnProfile("Windscribe")
-        profile.mUsePull = true
-        profile.mUseTLSAuth = false
-        profile.mCaFilename = "[inline]"
-        profile.mAuthenticationType = de.blinkt.openvpn.VpnProfile.TYPE_USERPASS
-        profile.mUseUdp = false
-
-        // Lan by pass
-        profile.mAllowLocalLAN = preferencesHelper.lanByPass
-
-        // Split Routing
-        if (preferencesHelper.splitTunnelToggle && (preferencesHelper.splitRoutingMode == PreferencesKeyConstants.EXCLUSIVE_MODE)) {
-            preferencesHelper.lastConnectedUsingSplit = true
-            profile.mAllowedAppsVpnAreDisallowed = true
-        } else if (preferencesHelper.splitTunnelToggle && (preferencesHelper.splitRoutingMode == PreferencesKeyConstants.INCLUSIVE_MODE)) {
-            preferencesHelper.lastConnectedUsingSplit = true
-            profile.mAllowedAppsVpnAreDisallowed = false
-        } else {
-            preferencesHelper.lastConnectedUsingSplit = false
-            if (profile.mAllowedAppsVpn != null) {
-                profile.mAllowedAppsVpn.clear()
-            }
-            profile.mAllowedAppsVpnAreDisallowed = true
-        }
-
-        // MTU
-        if (!preferencesHelper.isPackageSizeModeAuto && preferencesHelper.packetSize != -1) {
-            profile.mTunMtu = preferencesHelper.packetSize
-        }
-
-        var port: String? = null
-        var protocol: String? = null
-        var serverConfig: String? = null
-        var proxyIp: String? = null
-        var ip: String? = null
-        try {
-            if (PreferencesKeyConstants.PROTO_STEALTH == protocolInformation.protocol) {
-                serverConfig = preferencesHelper.getOpenVPNServerConfig()
-                protocol = PROXY_TUNNEL_PROTOCOL
-                ip = PROXY_TUNNEL_ADDRESS
-                proxyIp = vpnParameters.stealthIp
-                port = PROXY_TUNNEL_PORT.toString()
-                //Old stunnel port
-                // port = "1194"
-            }
-            if (PreferencesKeyConstants.PROTO_WS_TUNNEL == protocolInformation.protocol) {
-                serverConfig = preferencesHelper.getOpenVPNServerConfig()
-                port = PROXY_TUNNEL_PORT.toString()
-                protocol = PROXY_TUNNEL_PROTOCOL
-                ip = PROXY_TUNNEL_ADDRESS
-                proxyIp = vpnParameters.ikev2Ip
-            }
-            if (PreferencesKeyConstants.PROTO_TCP == protocolInformation.protocol) {
-                ip = vpnParameters.tcpIp
-                protocol = "tcp"
-                serverConfig = preferencesHelper.getOpenVPNServerConfig()
-                // Append additional anti-censorship options
-                if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
-                    serverConfig =
-                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
-                    serverConfig += "\nudp-stuffing"
-                    serverConfig += "\ntcp-split-reset"
-                    serverConfig =
-                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
-                }
-                port = protocolInformation.port
-                proxyIp = null
-            }
-            if (PreferencesKeyConstants.PROTO_UDP == protocolInformation.protocol) {
-                ip = vpnParameters.udpIp
-                protocol = "udp"
-                serverConfig = preferencesHelper.getOpenVPNServerConfig()
-                // Append additional anti-censorship options
-                if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
-                    serverConfig =
-                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
-                    serverConfig += "\nudp-stuffing"
-                    serverConfig += "\ntcp-split-reset"
-                    serverConfig =
-                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
-                }
-                port = protocolInformation.port
-                proxyIp = null
-            }
-            if (serverConfig != null) {
-                profile.writeConfigFile(
-                    appContext,
-                    serverConfig,
-                    ip,
-                    protocol,
-                    port,
-                    proxyIp,
-                    vpnParameters.ovpnX509
-                )
-            } else {
-                throw InvalidVPNConfigException(
-                    CallResult.Error(
-                        ERROR_VALID_CONFIG_NOT_FOUND,
-                        "OpenVPN Server config not found."
-                    )
-                )
-            }
-        } catch (e: Exception) {
-            logger.debug(e.toString())
-        }
-        val credentials = addOpenVpnCredentials()
-        profile.mUsername = credentials.first
-        profile.mPassword = credentials.second
-
-        if (preferencesHelper.splitTunnelToggle) {
-            profile.mAllowedAppsVpn = HashSet(preferencesHelper.installedApps())
-        }
-        if (protocolInformation.protocol == PreferencesKeyConstants.PROTO_STEALTH) {
-            if (proxyTunnelManager.running) {
-                proxyTunnelManager.stopProxyTunnel()
-            }
-            preferencesHelper.selectedPort = protocolInformation.port
-            if (proxyIp != null) {
-                proxyTunnelManager.startProxyTunnel(
-                    proxyIp,
-                    protocolInformation.port,
-                    false
-                )
-            }
-            // Old stunnel setup
-            /*if (WindStunnelUtility.isStunnelRunning) {
-                WindStunnelUtility.stopLocalTunFromAppContext(appContext)
-            }
-            preferencesHelper.selectedPort = protocolInformation.port
-            if (proxyIp != null) {
-                WindUtilities.writeStunnelConfig(appContext, proxyIp, protocolInformation.port)
-                WindStunnelUtility.startLocalTun()
-            }*/
-        } else if (protocolInformation.protocol == PreferencesKeyConstants.PROTO_WS_TUNNEL) {
-            if (proxyTunnelManager.running) {
-                proxyTunnelManager.stopProxyTunnel()
-            }
-            preferencesHelper.selectedPort = protocolInformation.port
-            if (proxyIp != null) {
-                proxyTunnelManager.startProxyTunnel(proxyIp, protocolInformation.port, true)
-            }
-        }
-        saveSelectedLocation(lastSelectedLocation)
-        saveProfile(profile)
-        return "$lastSelectedLocation"
-    }
+//    fun createOpenVpnProfile(
+//        lastSelectedLocation: LastSelectedLocation,
+//        vpnParameters: VPNParameters,
+//        protocolInformation: ProtocolInformation
+//    ): String {
+//        logger.info("Creating open vpn profile.")
+//        // Create a new profile
+//        val profile = de.blinkt.openvpn.VpnProfile("Windscribe")
+//        profile.mUsePull = true
+//        profile.mUseTLSAuth = false
+//        profile.mCaFilename = "[inline]"
+//        profile.mAuthenticationType = de.blinkt.openvpn.VpnProfile.TYPE_USERPASS
+//        profile.mUseUdp = false
+//
+//        // Lan by pass
+//        profile.mAllowLocalLAN = preferencesHelper.lanByPass
+//
+//        // Split Routing
+//        if (preferencesHelper.splitTunnelToggle && (preferencesHelper.splitRoutingMode == PreferencesKeyConstants.EXCLUSIVE_MODE)) {
+//            preferencesHelper.lastConnectedUsingSplit = true
+//            profile.mAllowedAppsVpnAreDisallowed = true
+//        } else if (preferencesHelper.splitTunnelToggle && (preferencesHelper.splitRoutingMode == PreferencesKeyConstants.INCLUSIVE_MODE)) {
+//            preferencesHelper.lastConnectedUsingSplit = true
+//            profile.mAllowedAppsVpnAreDisallowed = false
+//        } else {
+//            preferencesHelper.lastConnectedUsingSplit = false
+//            if (profile.mAllowedAppsVpn != null) {
+//                profile.mAllowedAppsVpn.clear()
+//            }
+//            profile.mAllowedAppsVpnAreDisallowed = true
+//        }
+//
+//        // MTU
+//        if (!preferencesHelper.isPackageSizeModeAuto && preferencesHelper.packetSize != -1) {
+//            profile.mTunMtu = preferencesHelper.packetSize
+//        }
+//
+//        var port: String? = null
+//        var protocol: String? = null
+//        var serverConfig: String? = null
+//        var proxyIp: String? = null
+//        var ip: String? = null
+//        try {
+//            if (PreferencesKeyConstants.PROTO_STEALTH == protocolInformation.protocol) {
+//                serverConfig = preferencesHelper.getOpenVPNServerConfig()
+//                protocol = PROXY_TUNNEL_PROTOCOL
+//                ip = PROXY_TUNNEL_ADDRESS
+//                proxyIp = vpnParameters.stealthIp
+//                port = PROXY_TUNNEL_PORT.toString()
+//                //Old stunnel port
+//                // port = "1194"
+//            }
+//            if (PreferencesKeyConstants.PROTO_WS_TUNNEL == protocolInformation.protocol) {
+//                serverConfig = preferencesHelper.getOpenVPNServerConfig()
+//                port = PROXY_TUNNEL_PORT.toString()
+//                protocol = PROXY_TUNNEL_PROTOCOL
+//                ip = PROXY_TUNNEL_ADDRESS
+//                proxyIp = vpnParameters.ikev2Ip
+//            }
+//            if (PreferencesKeyConstants.PROTO_TCP == protocolInformation.protocol) {
+//                ip = vpnParameters.tcpIp
+//                protocol = "tcp"
+//                serverConfig = preferencesHelper.getOpenVPNServerConfig()
+//                // Append additional anti-censorship options
+//                if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
+//                    serverConfig =
+//                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
+//                    serverConfig += "\nudp-stuffing"
+//                    serverConfig += "\ntcp-split-reset"
+//                    serverConfig =
+//                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
+//                }
+//                port = protocolInformation.port
+//                proxyIp = null
+//            }
+//            if (PreferencesKeyConstants.PROTO_UDP == protocolInformation.protocol) {
+//                ip = vpnParameters.udpIp
+//                protocol = "udp"
+//                serverConfig = preferencesHelper.getOpenVPNServerConfig()
+//                // Append additional anti-censorship options
+//                if (preferencesHelper.isAntiCensorshipOn && serverConfig != null) {
+//                    serverConfig =
+//                        String(org.spongycastle.util.encoders.Base64.decode(serverConfig))
+//                    serverConfig += "\nudp-stuffing"
+//                    serverConfig += "\ntcp-split-reset"
+//                    serverConfig =
+//                        String(org.spongycastle.util.encoders.Base64.encode(serverConfig.toByteArray()))
+//                }
+//                port = protocolInformation.port
+//                proxyIp = null
+//            }
+//            if (serverConfig != null) {
+//                profile.writeConfigFile(
+//                    appContext,
+//                    serverConfig,
+//                    ip,
+//                    protocol,
+//                    port,
+//                    proxyIp,
+//                    vpnParameters.ovpnX509
+//                )
+//            } else {
+//                throw InvalidVPNConfigException(
+//                    CallResult.Error(
+//                        ERROR_VALID_CONFIG_NOT_FOUND,
+//                        "OpenVPN Server config not found."
+//                    )
+//                )
+//            }
+//        } catch (e: Exception) {
+//            logger.debug(e.toString())
+//        }
+//        val credentials = addOpenVpnCredentials()
+//        profile.mUsername = credentials.first
+//        profile.mPassword = credentials.second
+//
+//        if (preferencesHelper.splitTunnelToggle) {
+//            profile.mAllowedAppsVpn = HashSet(preferencesHelper.installedApps())
+//        }
+//        if (protocolInformation.protocol == PreferencesKeyConstants.PROTO_STEALTH) {
+//            if (proxyTunnelManager.running) {
+//                proxyTunnelManager.stopProxyTunnel()
+//            }
+//            preferencesHelper.selectedPort = protocolInformation.port
+//            if (proxyIp != null) {
+//                proxyTunnelManager.startProxyTunnel(
+//                    proxyIp,
+//                    protocolInformation.port,
+//                    false
+//                )
+//            }
+//            // Old stunnel setup
+//            /*if (WindStunnelUtility.isStunnelRunning) {
+//                WindStunnelUtility.stopLocalTunFromAppContext(appContext)
+//            }
+//            preferencesHelper.selectedPort = protocolInformation.port
+//            if (proxyIp != null) {
+//                WindUtilities.writeStunnelConfig(appContext, proxyIp, protocolInformation.port)
+//                WindStunnelUtility.startLocalTun()
+//            }*/
+//        } else if (protocolInformation.protocol == PreferencesKeyConstants.PROTO_WS_TUNNEL) {
+//            if (proxyTunnelManager.running) {
+//                proxyTunnelManager.stopProxyTunnel()
+//            }
+//            preferencesHelper.selectedPort = protocolInformation.port
+//            if (proxyIp != null) {
+//                proxyTunnelManager.startProxyTunnel(proxyIp, protocolInformation.port, true)
+//            }
+//        }
+//        saveSelectedLocation(lastSelectedLocation)
+//        saveProfile(profile)
+//        return "$lastSelectedLocation"
+//    }
 
     fun createVpnProfileFromConfig(configFile: ConfigFile): Pair<String, ProtocolInformation> {
         val content = configFile.content
@@ -422,47 +422,47 @@ class VPNProfileCreator @Inject constructor(
         return "Custom Config: ${configWithSettings.toWgQuickString()}"
     }
 
-    suspend fun updateWireGuardConfig(config: Config): CallResult<Config> {
-        val builder = Config.Builder()
-        val serverPublicKey = config.peers[0].publicKey.toBase64()
-        val hostName = config.`interface`.addresses.first().address.hostAddress ?: ""
-        val ip = config.peers[0].endpoint.get().host
-        val port = config.peers[0].endpoint.get().port.toString()
-        logger.debug("Requesting wg remote params.")
-        when (val remoteParamsResponse = wgConfigRepository.getWgParams(
-            hostName,
-            serverPublicKey,
-            wgForceInit.getAndSet(false),
-            true
-        )) {
-            is CallResult.Success<WgRemoteParams> -> {
-                logger.debug("Wg remote params successful.")
-                val anInterface = createWireGuardInterface(remoteParamsResponse.data)
-                builder.setInterface(anInterface)
-                val peer = createWireGuardPeer(remoteParamsResponse.data, ip, port)
-                builder.addPeer(peer)
-                val content = builder.build().toWgQuickString()
-                val profileLines = content.split(System.lineSeparator().toRegex()).toTypedArray()
-                val stringBuilder = StringBuilder()
-                for (logLine in profileLines) {
-                    if (!logLine.startsWith("PrivateKey") && !logLine.startsWith("PreSharedKey") && !logLine.startsWith(
-                            "PublicKey"
-                        )
-                    ) {
-                        stringBuilder.append(logLine).append(" ")
-                    }
-                }
-                logger.debug(stringBuilder.toString())
-                saveProfile(WireGuardVpnProfile(content))
-                return CallResult.Success(WireGuardVpnProfile.createConfigFromString(content))
-            }
-
-            is CallResult.Error -> {
-                logger.debug("Error getting Wg remote params.")
-                return remoteParamsResponse
-            }
-        }
-    }
+//    suspend fun updateWireGuardConfig(config: Config): CallResult<Config> {
+//        val builder = Config.Builder()
+//        val serverPublicKey = config.peers[0].publicKey.toBase64()
+//        val hostName = config.`interface`.addresses.first().address.hostAddress ?: ""
+//        val ip = config.peers[0].endpoint.get().host
+//        val port = config.peers[0].endpoint.get().port.toString()
+//        logger.debug("Requesting wg remote params.")
+//        when (val remoteParamsResponse = wgConfigRepository.getWgParams(
+//            hostName,
+//            serverPublicKey,
+//            wgForceInit.getAndSet(false),
+//            true
+//        )) {
+//            is CallResult.Success<WgRemoteParams> -> {
+//                logger.debug("Wg remote params successful.")
+//                val anInterface = createWireGuardInterface(remoteParamsResponse.data)
+//                builder.setInterface(anInterface)
+//                val peer = createWireGuardPeer(remoteParamsResponse.data, ip, port)
+//                builder.addPeer(peer)
+//                val content = builder.build().toWgQuickString()
+//                val profileLines = content.split(System.lineSeparator().toRegex()).toTypedArray()
+//                val stringBuilder = StringBuilder()
+//                for (logLine in profileLines) {
+//                    if (!logLine.startsWith("PrivateKey") && !logLine.startsWith("PreSharedKey") && !logLine.startsWith(
+//                            "PublicKey"
+//                        )
+//                    ) {
+//                        stringBuilder.append(logLine).append(" ")
+//                    }
+//                }
+//                logger.debug(stringBuilder.toString())
+//                saveProfile(WireGuardVpnProfile(content))
+//                return CallResult.Success(WireGuardVpnProfile.createConfigFromString(content))
+//            }
+//
+//            is CallResult.Error -> {
+//                logger.debug("Error getting Wg remote params.")
+//                return remoteParamsResponse
+//            }
+//        }
+//    }
 
     suspend fun createVpnProfileFromWireGuardProfile(
         lastSelectedLocation: LastSelectedLocation,
@@ -757,17 +757,17 @@ class VPNProfileCreator @Inject constructor(
             throw e
         }
         val vpnProfile = configParser.convertProfile()
-        vpnProfile.mUsername = openVPNConnectionInfo.username
-        vpnProfile.mPassword = openVPNConnectionInfo.password
-        vpnProfile.writeConfigFile(
-            appContext,
-            openVPNConnectionInfo.base64EncodedServerConfig,
-            openVPNConnectionInfo.ip,
-            openVPNConnectionInfo.protocol,
-            openVPNConnectionInfo.port,
-            null,
-            null
-        )
+//        vpnProfile.mUsername = openVPNConnectionInfo.username
+//        vpnProfile.mPassword = openVPNConnectionInfo.password
+//        vpnProfile.writeConfigFile(
+//            appContext,
+//            openVPNConnectionInfo.base64EncodedServerConfig,
+//            openVPNConnectionInfo.ip,
+//            openVPNConnectionInfo.protocol,
+//            openVPNConnectionInfo.port,
+//            null,
+//            null
+//        )
         saveProfile(vpnProfile)
     }
 }
