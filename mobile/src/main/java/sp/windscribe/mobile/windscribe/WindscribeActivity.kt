@@ -424,11 +424,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         val layoutTransition = constraintLayoutMain?.layoutTransition
         layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
-        // v2ray
+
         winContext = this.applicationContext
         winActivity = this
+        // v2ray
         V2rayController.init(this, R.drawable.ic_logo, "Windscribe")
-
+        // state
         when (V2rayController.getConnectionState()) {
             CONNECTION_STATES.CONNECTED -> {
                 presenter.startVpnUi()
@@ -480,16 +481,21 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             }
         }
 
-        // openvpn
-        isServiceRunning
-        VpnStatus.initLogCache(this.cacheDir)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
         } else {
             registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT))
         }
 
+        // openvpn
+        isServiceRunning
+        VpnStatus.initLogCache(this.cacheDir)
+
+        // Set broadcast for OpenVpn
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+
+        // other ..
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -629,10 +635,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onResume() {
         super.onResume()
-
-        // Set broadcast for OpenVpn
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
 
         if (!coldLoad.getAndSet(false)) {
             setLanguage()

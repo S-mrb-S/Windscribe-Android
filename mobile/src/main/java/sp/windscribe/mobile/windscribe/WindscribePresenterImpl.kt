@@ -696,7 +696,6 @@ class WindscribePresenterImpl @Inject constructor(
         windscribeView.exitSearchLayout()
         logger.debug("User clicked on city.")
         stopAll()
-        stopVpn()
         selectedLocation?.cityId?.let {
             if (it == cityId && (interactor.getVpnConnectionStateManager()
                     .isVPNActive() || connectingFromServerList)
@@ -727,7 +726,6 @@ class WindscribePresenterImpl @Inject constructor(
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
 
         stopAll()
-        stopVpn()
 
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
@@ -1694,16 +1692,14 @@ class WindscribePresenterImpl @Inject constructor(
      */
     private fun prepareVpn(ovpnX509: String) {
         try{
-//            if (!StateStatic.openvpn) {
-            stopVpn()
+            stopAll()
+//            if (de.blinkt.openvpn.core.OpenVPNService.getStatus() != "DISCONNECTED") {
                 // Checking permission for network monitor Sp
                 val intent = VpnService.prepare(windscribeView.winContext)
                 if (intent != null) {
                     MmkvManager.getSettingsStorage().putString("ovpn", ovpnX509)
                     windscribeView.winActivity?.startActivityForResult(intent, 1)
                 } else startOpenVPN(ovpnX509) //have already permission Sp
-//            } else {
-//                stopVpn()
 //            }
         }catch (e: Exception){
             Log.d("OOO 3", "C: " + e.toString())
@@ -1712,9 +1708,7 @@ class WindscribePresenterImpl @Inject constructor(
     }
 
     private fun startOpenVPN(ovpnX509: String){
-        Log.d("OOO 2", "START")
         try{
-//            windscribeView.showToast("Start ovpn")
             OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
                 MmkvManager.getLoginStorage().getString(
                     "username_ovpn",
@@ -1726,7 +1720,7 @@ class WindscribePresenterImpl @Inject constructor(
                 ))
         }catch (e: Exception){
             Log.d("OOO 4", "C: " + e.toString())
-            stopVpn()
+            stopAll()
         }
     }
 
@@ -1734,12 +1728,9 @@ class WindscribePresenterImpl @Inject constructor(
         if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
             V2rayController.stopV2ray(windscribeView.winContext)
         }
-        // bug TODO()
-//        Log.d("STOP", "OO 1")
-//        if (StateStatic.openvpn) {
-//            Log.d("STOP", "OO")
-//            stopVpn()
-//        }
+        if (de.blinkt.openvpn.core.OpenVPNService.getStatus() != "DISCONNECTED") {
+            stopVpn()
+        }
     }
     /*
      * Gets city node
