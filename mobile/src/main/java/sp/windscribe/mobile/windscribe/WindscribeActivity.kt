@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.LayoutTransition
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.app.ActivityOptions
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -22,6 +21,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.RemoteException
 import android.transition.AutoTransition
 import android.transition.Slide
 import android.util.Log
@@ -98,7 +98,6 @@ import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
-import sp.windscribe.mobile.mrb.util.StateStatic
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -113,7 +112,6 @@ import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
-import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
@@ -574,35 +572,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     // cisco
-    override fun CurrentUserName(): String {
-        var ul = MmkvManager.getLoginStorage().getString(
-            "username_ovpn",
-            ""
-        )
-        if(ul == null) ul = ""
-        return ul
-    }
-
-    override fun CurrentPassWord(): String {
-        var ul = MmkvManager.getLoginStorage().getString(
-            "password_ovpn",
-            ""
-        )
-        if(ul == null) ul = ""
-        return ul
-    }
-
-    override fun isEnableDialog(): Boolean {
-        return false
-    }
-
-    // cisco
     private var mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED
     override var winCiscoState: Boolean = false
-    override fun CiscoUpdateUI(service: OpenVpnService?) {
-        val newState = service!!.connectionState
+    override fun CiscoUpdateUI(p0: OpenVpnService?) {
+        val newState = p0!!.connectionState
 
-        service.startActiveDialog(this)
+        p0.startActiveDialog(this)
 
         Log.d("OPENCONNECT S", newState.toString())
 
@@ -620,57 +595,39 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    override fun skipCertWarning(): Boolean {
-        return true
-    }
-
     /**
      * this is Cisco
      */
 
-    fun ConnectToCisco(){
+    override fun ConnectToCisco(url: String?){
         if (!winCiscoState) {
 
-//            try {
-//                try {
-//                    val file = GlobalData.connectionStorage.getString("fileC", null)
-//
-//                    if (file != null) {
-//                        setup?.setNewImage()
-//                        state?.setNewVpnState(1)
-//
-//                        val res: Boolean = CiscoCreateProfileWithHostName(file)
-//
-//                        if(!res){
-//                            Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT).show()
-//                            StopCisco()
-//                        }else{
-//                            Toast.makeText(this, "در حال اتصال ...", Toast.LENGTH_SHORT).show()
-//
-//                            windscribeView.CiscoStartVPNWithProfile()
-//                        }
-//
-//                    } else {
-//                        startServersActivity()
-//                        Toast.makeText(this, "ابتدا یک سرور را انتخاب کنید", Toast.LENGTH_SHORT).show()
-//                    }
-//                } catch (e: RemoteException) {
-//                    e.printStackTrace()
-//                }
-//
-//            } catch (e: Exception) {
-//                Log.d("CISCO", "BUG: $e")
-//                showToast("وصل نشد!")
-//                StopCisco()
-//            }
+            try {
+                if (url != null) {
+                    val res: Boolean = CiscoCreateProfileWithHostName(url)
+
+                    if (!res) {
+                        Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT)
+                            .show()
+                        StopCisco()
+                    } else {
+                        CiscoStartVPNWithProfile()
+                    }
+
+                }
+            } catch (e: RemoteException) {
+                Log.d("CISCO", "BUG: $e")
+                showToast("وصل نشد!")
+                StopCisco()
+            }
+
         }else{
             StopCisco()
         }
     }
 
-    fun StopCisco(){
+    override fun StopCisco(){
         try{
-            showToast(" قطع شد !")
             CiscoStopForceVPN()
         }catch (e: Exception){
             showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
