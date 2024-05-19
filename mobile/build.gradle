@@ -14,7 +14,7 @@ def appVersionName = "5.0.0"
 
 android {
     namespace 'sp.windscribe.mobile'
-    ndkVersion '27.0.11718014 rc1'
+    ndkVersion '25.1.8937393'
     bundle {
         language {
             enableSplit = false
