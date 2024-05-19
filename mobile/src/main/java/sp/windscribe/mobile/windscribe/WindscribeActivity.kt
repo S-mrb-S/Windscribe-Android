@@ -64,6 +64,8 @@ import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAS
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import org.slf4j.LoggerFactory
 import de.blinkt.openvpn.core.VpnStatus
+import sp.openconnect.core.OpenConnectManagementThread
+import sp.openconnect.core.OpenVpnService
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
 import sp.windscribe.mobile.adapter.FavouriteAdapter
@@ -570,6 +572,56 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //            }
         }
     }
+
+    // cisco
+    override fun CurrentUserName(): String {
+        var ul = MmkvManager.getLoginStorage().getString(
+            "username_ovpn",
+            ""
+        )
+        if(ul == null) ul = ""
+        return ul
+    }
+
+    override fun CurrentPassWord(): String {
+        var ul = MmkvManager.getLoginStorage().getString(
+            "password_ovpn",
+            ""
+        )
+        if(ul == null) ul = ""
+        return ul
+    }
+
+    override fun isEnableDialog(): Boolean {
+        return false
+    }
+
+    // cisco
+    private var mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED
+    override fun CiscoUpdateUI(service: OpenVpnService?) {
+        val newState = service!!.connectionState
+
+        service.startActiveDialog(this)
+
+        Log.d("OPENCONNECT S", newState.toString())
+
+        if (mConnectionState !== newState) {
+            if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+                // stop
+                presenter.stopVpnUi()
+            } else if (mConnectionState == OpenConnectManagementThread.STATE_DISCONNECTED) {
+                // start
+                presenter.startVpnUi()
+            }
+            mConnectionState = newState
+        }
+    }
+
+    override fun skipCertWarning(): Boolean {
+        return true
+    }
+
+
 
     override fun onStart() {
         super.onStart()

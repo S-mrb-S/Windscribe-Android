@@ -18,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import butterknife.ButterKnife
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import sp.openconnect.remote.CiscoMainActivity
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.di.ActivityComponent
 import sp.windscribe.mobile.di.ActivityModule
@@ -28,7 +29,7 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : CiscoMainActivity() {
     val coldLoad = AtomicBoolean()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
