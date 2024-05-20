@@ -573,20 +573,29 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     // cisco
     override var winCiscoState: Int? = OpenConnectManagementThread.STATE_DISCONNECTED
+    private var fixResume: Boolean = false
     override fun CiscoUpdateUI(serviceState: OpenVpnService?) {
         val newState = serviceState!!.connectionState
+        try{
+            serviceState.startActiveDialog(this@WindscribeActivity) // no effect but require
 
-        serviceState.startActiveDialog(this) // no effect but require
+            if (winCiscoState != newState) { // connected --> spam
+                when (newState) {
+                    OpenConnectManagementThread.STATE_DISCONNECTED -> {
+                        // stop
+                        presenter.stopVpnUi()
+                    }
 
-        if (winCiscoState != newState) {
-            if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-                // stop
-                presenter.stopVpnUi()
-            } else if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-                // start
-                presenter.startVpnUi()
+                    OpenConnectManagementThread.STATE_CONNECTED -> {
+                        // start
+                        presenter.startVpnUi()
+                    }
+                }
+                winCiscoState = newState
             }
-            winCiscoState = newState
+        }catch (e: Exception){
+            Log.d("ERR", e.toString())
+            showToast("Cisco corruption detected")
         }
     }
 
@@ -606,6 +615,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                         StopCisco()
                     } else {
                         CiscoStartVPNWithProfile()
+                        presenter.connectionVpnUi()
                     }
 
                 }
@@ -627,7 +637,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
         }
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -694,15 +703,19 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun onResume() {
         super.onResume()
 
-        if (!coldLoad.getAndSet(false)) {
-            setLanguage()
-            presenter.onHotStart()
-        }
-        presenter.checkForWgIpChange()
-        presenter.checkPendingAccountUpgrades()
+        if(!fixResume){
+            if (!coldLoad.getAndSet(false)) {
+                setLanguage()
+                presenter.onHotStart()
+            }
+            presenter.checkForWgIpChange()
+            presenter.checkPendingAccountUpgrades()
 
-        // نمایش سرور ها در اینجا
-        onReloadClick()
+            showToast("SALAAM")
+            // نمایش سرور ها در اینجا
+            fixResume = true
+            onReloadClick()
+        }
     }
 
     override fun onStop() {
