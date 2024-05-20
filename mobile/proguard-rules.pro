@@ -57,3 +57,36 @@
 
 #Lifecycle
 -keep class androidx.lifecycle.** {*;}
+
+# OpenVpn
+-keep class de.blinkt.openvpn.** { *; }
+
+# V2ray
+-keep class go.** { *; }
+-keep class libv2ray.** { *; }
+-keep class dev.dev7.lib.v2ray.** { *; }
+
+# Cisco
+-keep class sp.openconnect.** { *; }
+
+# Others
+-keep class sp.spongycastle.util.** { *; }
+-dontwarn android.app.ActivityThread
+-dontwarn android.app.LoadedApk
+-dontwarn android.content.pm.PackageParser$PackageLite
+-dontwarn android.content.pm.PackageParser
+-dontwarn android.content.res.CompatibilityInfo
+-dontwarn com.android.internal.os.RuntimeInit
+-dontwarn com.android.internal.os.ZygoteInit
+-dontwarn com.android.internal.util.XmlUtils
+-dontwarn dalvik.annotation.optimization.FastNative
+-dontwarn external.org.apache.commons.lang3.ClassUtils
+-dontwarn external.org.apache.commons.lang3.reflect.MemberUtils
+
+# optimize
+-keep class * {
+    public private *;
+}
+-dontwarn android.support.**
+-dontwarn com.google.**
+-optimizationpasses 5
