@@ -13,6 +13,7 @@ object FlagIconResource {
     val flagIcons: Map<String, Int>
         get() {
             val flagIcon: MutableMap<String, Int> = HashMap()
+            flagIcon["IR"] = R.drawable.iran
             flagIcon["CA"] = R.drawable.ca
             flagIcon["US"] = R.drawable.us
             flagIcon["FR"] = R.drawable.fr
