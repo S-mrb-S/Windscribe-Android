@@ -879,7 +879,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun onPageScrollStateChanged(i: Int) {}
-    override fun onPageScrolled(i: Int, v: Float, i1: Int) {}
+    override fun onPageScrolled(position: Int, positionOffset: Float, i1: Int) {
+        if (position >= 1 && positionOffset > 0) {
+            locationFragmentViewPager?.setCurrentItem(1, true)
+        }
+    }
     override fun onPageSelected(i: Int) {
         when (i) {
             0 -> {
@@ -2136,7 +2140,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         val pagerAdapter = ServerListFragmentPager(
             supportFragmentManager, serverListFragments
         )
-        locationFragmentViewPager?.offscreenPageLimit = 4
+        locationFragmentViewPager?.offscreenPageLimit = 1
         locationFragmentViewPager?.adapter = pagerAdapter
         locationFragmentViewPager?.addOnPageChangeListener(this)
         serverListFragments.let {
