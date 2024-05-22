@@ -15,7 +15,7 @@ suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Uni
                 return@coroutineScope
             }
             if (StaticData.data == null) {
-                StaticData.data = data // cache for next time
+                StaticData.data = data // save data for handle protocols
             }
 
             Data.dataString = ListCreator(data).createAndGet() // create and save
