@@ -189,21 +189,21 @@ class ListCreator(var data: GetServersQuery.Data) {
 
                 // Group servers by flag
                 val groupedServers = data.servers
-                        ?.filter { it?.serverType == "V2Ray" } // Filter servers with serverType V2
+                        ?.filter { it?.serverType == "V2Ray" } // Filter servers with serverType
                         ?.groupBy { it?.flag }
 
-                val gV2ray = mutableListOf<Server>()
+                val gHead = mutableListOf<Server>()
 
                 // Iterate over grouped servers
                 groupedServers?.forEach { (_, servers) -> // Group servers by flag
                     try {
                         // Create a list to hold grouped servers
-                        val chilV2ray = mutableListOf<Group>()
+                        val childServer = mutableListOf<Group>()
                         val currentData = servers.filterNotNull()
                         val currentFlag = servers.firstOrNull()?.flag.toString()
 
                         for (server in currentData) {
-                            chilV2ray.add(
+                            childServer.add(
                                     Group(
                                             numChild,
                                             server.name.toString(),
@@ -241,7 +241,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                             ++numChild
                         }
 
-                        gV2ray.add(
+                        gHead.add(
                                 Server(
                                         numGroup,
                                         currentFlag,
@@ -254,7 +254,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                                         "-5,EST",
                                         "normal",
                                         "ca.windscribe.com",
-                                        chilV2ray.toImmutableList()
+                                        childServer.toImmutableList()
                                 )
                         )
                     } finally {
@@ -263,7 +263,179 @@ class ListCreator(var data: GetServersQuery.Data) {
                 }
 
                 // return
-                gV2ray.toImmutableList()
+                gHead.toImmutableList()
+            }
+
+            1 -> { // openvpn
+                var numChild = 1
+                var numGroup = 1
+
+                // Group servers by flag
+                val groupedServers = data.servers
+                        ?.filter { it?.serverType == "OpenVPN" } // Filter servers with serverType
+                        ?.groupBy { it?.flag }
+
+                val gHead = mutableListOf<Server>()
+
+                // Iterate over grouped servers
+                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                    try {
+                        // Create a list to hold grouped servers
+                        val childServer = mutableListOf<Group>()
+                        val currentData = servers.filterNotNull()
+                        val currentFlag = servers.firstOrNull()?.flag.toString()
+
+                        for (server in currentData) {
+                                val configContent = fetchOvpnConfig(server.url.toString())
+
+                                configContent?.let {
+                                    childServer.add(
+                                            Group(
+                                                    numChild,
+                                                    server.name.toString(),
+                                                    "vpn",
+                                                    0,
+                                                    "44.46,-63.61",
+                                                    "America/Halifax",
+                                                    "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+                                                    "yhz-386-wg.whiskergalaxy.com",
+                                                    it, // openvpn content
+                                                    "23.191.80.2",
+                                                    "https://ca-021.whiskergalaxy.com:6363/latency",
+                                                    "1000",
+                                                    listOf(
+                                                            Node(
+                                                                    "172.98.68.238",
+                                                                    "172.98.68.239",
+                                                                    "172.98.68.240",
+                                                                    "ca-055.whiskergalaxy.com",
+                                                                    1,
+                                                                    2
+                                                            ),
+                                                            Node(
+                                                                    "172.98.68.227",
+                                                                    "172.98.68.228",
+                                                                    "172.98.68.229",
+                                                                    "ca-054.whiskergalaxy.com",
+                                                                    1,
+                                                                    2
+                                                            )
+                                                    ),
+                                                    0
+                                            )
+                                    )
+                                } ?: run {
+                                    // no content
+                                }
+                            ++numChild
+                        }
+
+                        gHead.add(
+                                Server(
+                                        numGroup,
+                                        currentFlag,
+                                        currentFlag,
+                                        1,
+                                        0,
+                                        currentFlag,
+                                        1,
+                                        "America/Toronto",
+                                        "-5,EST",
+                                        "normal",
+                                        "ca.windscribe.com",
+                                        childServer.toImmutableList()
+                                )
+                        )
+                    } finally {
+                        ++numGroup
+                    }
+                }
+
+                // return
+                gHead.toImmutableList()
+            }
+
+            3 -> { // cisco
+                var numChild = 1
+                var numGroup = 1
+
+                // Group servers by flag
+                val groupedServers = data.servers
+                        ?.filter { it?.serverType == "Cisco" } // Filter servers with serverType
+                        ?.groupBy { it?.flag }
+
+                val gHead = mutableListOf<Server>()
+
+                // Iterate over grouped servers
+                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                    try {
+                        // Create a list to hold grouped servers
+                        val childServer = mutableListOf<Group>()
+                        val currentData = servers.filterNotNull()
+                        val currentFlag = servers.firstOrNull()?.flag.toString()
+
+                        for (server in currentData) {
+                            childServer.add(
+                                    Group(
+                                            numChild,
+                                            server.name.toString(),
+                                            "vpn",
+                                            0,
+                                            "44.46,-63.61",
+                                            "America/Halifax",
+                                            "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+                                            "yhz-386-wg.whiskergalaxy.com",
+                                            server.url.toString(),
+                                            "23.191.80.2",
+                                            "https://ca-021.whiskergalaxy.com:6363/latency",
+                                            "1000",
+                                            listOf(
+                                                    Node(
+                                                            "172.98.68.238",
+                                                            "172.98.68.239",
+                                                            "172.98.68.240",
+                                                            "ca-055.whiskergalaxy.com",
+                                                            1,
+                                                            2
+                                                    ),
+                                                    Node(
+                                                            "172.98.68.227",
+                                                            "172.98.68.228",
+                                                            "172.98.68.229",
+                                                            "ca-054.whiskergalaxy.com",
+                                                            1,
+                                                            2
+                                                    )
+                                            ),
+                                            0
+                                    )
+                            )
+                            ++numChild
+                        }
+
+                        gHead.add(
+                                Server(
+                                        numGroup,
+                                        currentFlag,
+                                        currentFlag,
+                                        1,
+                                        0,
+                                        currentFlag,
+                                        1,
+                                        "America/Toronto",
+                                        "-5,EST",
+                                        "normal",
+                                        "ca.windscribe.com",
+                                        childServer.toImmutableList()
+                                )
+                        )
+                    } finally {
+                        ++numGroup
+                    }
+                }
+
+                // return
+                gHead.toImmutableList()
             }
 
             else -> {
