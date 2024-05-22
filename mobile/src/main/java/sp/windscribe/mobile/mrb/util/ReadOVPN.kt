@@ -3,23 +3,31 @@ package sp.windscribe.mobile.mrb.util
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+
+val client by lazy {
+    OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .build()
+}
 
 fun fetchOvpnConfig(url: String): String? {
-    val client = OkHttpClient()
-
     val request = Request.Builder()
             .url(url)
             .build()
 
     return try {
-        val response = client.newCall(request).execute()
-        if (response.isSuccessful) {
-            response.body?.string()
-        } else {
-            null
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                response.body?.string() ?: ""
+            } else {
+                ""
+            }
         }
     } catch (e: IOException) {
         e.printStackTrace()
-        null
+        ""
     }
 }
