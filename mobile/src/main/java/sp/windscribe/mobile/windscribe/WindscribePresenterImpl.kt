@@ -1723,7 +1723,7 @@ class WindscribePresenterImpl @Inject constructor(
     }
 
 
-    private fun stopAll() {
+    override fun stopAll() {
         try {
             if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
                 V2rayController.stopV2ray(windscribeView.winContext)

@@ -2250,12 +2250,21 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                         if (StaticData.data != null) {
                             GlobalScope.launch {
                                 try {
+                                    this@WindscribeActivity.exitSearchLayout()
+                                    presenter.stopAll() // stop all vpn
+
                                     saveDataAndFinish(StaticData.data, {}, {}) // set new protocol
                                 } finally {
                                     activityScope { presenter.observeAllLocations() } // read new data
+                                    delay(200)
                                     activityScope { this@WindscribeActivity.onReloadClick() } // set new data
                                     delay(200)
                                     onRefreshPingsForAllServers() // refresh list
+                                    delay(100)
+                                    presenter.onHotStart() // reload current selected city
+//                                    this@WindscribeActivity.runOnUiThread {
+//                                        this@WindscribeActivity.recreate()
+//                                    }
                                 }
                             }
 
