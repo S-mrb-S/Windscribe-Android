@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.vpn.qq.Data
 
+// service
 class GetLoginWithKeyQuery {
 
     interface GetLoginCallback {

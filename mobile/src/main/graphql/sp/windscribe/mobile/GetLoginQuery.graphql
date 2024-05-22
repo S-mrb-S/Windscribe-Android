@@ -3,6 +3,13 @@ query GetLoginQuery($key: String!) {
       username
       password
       dailyQuota
+      type {
+        timeLimited
+        quotaLimited
+        dailyQuotaLimited
+        displayName
+        connectionLimited
+      }
       isActive
       isTrial
       uuid
