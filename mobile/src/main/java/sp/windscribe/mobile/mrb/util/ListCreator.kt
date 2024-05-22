@@ -6,7 +6,8 @@ import okhttp3.internal.toImmutableList
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.vpn.qq.Data
 
-
+// fake data
+// by MRB
 data class Server(
         val id: Int,
         val name: String,
@@ -64,23 +65,7 @@ class ListCreator(var data: GetServersQuery.Data) {
     suspend fun createAndGet(): String = coroutineScope {
         try {
             initAllChildrens()
-            val res: List<Server> = when (Data.defaultItemDialog) {
-                0 -> { // v2ray
-                    listOf(createV2ray())
-                }
-
-                1 -> { // openvpn
-                    listOf(createOpenVpn())
-                }
-
-                2 -> { // cisco
-                    listOf(createCisco())
-                }
-
-                else -> {
-                    listOf()
-                }
-            }
+            val res: List<Server> = listOf(createServerGroup())
 
             val gson = Gson()
             return@coroutineScope gson.toJson(res)
@@ -245,57 +230,58 @@ class ListCreator(var data: GetServersQuery.Data) {
         }
     }
 
-    // v2ray
-    private fun createV2ray(): Server {
-        return Server(
-                1,
-                "V2ray",
-                v2rayFlag.toString(),
-                1,
-                0,
-                v2rayFlag.toString(),
-                1,
-                "America/Toronto",
-                "-5,EST",
-                "normal",
-                "ca.windscribe.com",
-                v2rayChildrens
-        )
-    }
+    private fun createServerGroup(): Server {
+        return when (Data.defaultItemDialog) {
+            0 -> { // v2ray
+                Server(
+                        1,
+                        "V2ray",
+                        v2rayFlag.toString(),
+                        1,
+                        0,
+                        v2rayFlag.toString(),
+                        1,
+                        "America/Toronto",
+                        "-5,EST",
+                        "normal",
+                        "ca.windscribe.com",
+                        v2rayChildrens
+                )
+            }
 
-    // openvpn
-    private fun createOpenVpn(): Server {
-        return Server(
-                2,
-                "OpenVpn",
-                openVpnFlag.toString(),
-                1,
-                0,
-                openVpnFlag.toString(),
-                1,
-                "America/Toronto",
-                "-5,EST",
-                "normal",
-                "ca.windscribe.com",
-                openVpnChildrens
-        )
-    }
+            1 -> { // openvpn
+                Server(
+                        2,
+                        "OpenVpn",
+                        openVpnFlag.toString(),
+                        1,
+                        0,
+                        openVpnFlag.toString(),
+                        1,
+                        "America/Toronto",
+                        "-5,EST",
+                        "normal",
+                        "ca.windscribe.com",
+                        openVpnChildrens
+                )
+            }
 
-    // cisco
-    private fun createCisco(): Server {
-        return Server(
-                3,
-                "Cisco",
-                ciscoFlag.toString(),
-                1,
-                0,
-                ciscoFlag.toString(),
-                1,
-                "America/Toronto",
-                "-5,EST",
-                "normal",
-                "ca.windscribe.com",
-                ciscoChildrens
-        )
+            else -> { // cisco (2)
+                Server(
+                        3,
+                        "Cisco",
+                        ciscoFlag.toString(),
+                        1,
+                        0,
+                        ciscoFlag.toString(),
+                        1,
+                        "America/Toronto",
+                        "-5,EST",
+                        "normal",
+                        "ca.windscribe.com",
+                        ciscoChildrens
+                )
+            }
+        }
     }
 }
