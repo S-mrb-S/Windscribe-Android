@@ -234,7 +234,7 @@ class ListCreator(var data: GetServersQuery.Data) {
         return when (Data.defaultItemDialog) {
             0 -> { // v2ray
                 Server(
-                        1,
+                        Data.defaultItemDialog + 1,
                         "V2ray",
                         v2rayFlag.toString(),
                         1,
@@ -251,7 +251,7 @@ class ListCreator(var data: GetServersQuery.Data) {
 
             1 -> { // openvpn
                 Server(
-                        2,
+                        Data.defaultItemDialog + 1,
                         "OpenVpn",
                         openVpnFlag.toString(),
                         1,
@@ -268,7 +268,7 @@ class ListCreator(var data: GetServersQuery.Data) {
 
             else -> { // cisco (2)
                 Server(
-                        3,
+                        Data.defaultItemDialog + 1,
                         "Cisco",
                         ciscoFlag.toString(),
                         1,
