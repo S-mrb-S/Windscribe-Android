@@ -86,6 +86,7 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import sp.windscribe.vpn.model.User
+import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.qq.MmkvManager
 import sp.windscribe.vpn.repository.LatencyRepository
 import sp.windscribe.vpn.serverlist.entity.City
@@ -1693,7 +1694,7 @@ class WindscribePresenterImpl @Inject constructor(
             val intent = VpnService.prepare(windscribeView.winContext)
             if (intent != null) {
                 MmkvManager.getSettingsStorage().putString("ovpn", ovpnX509)
-                windscribeView.winActivity?.startActivityForResult(intent, 1)
+                windscribeView.winActivity?.startActivityForResult(intent, OpenConnectManagementThread.STATE_CONNECTED)
             } else startOpenVPN(ovpnX509) //have already permission Sp
         } catch (e: Exception) {
             catchVpn()
@@ -1709,11 +1710,11 @@ class WindscribePresenterImpl @Inject constructor(
         try {
             Log.d("OO P", "SS 2")
             OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
-                    MmkvManager.getLoginStorage().getString(
+                    Data.serviceStorage.getString(
                             "username_ovpn",
                             ""
                     ),
-                    MmkvManager.getLoginStorage().getString(
+                    Data.serviceStorage.getString(
                             "password_ovpn",
                             ""
                     ))

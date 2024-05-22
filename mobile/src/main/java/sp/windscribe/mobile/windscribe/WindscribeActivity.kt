@@ -103,7 +103,7 @@ import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
 import sp.windscribe.mobile.mrb.util.StaticData
-import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.mobile.mrb.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -669,44 +669,36 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            33 -> {
-//                if (resultCode == Activity.RESULT_OK) {
-//                    // اطلاعاتی که از اکتیویتی دوم دریافت می‌کنید
-//                    val result = data?.getBooleanExtra("restart", false)
-//                    if (result == true) {
-//                        restartOpenVpnServer()
-//                    }
-//                    // انجام کار خاص با استفاده از callback
-//                }
-            }
-
-            else -> {
-                if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                OpenConnectManagementThread.STATE_CONNECTED -> {
                     //Permission granted, start the VPN
                     try {
                         OpenVpnApi.startVpn(this.applicationContext,
                                 MmkvManager.getSettingsStorage().getString("ovpn", ""), "Japan",
-                                MmkvManager.getLoginStorage().getString(
+                                Data.serviceStorage.getString(
                                         "username_ovpn",
                                         ""
                                 ),
-                                MmkvManager.getLoginStorage().getString(
+                                Data.serviceStorage.getString(
                                         "password_ovpn",
                                         ""
                                 ))
                     } catch (e: Exception) {
-                        Log.d("OOO 4", "C: " + e.toString())
+                        showToast("[5] Failed")
                     }
-                } else {
-                    showToast("دسترسی رد شد !! ")
+                }
+
+                FILE_PICK_REQUEST -> { // no effect
+                    if (data != null) {
+                        presenter.loadConfigFile(data)
+                    }
                 }
             }
+        } else {
+            showToast("دسترسی رد شد !! ")
         }
 
-        if (requestCode == FILE_PICK_REQUEST && resultCode == RESULT_OK && data != null) {
-            presenter.loadConfigFile(data)
-        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -2260,7 +2252,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                                     activityScope { this@WindscribeActivity.onReloadClick() } // set new data
                                     delay(200)
                                     onRefreshPingsForAllServers() // refresh list
-                                    delay(100)
+                                    delay(200)
                                     presenter.onHotStart() // reload current selected city
 //                                    this@WindscribeActivity.runOnUiThread {
 //                                        this@WindscribeActivity.recreate()
