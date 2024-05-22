@@ -34,7 +34,7 @@ import sp.windscribe.vpn.constants.FeatureExplainer
 import javax.inject.Inject
 
 class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
-    ExtraDataUseWarningDialogCallBack {
+        ExtraDataUseWarningDialogCallBack {
 
     private val logger = LoggerFactory.getLogger(TAG)
 
@@ -237,14 +237,14 @@ class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
         splitTunnelArrow.tag = R.drawable.ic_forward_arrow_settings
         networkOptionsArrow.tag = R.drawable.ic_forward_arrow_settings
         UiUtil.setupOnTouchListener(
-            textViewContainer = splitTunnelLabel,
-            iconView = splitTunnelArrow,
-            textView = splitTunnelLabel
+                textViewContainer = splitTunnelLabel,
+                iconView = splitTunnelArrow,
+                textView = splitTunnelLabel
         )
         UiUtil.setupOnTouchListener(
-            textViewContainer = networkOptionsLabel,
-            iconView = networkOptionsArrow,
-            textView = networkOptionsLabel
+                textViewContainer = networkOptionsLabel,
+                iconView = networkOptionsArrow,
+                textView = networkOptionsLabel
         )
         clAntiCensorshipToggleView.delegate = object : ToggleView.Delegate {
             override fun onToggleClick() {
@@ -299,7 +299,7 @@ class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
 
     override fun packetSizeDetectionProgress(progress: Boolean) {
         (packetSizeModeDropDownView.childView as PacketSizeView).packetSizeDetectionProgress(
-            progress
+                progress
         )
     }
 
@@ -370,7 +370,7 @@ class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
 
     override fun setKeepAliveContainerVisibility(isAutoKeepAlive: Boolean) {
         keepAliveExpandableView.visibility =
-            if (isAutoKeepAlive) View.VISIBLE else View.GONE
+                if (isAutoKeepAlive) View.VISIBLE else View.GONE
     }
 
     override fun setupConnectionModeAdapter(savedValue: String, connectionModes: Array<String>) {
@@ -379,8 +379,8 @@ class ConnectionSettingsActivity : BaseActivity(), ConnectionSettingsView,
 
     override fun setupFakeTrafficVolumeAdapter(selectedValue: String, values: Array<String>) {
         (decoyTrafficToggleView.childView as DecoyTrafficView).setAdapter(
-            selectedValue,
-            values
+                selectedValue,
+                values
         )
     }
 

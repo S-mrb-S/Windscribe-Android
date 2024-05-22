@@ -11,8 +11,8 @@ import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import javax.inject.Inject
 
 class NewsFeedPresenterImpl @Inject constructor(
-    private val newsFeedView: NewsFeedView,
-    private val interactor: ActivityInteractor
+        private val newsFeedView: NewsFeedView,
+        private val interactor: ActivityInteractor
 ) : NewsFeedPresenter, NewsFeedListener {
     private var adapter: NewsFeedAdapter? = null
     private val logger = LoggerFactory.getLogger("news_feed_p")
@@ -28,28 +28,28 @@ class NewsFeedPresenterImpl @Inject constructor(
         newsFeedView.showProgress("Loading")
         interactor.getAppPreferenceInterface().setShowNewsFeedAlert(false)
         interactor.getCompositeDisposable().add(
-            interactor.getNotifications()
-                .onErrorResumeNext(
-                    interactor.getNotificationUpdater().update()
-                        .andThen(interactor.getNotifications())
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ notifications: List<WindNotification> ->
-                    onNotificationResponse(
-                        showPopUp,
-                        popUpId,
-                        notifications
-                    )
-                }) { throwable: Throwable -> onNotificationResponseError(throwable) })
+                interactor.getNotifications()
+                        .onErrorResumeNext(
+                                interactor.getNotificationUpdater().update()
+                                        .andThen(interactor.getNotifications())
+                        )
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ notifications: List<WindNotification> ->
+                            onNotificationResponse(
+                                    showPopUp,
+                                    popUpId,
+                                    notifications
+                            )
+                        }) { throwable: Throwable -> onNotificationResponseError(throwable) })
     }
 
     override fun onNotificationActionClick(windNotification: WindNotification) {
         val newsfeedAction = windNotification.action
         if (newsfeedAction != null) {
             val pushNotificationAction = PushNotificationAction(
-                newsfeedAction.pcpID,
-                newsfeedAction.promoCode, newsfeedAction.type
+                    newsfeedAction.pcpID,
+                    newsfeedAction.promoCode, newsfeedAction.type
             )
             if (pushNotificationAction.type == "promo") {
                 newsFeedView.startUpgradeActivity(pushNotificationAction)
@@ -59,19 +59,19 @@ class NewsFeedPresenterImpl @Inject constructor(
 
     override fun onNotificationExpand(windNotification: WindNotification) {
         interactor.getAppPreferenceInterface()
-            .saveNotificationId(windNotification.notificationId.toString())
+                .saveNotificationId(windNotification.notificationId.toString())
     }
 
     private fun onNotificationResponse(
-        showPopUp: Boolean,
-        popUpId: Int,
-        mNotificationList: List<WindNotification>
+            showPopUp: Boolean,
+            popUpId: Int,
+            mNotificationList: List<WindNotification>
     ) {
         logger.info("Loaded notification data successfully...")
         var firstItemToOpen = -1
         for (wn in mNotificationList) {
             val read = interactor.getAppPreferenceInterface()
-                .isNotificationAlreadyShown(wn.notificationId.toString())
+                    .isNotificationAlreadyShown(wn.notificationId.toString())
             if (!read && firstItemToOpen == -1) {
                 firstItemToOpen = wn.notificationId
             }
@@ -86,8 +86,8 @@ class NewsFeedPresenterImpl @Inject constructor(
             logger.debug("No pop up or unread message to show")
         }
         adapter = NewsFeedAdapter(
-            mNotificationList, firstItemToOpen,
-            this@NewsFeedPresenterImpl
+                mNotificationList, firstItemToOpen,
+                this@NewsFeedPresenterImpl
         )
         newsFeedView.setNewsFeedAdapter(adapter!!)
         newsFeedView.hideProgress()
@@ -95,8 +95,8 @@ class NewsFeedPresenterImpl @Inject constructor(
 
     private fun onNotificationResponseError(throwable: Throwable) {
         logger.debug(
-            "Error getting notification data. Error: " +
-                    instance.convertThrowableToString(throwable)
+                "Error getting notification data. Error: " +
+                        instance.convertThrowableToString(throwable)
         )
         newsFeedView.showLoadingError("Error loading news feed data...")
         newsFeedView.hideProgress()
