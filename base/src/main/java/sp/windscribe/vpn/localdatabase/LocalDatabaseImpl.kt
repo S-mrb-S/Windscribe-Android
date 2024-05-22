@@ -32,21 +32,21 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalDatabaseImpl @Inject constructor(
-    private val pingTestDao: PingTestDao,
-    private val userStatusDao: UserStatusDao,
-    private val popupNotificationDao: PopupNotificationDao,
-    private val regionDao: RegionDao,
-    private val cityDao: CityDao,
-    private val cityAndRegionDao: CityAndRegionDao,
-    private val configFileDao: ConfigFileDao,
-    private val staticRegionsDao: StaticRegionDao,
-    private val pingTimeDao: PingTimeDao,
-    private val favouriteDao: FavouriteDao,
-    private val regionAndCitiesDao: RegionAndCitiesDao,
-    private val networkInfoDao: NetworkInfoDao,
-    private val serverStatusDao: ServerStatusDao,
-    private val preferenceChangeObserver: PreferenceChangeObserver,
-    private val windNotificationDao: WindNotificationDao
+        private val pingTestDao: PingTestDao,
+        private val userStatusDao: UserStatusDao,
+        private val popupNotificationDao: PopupNotificationDao,
+        private val regionDao: RegionDao,
+        private val cityDao: CityDao,
+        private val cityAndRegionDao: CityAndRegionDao,
+        private val configFileDao: ConfigFileDao,
+        private val staticRegionsDao: StaticRegionDao,
+        private val pingTimeDao: PingTimeDao,
+        private val favouriteDao: FavouriteDao,
+        private val regionAndCitiesDao: RegionAndCitiesDao,
+        private val networkInfoDao: NetworkInfoDao,
+        private val serverStatusDao: ServerStatusDao,
+        private val preferenceChangeObserver: PreferenceChangeObserver,
+        private val windNotificationDao: WindNotificationDao
 ) : LocalDbInterface {
     override fun addConfig(configFile: ConfigFile): Completable {
         return configFileDao.addConfig(configFile)
@@ -229,11 +229,11 @@ class LocalDatabaseImpl @Inject constructor(
 
     override fun updateUserStatus(userStatusTable: UserStatusTable?): Completable {
         return userStatusDao.delete()
-            .andThen(Completable.fromAction {
-                userStatusDao.insertOrUpdateUserStatus(
-                    userStatusTable
-                )
-            })
+                .andThen(Completable.fromAction {
+                    userStatusDao.insertOrUpdateUserStatus(
+                            userStatusTable
+                    )
+                })
     }
 
     override fun getCityAndRegion(cityId: Int): CityAndRegion {

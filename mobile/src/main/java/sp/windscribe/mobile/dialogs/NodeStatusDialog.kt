@@ -22,7 +22,7 @@ class NodeStatusDialog : FullScreenDialog() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = NodeStatusLayoutBinding.inflate(inflater, container, false)
         return binding?.root

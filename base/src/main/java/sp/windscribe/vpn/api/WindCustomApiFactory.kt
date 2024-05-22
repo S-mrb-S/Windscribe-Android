@@ -13,11 +13,15 @@ import java.security.KeyStore
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import javax.inject.Inject
-import javax.net.ssl.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 class WindCustomApiFactory @Inject constructor(
-    private val retrofitBuilder: Retrofit.Builder,
-    private val okHttpClient: OkHttpClient.Builder,
+        private val retrofitBuilder: Retrofit.Builder,
+        private val okHttpClient: OkHttpClient.Builder,
 ) {
     private var retrofit: Retrofit? = null
     private var logger = LoggerFactory.getLogger("static_api")
@@ -29,7 +33,7 @@ class WindCustomApiFactory @Inject constructor(
      */
     fun createCustomCertApi(url: String): ApiService {
         return retrofit?.newBuilder()?.baseUrl(url)
-            ?.build()?.create(ApiService::class.java)!!
+                ?.build()?.create(ApiService::class.java)!!
     }
 
     /**
@@ -40,10 +44,10 @@ class WindCustomApiFactory @Inject constructor(
     init {
         getUnsafeOkHttpClient()?.let {
             retrofit = retrofitBuilder.baseUrl(API_ENDPOINT)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(it.build())
-                .build()
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(it.build())
+                    .build()
         }
     }
 

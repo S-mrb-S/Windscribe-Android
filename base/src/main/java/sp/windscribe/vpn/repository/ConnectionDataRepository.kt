@@ -17,8 +17,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ConnectionDataRepository @Inject constructor(
-    private val preferencesHelper: PreferencesHelper,
-    private val apiCallManager: IApiCallManager
+        private val preferencesHelper: PreferencesHelper,
+        private val apiCallManager: IApiCallManager
 ) {
     private val logger = LoggerFactory.getLogger("connection_data_updater")
 
@@ -38,49 +38,49 @@ class ConnectionDataRepository @Inject constructor(
                 apiCallManager.getServerCredentials()
             }
         }
-            .onErrorResumeNext(apiCallManager.getServerCredentials())
-            .flatMap { response ->
-                response.dataClass?.let {
-                    preferencesHelper.saveCredentials(
-                        PreferencesKeyConstants.OPEN_VPN_CREDENTIALS,
-                        it
-                    )
-                }
-                if (errorRequestingCredentials(response.errorClass)) {
-                    return@flatMap rxSingle { appContext.vpnController.disconnectAsync() }
-                        .flatMap { apiCallManager.getServerCredentialsForIKev2() }
-                } else {
+                .onErrorResumeNext(apiCallManager.getServerCredentials())
+                .flatMap { response ->
+                    response.dataClass?.let {
+                        preferencesHelper.saveCredentials(
+                                PreferencesKeyConstants.OPEN_VPN_CREDENTIALS,
+                                it
+                        )
+                    }
+                    if (errorRequestingCredentials(response.errorClass)) {
+                        return@flatMap rxSingle { appContext.vpnController.disconnectAsync() }
+                                .flatMap { apiCallManager.getServerCredentialsForIKev2() }
+                    } else {
+                        apiCallManager.getServerCredentialsForIKev2()
+                    }
                     apiCallManager.getServerCredentialsForIKev2()
-                }
-                apiCallManager.getServerCredentialsForIKev2()
-            }.onErrorResumeNext(apiCallManager.getServerCredentialsForIKev2())
-            .flatMap { response ->
-                response.dataClass?.let {
-                    preferencesHelper.saveCredentials(PreferencesKeyConstants.IKEV2_CREDENTIALS, it)
-                }
-                if (errorRequestingCredentials(response.errorClass)) {
-                    return@flatMap rxSingle { appContext.vpnController.disconnectAsync() }
-                        .flatMap { apiCallManager.getPortMap() }
-                } else {
+                }.onErrorResumeNext(apiCallManager.getServerCredentialsForIKev2())
+                .flatMap { response ->
+                    response.dataClass?.let {
+                        preferencesHelper.saveCredentials(PreferencesKeyConstants.IKEV2_CREDENTIALS, it)
+                    }
+                    if (errorRequestingCredentials(response.errorClass)) {
+                        return@flatMap rxSingle { appContext.vpnController.disconnectAsync() }
+                                .flatMap { apiCallManager.getPortMap() }
+                    } else {
+                        apiCallManager.getPortMap()
+                    }
                     apiCallManager.getPortMap()
                 }
-                apiCallManager.getPortMap()
-            }
-            .onErrorResumeNext(apiCallManager.getPortMap())
-            .flatMapCompletable {
-                Completable.fromAction {
-                    it.dataClass?.let {
-                        preferencesHelper.saveResponseStringData(
-                            PreferencesKeyConstants.PORT_MAP,
-                            Gson().toJson(it)
-                        )
-                        preferencesHelper.savePortMapVersion(NetworkKeyConstants.PORT_MAP_VERSION)
-                    } ?: it.errorClass?.let {
-                        logger.error(it.errorMessage)
+                .onErrorResumeNext(apiCallManager.getPortMap())
+                .flatMapCompletable {
+                    Completable.fromAction {
+                        it.dataClass?.let {
+                            preferencesHelper.saveResponseStringData(
+                                    PreferencesKeyConstants.PORT_MAP,
+                                    Gson().toJson(it)
+                            )
+                            preferencesHelper.savePortMapVersion(NetworkKeyConstants.PORT_MAP_VERSION)
+                        } ?: it.errorClass?.let {
+                            logger.error(it.errorMessage)
+                        }
                     }
-                }
-            }.doOnError { throwable: Throwable -> logger.debug(throwable.message) }
-            .onErrorComplete()
+                }.doOnError { throwable: Throwable -> logger.debug(throwable.message) }
+                .onErrorComplete()
     }
 
     private fun errorRequestingCredentials(genericErrorResponse: ApiErrorResponse?): Boolean {

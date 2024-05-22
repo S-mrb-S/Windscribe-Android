@@ -103,8 +103,8 @@ class AboutActivity : BaseActivity(), AboutView {
         if (aboutPresenter.isHapticFeedbackEnabled) {
             view.isHapticFeedbackEnabled = true
             view.performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                    HapticFeedbackConstants.VIRTUAL_KEY,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
         }
     }

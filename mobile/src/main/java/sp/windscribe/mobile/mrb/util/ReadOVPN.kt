@@ -8,8 +8,8 @@ fun fetchOvpnConfig(url: String): String? {
     val client = OkHttpClient()
 
     val request = Request.Builder()
-        .url(url)
-        .build()
+            .url(url)
+            .build()
 
     return try {
         val response = client.newCall(request).execute()

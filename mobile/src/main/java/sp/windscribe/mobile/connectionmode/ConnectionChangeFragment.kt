@@ -26,9 +26,9 @@ class ConnectionChangeFragment : DialogFragment(), ItemSelectListener {
 
     var adapter: ProtocolInformationAdapter? = null
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.connection_change, container, false)
         ButterKnife.bind(this, view)
@@ -63,8 +63,8 @@ class ConnectionChangeFragment : DialogFragment(), ItemSelectListener {
 
     companion object {
         fun newInstance(
-            protocolInformation: List<ProtocolInformation>,
-            autoConnectionModeCallback: AutoConnectionModeCallback
+                protocolInformation: List<ProtocolInformation>,
+                autoConnectionModeCallback: AutoConnectionModeCallback
         ): ConnectionChangeFragment {
             val fragment = ConnectionChangeFragment()
             fragment.protocolInformation = protocolInformation

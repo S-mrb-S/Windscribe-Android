@@ -17,9 +17,9 @@ import sp.windscribe.mobile.R
 
 
 class AppBackgroundView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), AdapterView.OnItemSelectedListener {
 
     interface Delegate {
@@ -38,11 +38,11 @@ class AppBackgroundView @JvmOverloads constructor(
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
         view.findViewById<ImageView>(R.id.first_item_right_icon)
-            .setOnClickListener { delegate?.onFirstRightIconClick() }
+                .setOnClickListener { delegate?.onFirstRightIconClick() }
         view.findViewById<ImageView>(R.id.second_item_right_icon)
-            .setOnClickListener { delegate?.onSecondRightIconClick() }
+                .setOnClickListener { delegate?.onSecondRightIconClick() }
         view.findViewById<ImageView>(R.id.clickable_area)
-            .setOnClickListener { spinner?.performClick() }
+                .setOnClickListener { spinner?.performClick() }
         spinner?.onItemSelectedListener = this
     }
 
@@ -92,18 +92,18 @@ class AppBackgroundView @JvmOverloads constructor(
 
     fun setFirstItemDescription(value: String) {
         if (value.isNotEmpty()) view.findViewById<TextView>(R.id.first_item_description).text =
-            value
+                value
     }
 
     fun setSecondItemDescription(value: String) {
         if (value.isNotEmpty()) view.findViewById<TextView>(R.id.second_item_description).text =
-            value
+                value
     }
 
     fun setAdapter(localiseValues: Array<String>, selectedKey: String, keys: Array<String>) {
         this.keys = keys
         val selectionAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            context, R.layout.drop_down_layout, R.id.tv_drop_down, localiseValues
+                context, R.layout.drop_down_layout, R.id.tv_drop_down, localiseValues
         )
         spinner?.adapter = selectionAdapter
         spinner?.isSelected = false

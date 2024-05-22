@@ -6,9 +6,9 @@ import sp.windscribe.mobile.R
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 
 class DisconnectedState(
-    lastSelectedLocation: LastSelectedLocation,
-    connectionOptions: ConnectionOptions,
-    context: Context
+        lastSelectedLocation: LastSelectedLocation,
+        connectionOptions: ConnectionOptions,
+        context: Context
 ) : ConnectionUiState(lastSelectedLocation, connectionOptions, context) {
 
     override val connectionStatusBackground: Drawable?

@@ -13,7 +13,7 @@ import sp.windscribe.vpn.Windscribe.Companion.appContext
 import javax.inject.Inject
 
 class RobertSyncWorker(context: Context, workerParameters: WorkerParameters) :
-    RxWorker(context, workerParameters) {
+        RxWorker(context, workerParameters) {
 
     @Inject
     lateinit var interactor: ServiceInteractor
@@ -24,20 +24,20 @@ class RobertSyncWorker(context: Context, workerParameters: WorkerParameters) :
 
     override fun createWork(): Single<Result> {
         return interactor.apiManager.syncRobert()
-            .flatMap {
-                when {
-                    it.dataClass != null -> {
-                        return@flatMap Single.just(Result.success())
-                    }
+                .flatMap {
+                    when {
+                        it.dataClass != null -> {
+                            return@flatMap Single.just(Result.success())
+                        }
 
-                    it.errorClass != null -> {
-                        return@flatMap Single.just(Result.failure())
-                    }
+                        it.errorClass != null -> {
+                            return@flatMap Single.just(Result.failure())
+                        }
 
-                    else -> {
-                        return@flatMap Single.just(Result.retry())
+                        else -> {
+                            return@flatMap Single.just(Result.retry())
+                        }
                     }
-                }
-            }.onErrorReturnItem(Result.retry())
+                }.onErrorReturnItem(Result.retry())
     }
 }

@@ -7,7 +7,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.request.transition.TransitionFactory
 
 open class CustomDrawableCrossFadeFactory protected constructor(
-    private val duration: Int, private val isCrossFadeEnabled: Boolean
+        private val duration: Int, private val isCrossFadeEnabled: Boolean
 ) : TransitionFactory<Drawable> {
     /**
      * A Builder for [CustomDrawableCrossFadeFactory].

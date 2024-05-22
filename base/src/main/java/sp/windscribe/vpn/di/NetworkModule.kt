@@ -13,9 +13,9 @@ class NetworkModule {
     @Named("SecondaryApiEndpointMap")
     fun providesSecondaryApiEndpointMap(): Map<HostType, String> {
         return mapOf(
-            Pair(HostType.API, "https://api.totallyacdn.com"),
-            Pair(HostType.ASSET, "https://assets.totallyacdn.com"),
-            Pair(HostType.CHECK_IP, "https://checkip.totallyacdn.com")
+                Pair(HostType.API, "https://api.totallyacdn.com"),
+                Pair(HostType.ASSET, "https://assets.totallyacdn.com"),
+                Pair(HostType.CHECK_IP, "https://checkip.totallyacdn.com")
         )
     }
 
@@ -23,9 +23,9 @@ class NetworkModule {
     @Named("PrimaryApiEndpointMap")
     fun providesPrimaryApiEndpointMap(): Map<HostType, String> {
         return mapOf(
-            Pair(HostType.API, NetworkKeyConstants.API_ENDPOINT),
-            Pair(HostType.ASSET, NetworkKeyConstants.API_ENDPOINT_FOR_SERVER_LIST),
-            Pair(HostType.CHECK_IP, BuildConfig.CHECK_IP_URL)
+                Pair(HostType.API, NetworkKeyConstants.API_ENDPOINT),
+                Pair(HostType.ASSET, NetworkKeyConstants.API_ENDPOINT_FOR_SERVER_LIST),
+                Pair(HostType.CHECK_IP, BuildConfig.CHECK_IP_URL)
         )
     }
 }

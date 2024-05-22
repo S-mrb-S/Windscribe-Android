@@ -27,16 +27,16 @@ class ConnectionModeView(childView: View) : BaseView(childView) {
         portSpinner = childView.findViewById(R.id.spinner_port)
         portCurrent?.setOnClickListener { portSpinner?.performClick() }
         childView.findViewById<ImageView>(R.id.img_port_drop_down_btn)
-            .setOnClickListener { portSpinner?.performClick() }
+                .setOnClickListener { portSpinner?.performClick() }
         protocolCurrent?.setOnClickListener { protocolSpinner?.performClick() }
         childView.findViewById<ImageView>(R.id.img_protocol_drop_down_btn)
-            .setOnClickListener { protocolSpinner?.performClick() }
+                .setOnClickListener { protocolSpinner?.performClick() }
     }
 
     fun seProtocolAdapter(savedSelection: String, selections: Array<String>) {
         val selectionAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            view.context, R.layout.drop_down_layout,
-            R.id.tv_drop_down, selections
+                view.context, R.layout.drop_down_layout,
+                R.id.tv_drop_down, selections
         )
         protocolSpinner?.adapter = selectionAdapter
         protocolSpinner?.isSelected = false
@@ -44,10 +44,10 @@ class ConnectionModeView(childView: View) : BaseView(childView) {
         protocolCurrent?.text = savedSelection
         protocolSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
             ) {
                 view?.findViewById<TextView>(R.id.tv_drop_down)?.text = ""
                 protocolSpinner?.selectedItem.toString().let {
@@ -62,8 +62,8 @@ class ConnectionModeView(childView: View) : BaseView(childView) {
 
     fun sePortAdapter(savedSelection: String, selections: List<String>) {
         val selectionAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            view.context, R.layout.drop_down_layout,
-            R.id.tv_drop_down, selections
+                view.context, R.layout.drop_down_layout,
+                R.id.tv_drop_down, selections
         )
         portSpinner?.adapter = selectionAdapter
         portSpinner?.isSelected = false
@@ -71,10 +71,10 @@ class ConnectionModeView(childView: View) : BaseView(childView) {
         portCurrent?.text = savedSelection
         portSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
             ) {
                 view?.findViewById<TextView>(R.id.tv_drop_down)?.text = ""
                 portSpinner?.selectedItem.toString().let {

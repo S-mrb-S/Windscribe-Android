@@ -7,8 +7,8 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants.getWebsiteLink
 import javax.inject.Inject
 
 class AboutPresenterImpl @Inject constructor(
-    val aboutView: AboutView,
-    val interactor: ActivityInteractor
+        val aboutView: AboutView,
+        val interactor: ActivityInteractor
 ) : AboutPresenter {
     override fun init() {
         aboutView.setTitle(interactor.getResourceString(R.string.about))

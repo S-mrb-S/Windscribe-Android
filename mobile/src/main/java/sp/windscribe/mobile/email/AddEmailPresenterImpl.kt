@@ -17,8 +17,8 @@ import sp.windscribe.vpn.repository.CallResult
 import javax.inject.Inject
 
 class AddEmailPresenterImpl @Inject constructor(
-    private val emailView: AddEmailView,
-    private val interactor: ActivityInteractor
+        private val emailView: AddEmailView,
+        private val interactor: ActivityInteractor
 ) : AddEmailPresenter {
 
     private val logger = LoggerFactory.getLogger("[add_email_p]")
@@ -46,45 +46,45 @@ class AddEmailPresenterImpl @Inject constructor(
             emailMap[NetworkKeyConstants.ADD_EMAIL_KEY] = emailAddress
             emailMap[NetworkKeyConstants.ADD_EMAIL_FORCED_KEY] = 1.toString()
             interactor.getCompositeDisposable().add(
-                interactor.getApiCallManager()
-                    .addUserEmailAddress(emailMap)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(
-                        object :
-                            DisposableSingleObserver<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>>() {
-                            override fun onError(e: Throwable) {
-                                logger
-                                    .debug("Error adding email address..." + e.localizedMessage)
-                                emailView
-                                    .showToast("Sorry! We were unable to add your email address...")
-                                emailView.prepareUiForApiCallFinished()
-                            }
-
-                            override fun onSuccess(
-                                postEmailResponseClass: GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>
-                            ) {
-                                emailView.prepareUiForApiCallFinished()
-                                when (val result =
-                                    postEmailResponseClass.callResult<AddEmailResponse>()) {
-                                    is CallResult.Error -> {
-                                        if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                            emailView.showToast(result.errorMessage)
-                                            logger.debug(
-                                                "Server returned error. " + postEmailResponseClass.errorClass.toString()
-                                            )
-                                            emailView.showInputError(result.errorMessage)
+                    interactor.getApiCallManager()
+                            .addUserEmailAddress(emailMap)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(
+                                    object :
+                                            DisposableSingleObserver<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>>() {
+                                        override fun onError(e: Throwable) {
+                                            logger
+                                                    .debug("Error adding email address..." + e.localizedMessage)
+                                            emailView
+                                                    .showToast("Sorry! We were unable to add your email address...")
+                                            emailView.prepareUiForApiCallFinished()
                                         }
-                                    }
 
-                                    is CallResult.Success -> {
-                                        emailView.showToast(interactor.getResourceString(R.string.added_email_successfully))
-                                        logger.info("Email address added successfully...")
-                                        emailView.gotoWindscribeActivity()
-                                    }
-                                }
-                            }
-                        })
+                                        override fun onSuccess(
+                                                postEmailResponseClass: GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>
+                                        ) {
+                                            emailView.prepareUiForApiCallFinished()
+                                            when (val result =
+                                                    postEmailResponseClass.callResult<AddEmailResponse>()) {
+                                                is CallResult.Error -> {
+                                                    if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                                        emailView.showToast(result.errorMessage)
+                                                        logger.debug(
+                                                                "Server returned error. " + postEmailResponseClass.errorClass.toString()
+                                                        )
+                                                        emailView.showInputError(result.errorMessage)
+                                                    }
+                                                }
+
+                                                is CallResult.Success -> {
+                                                    emailView.showToast(interactor.getResourceString(R.string.added_email_successfully))
+                                                    logger.info("Email address added successfully...")
+                                                    emailView.gotoWindscribeActivity()
+                                                }
+                                            }
+                                        }
+                                    })
             )
         } else {
             emailView.showInputError(interactor.getResourceString(R.string.invalid_email_format))

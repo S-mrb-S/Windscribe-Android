@@ -24,8 +24,8 @@ import sp.windscribe.vpn.repository.CallResult
 import java.util.concurrent.TimeUnit
 
 class RobertSettingsPresenterImpl(
-    private val robertSettingsView: RobertSettingsView,
-    private val interactor: ActivityInteractor
+        private val robertSettingsView: RobertSettingsView,
+        private val interactor: ActivityInteractor
 ) : RobertSettingsPresenter, RobertAdapterListener {
     private val mPresenterLog = LoggerFactory.getLogger("robert_p")
     private var robertSettingsAdapter: RobertSettingsAdapter? = null
@@ -36,10 +36,10 @@ class RobertSettingsPresenterImpl(
     override val savedLocale: String
         get() {
             val selectedLanguage =
-                interactor.getAppPreferenceInterface().savedLanguage
+                    interactor.getAppPreferenceInterface().savedLanguage
             return selectedLanguage.substring(
-                selectedLanguage.indexOf("(") + 1,
-                selectedLanguage.indexOf(")")
+                    selectedLanguage.indexOf("(") + 1,
+                    selectedLanguage.indexOf(")")
             )
         }
 
@@ -53,14 +53,14 @@ class RobertSettingsPresenterImpl(
         mPresenterLog.info("Opening robert rules page in browser...")
         val webSessionMap = createWebSessionMap()
         interactor.getCompositeDisposable()
-            .add(interactor.getApiCallManager().getWebSession(webSessionMap)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ response: GenericResponseClass<WebSession?, ApiErrorResponse?> ->
-                    handleWebSessionResponse(
-                        response
-                    )
-                }) { throwable: Throwable -> handleWebSessionError(throwable) })
+                .add(interactor.getApiCallManager().getWebSession(webSessionMap)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ response: GenericResponseClass<WebSession?, ApiErrorResponse?> ->
+                            handleWebSessionResponse(
+                                    response
+                            )
+                        }) { throwable: Throwable -> handleWebSessionError(throwable) })
     }
 
     override fun onLearnMoreClick() {
@@ -77,9 +77,9 @@ class RobertSettingsPresenterImpl(
     }
 
     override fun settingChanged(
-        originalList: List<RobertFilter>,
-        filter: RobertFilter,
-        position: Int
+            originalList: List<RobertFilter>,
+            filter: RobertFilter,
+            position: Int
     ) {
         robertSettingsAdapter?.settingUpdateInProgress = true
         robertSettingsView.showProgress()
@@ -87,30 +87,30 @@ class RobertSettingsPresenterImpl(
         paramMap["filter"] = filter.id
         paramMap["status"] = filter.status.toString()
         mPresenterLog.debug(
-            String.format(
-                "Changing robert setting list to %S",
-                paramMap.toString()
-            )
+                String.format(
+                        "Changing robert setting list to %S",
+                        paramMap.toString()
+                )
         )
         interactor.getCompositeDisposable()
-            .add(interactor.getApiCallManager().updateRobertSettings(paramMap)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { response: GenericResponseClass<GenericSuccess?, ApiErrorResponse?> ->
-                        handleRobertSettingUpdateResponse(
-                            response,
-                            originalList,
-                            position
-                        )
-                    }
-                ) {
-                    handleRobertSettingsUpdateError(
-                        interactor.getResourceString(R.string.failed_to_update_robert_rules),
-                        originalList,
-                        position
-                    )
-                })
+                .add(interactor.getApiCallManager().updateRobertSettings(paramMap)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { response: GenericResponseClass<GenericSuccess?, ApiErrorResponse?> ->
+                                    handleRobertSettingUpdateResponse(
+                                            response,
+                                            originalList,
+                                            position
+                                    )
+                                }
+                        ) {
+                            handleRobertSettingsUpdateError(
+                                    interactor.getResourceString(R.string.failed_to_update_robert_rules),
+                                    originalList,
+                                    position
+                            )
+                        })
     }
 
     private fun handleRobertLoadSettingResponse(robertFilters: List<RobertFilter>) {
@@ -123,8 +123,8 @@ class RobertSettingsPresenterImpl(
     }
 
     private fun handleRobertSettingUpdateResponse(
-        response: GenericResponseClass<GenericSuccess?, ApiErrorResponse?>,
-        originalList: List<RobertFilter>, position: Int
+            response: GenericResponseClass<GenericSuccess?, ApiErrorResponse?>,
+            originalList: List<RobertFilter>, position: Int
     ) {
         robertSettingsAdapter?.settingUpdateInProgress = false
         when (val result = response.callResult<GenericSuccess>()) {
@@ -133,9 +133,9 @@ class RobertSettingsPresenterImpl(
                     handleRobertSettingsUpdateError(result.errorMessage, originalList, position)
                 } else {
                     handleRobertSettingsUpdateError(
-                        interactor.getResourceString(R.string.failed_to_update_robert_rules),
-                        originalList,
-                        position
+                            interactor.getResourceString(R.string.failed_to_update_robert_rules),
+                            originalList,
+                            position
                     )
                 }
             }
@@ -149,9 +149,9 @@ class RobertSettingsPresenterImpl(
     }
 
     private fun handleRobertSettingsUpdateError(
-        error: String,
-        originalList: List<RobertFilter>,
-        position: Int
+            error: String,
+            originalList: List<RobertFilter>,
+            position: Int
     ) {
         robertSettingsAdapter?.settingUpdateInProgress = false
         robertSettingsView.hideProgress()
@@ -162,10 +162,10 @@ class RobertSettingsPresenterImpl(
 
     private fun handleWebSessionError(throwable: Throwable) {
         mPresenterLog.debug(
-            String.format(
-                "Failed to generate web session: %s",
-                throwable.localizedMessage
-            )
+                String.format(
+                        "Failed to generate web session: %s",
+                        throwable.localizedMessage
+                )
         )
         robertSettingsView.setWebSessionLoading(false)
         robertSettingsView.showErrorDialog("Failed to generate web session. Check your network connection.")
@@ -177,10 +177,10 @@ class RobertSettingsPresenterImpl(
             is CallResult.Error -> {
                 if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
                     mPresenterLog.debug(
-                        String.format(
-                            "Failed to generate web session: %s",
-                            result.errorMessage
-                        )
+                            String.format(
+                                    "Failed to generate web session: %s",
+                                    result.errorMessage
+                            )
                     )
                     robertSettingsView.showErrorDialog(result.errorMessage)
                 } else {
@@ -197,55 +197,55 @@ class RobertSettingsPresenterImpl(
     @Throws(WindScribeException::class)
     private fun loadFromDatabase(throwable: Throwable): Single<List<RobertFilter>> {
         val json = interactor.getAppPreferenceInterface()
-            .getResponseString(PreferencesKeyConstants.ROBERT_FILTERS)
-            ?: throw WindScribeException(throwable.localizedMessage)
+                .getResponseString(PreferencesKeyConstants.ROBERT_FILTERS)
+                ?: throw WindScribeException(throwable.localizedMessage)
         return Single.just(
-            Gson().fromJson(
-                json,
-                object : TypeToken<List<RobertFilter>>() {}.type
-            )
+                Gson().fromJson(
+                        json,
+                        object : TypeToken<List<RobertFilter>>() {}.type
+                )
         )
     }
 
     private fun loadSettings() {
         robertSettingsView.showProgress()
         interactor.getCompositeDisposable().add(
-            interactor.getApiCallManager().getRobertFilters(null)
-                .flatMap { response: GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?> ->
-                    saveToDatabase(
-                        response
-                    )
-                }
-                .onErrorResumeNext { throwable: Throwable -> loadFromDatabase(throwable) }
-                .subscribeOn(Schedulers.io())
-                .delaySubscription(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ robertFilters: List<RobertFilter> ->
-                    handleRobertLoadSettingResponse(
-                        robertFilters
-                    )
-                }
-                ) {
-                    robertSettingsView.hideProgress()
-                    robertSettingsView
-                        .showError("Failed to load to Robert settings. Check your network connection.")
-                })
+                interactor.getApiCallManager().getRobertFilters(null)
+                        .flatMap { response: GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?> ->
+                            saveToDatabase(
+                                    response
+                            )
+                        }
+                        .onErrorResumeNext { throwable: Throwable -> loadFromDatabase(throwable) }
+                        .subscribeOn(Schedulers.io())
+                        .delaySubscription(1, TimeUnit.SECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ robertFilters: List<RobertFilter> ->
+                            handleRobertLoadSettingResponse(
+                                    robertFilters
+                            )
+                        }
+                        ) {
+                            robertSettingsView.hideProgress()
+                            robertSettingsView
+                                    .showError("Failed to load to Robert settings. Check your network connection.")
+                        })
     }
 
     private fun responseToUrl(webSession: WebSession): String {
         val uri = Uri.Builder()
-            .scheme("https")
-            .authority(NetworkKeyConstants.WEB_URL?.replace("https://", ""))
-            .path("myaccount")
-            .fragment("robertrules")
-            .appendQueryParameter("temp_session", webSession.tempSession)
-            .build()
+                .scheme("https")
+                .authority(NetworkKeyConstants.WEB_URL?.replace("https://", ""))
+                .path("myaccount")
+                .fragment("robertrules")
+                .appendQueryParameter("temp_session", webSession.tempSession)
+                .build()
         return uri.toString()
     }
 
     @Throws(WindScribeException::class)
     private fun saveToDatabase(
-        response: GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?>
+            response: GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?>
     ): Single<List<RobertFilter>> {
         when (val result = response.callResult<RobertFilterResponse>()) {
             is CallResult.Error -> {
@@ -260,7 +260,7 @@ class RobertSettingsPresenterImpl(
                 val robertSettings = result.data.filters
                 val json = Gson().toJson(robertSettings)
                 interactor.getAppPreferenceInterface()
-                    .saveResponseStringData(PreferencesKeyConstants.ROBERT_FILTERS, json)
+                        .saveResponseStringData(PreferencesKeyConstants.ROBERT_FILTERS, json)
                 return Single.just(robertSettings)
             }
         }

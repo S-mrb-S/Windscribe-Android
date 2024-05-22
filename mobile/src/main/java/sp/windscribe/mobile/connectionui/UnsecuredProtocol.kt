@@ -6,9 +6,9 @@ import sp.windscribe.mobile.R
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 
 class UnsecuredProtocol(
-    lastSelectedLocation: LastSelectedLocation,
-    connectionOptions: ConnectionOptions,
-    context: Context
+        lastSelectedLocation: LastSelectedLocation,
+        connectionOptions: ConnectionOptions,
+        context: Context
 ) : FailedProtocol(lastSelectedLocation, connectionOptions, context) {
 
     override val connectionStatusIcon: Drawable?

@@ -47,8 +47,8 @@ interface ApiService {
     // @GET("/PortMap?version=5&country_code=RU")
     @GET("/PortMap?version=5")
     fun getPortMaps(
-        @QueryMap params: Map<String, String>?,
-        @Query("force_protocols[]") forceProtocols: Array<String>
+            @QueryMap params: Map<String, String>?,
+            @Query("force_protocols[]") forceProtocols: Array<String>
     ): Single<ResponseBody>
 
     @FormUrlEncoded
@@ -66,18 +66,18 @@ interface ApiService {
 
     @GET("/serverlist/mob-v2/{plan}/{loc_rev}")
     fun getServerList(
-        @Path("plan") billing_plan: String?,
-        @Path("loc_rev") locRev: String?,
-        @Query("alc") alcList: String?,
-        @Query("country_override") country_override: String?
+            @Path("plan") billing_plan: String?,
+            @Path("loc_rev") locRev: String?,
+            @Query("alc") alcList: String?,
+            @Query("country_override") country_override: String?
     ): Single<ResponseBody>
 
     @GET("/assets/serverlist/mob-v2/{plan}/{loc_rev}")
     fun getServerListDirectIp(
-        @Path("plan") billing_plan: String?,
-        @Path("loc_rev") locRev: String?,
-        @Query("alc") alcList: String?,
-        @Query("country_override") country_override: String?,
+            @Path("plan") billing_plan: String?,
+            @Path("loc_rev") locRev: String?,
+            @Query("alc") alcList: String?,
+            @Query("country_override") country_override: String?,
     ): Single<ResponseBody>
 
     // Deprecated, exception with direct IP
@@ -170,16 +170,16 @@ interface ApiService {
     @FormUrlEncoded
     @POST("/")
     fun sendDecoyTraffic(
-        @FieldMap params: Map<String, String>?,
-        @Header("Content-Type") contentType: String,
-        @Header("X-DECOY-RESPONSE") xDecoyResponse: String
+            @FieldMap params: Map<String, String>?,
+            @Header("Content-Type") contentType: String,
+            @Header("X-DECOY-RESPONSE") xDecoyResponse: String
     ): Single<ResponseBody>
 
     @Streaming
     @FormUrlEncoded
     @POST("/")
     fun sendDecoyTraffic(
-        @FieldMap params: Map<String, String>?, @Header("Content-Type") contentType: String
+            @FieldMap params: Map<String, String>?, @Header("Content-Type") contentType: String
     ): Single<ResponseBody>
 
     @GET("/resolve")

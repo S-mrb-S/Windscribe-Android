@@ -13,7 +13,7 @@ import android.os.SystemClock
 class MockLocationProvider constructor(private val providerName: String, ctx: Context) {
 
     private val locationManager: LocationManager = ctx.getSystemService(
-        Context.LOCATION_SERVICE
+            Context.LOCATION_SERVICE
     ) as LocationManager
 
     @Throws(MockLocationPermissionException::class)
@@ -67,16 +67,16 @@ class MockLocationProvider constructor(private val providerName: String, ctx: Co
         removeTesProviders()
         try {
             locationManager.addTestProvider(
-                providerName,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                1,
-                1
+                    providerName,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    true,
+                    true,
+                    1,
+                    1
             )
             locationManager.setTestProviderStatus(providerName, 2, null, System.currentTimeMillis())
             locationManager.setTestProviderEnabled(providerName, true)

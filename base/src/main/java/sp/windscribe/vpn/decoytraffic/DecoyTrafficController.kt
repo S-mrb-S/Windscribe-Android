@@ -18,10 +18,10 @@ import java.util.Arrays
 import java.util.concurrent.TimeUnit
 
 class DecoyTrafficController(
-    val scope: CoroutineScope,
-    val apiCallManager: IApiCallManager,
-    val preferencesHelper: PreferencesHelper,
-    val vpnConnectionStateManager: VPNConnectionStateManager
+        val scope: CoroutineScope,
+        val apiCallManager: IApiCallManager,
+        val preferencesHelper: PreferencesHelper,
+        val vpnConnectionStateManager: VPNConnectionStateManager
 ) {
 
     private var mainJob: Job? = null
@@ -67,7 +67,7 @@ class DecoyTrafficController(
                 if (sendTrafficRequestInProgress.not()) {
                     sendTrafficRequestInProgress = true
                     val timeUsed =
-                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - lastRequestSendTime)
+                            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - lastRequestSendTime)
                     if (timeUsed >= fakeTraffic.interval()) {
                         sendTrafficIntervalInSeconds = fakeTraffic.interval()
                     } else {
@@ -79,22 +79,22 @@ class DecoyTrafficController(
                     }
                     lastRequestSendTime = System.currentTimeMillis()
                     val dataToSendPerMinute = trafficTrend.calculateTraffic(
-                        fakeTrafficVolume,
-                        trafficTrend.currentUploadTrend.attemptsToIncrease,
-                        true
+                            fakeTrafficVolume,
+                            trafficTrend.currentUploadTrend.attemptsToIncrease,
+                            true
                     )
                     val dataToSendPerSecond =
-                        dataToSendPerMinute / 60 * sendTrafficIntervalInSeconds
+                            dataToSendPerMinute / 60 * sendTrafficIntervalInSeconds
                     val chars = CharArray(dataToSendPerSecond)
                     Arrays.fill(chars, 'a')
                     val fakeData = String(chars)
                     val dataToReceivePerMinute = trafficTrend.calculateTraffic(
-                        fakeTrafficVolume,
-                        trafficTrend.currentDownloadTrend.attemptsToIncrease,
-                        false
+                            fakeTrafficVolume,
+                            trafficTrend.currentDownloadTrend.attemptsToIncrease,
+                            false
                     )
                     val dataToReceivePerSecond =
-                        dataToReceivePerMinute / 60 * sendTrafficIntervalInSeconds
+                            dataToReceivePerMinute / 60 * sendTrafficIntervalInSeconds
                     sendTraffic(fakeData, dataToReceivePerSecond.toString())
                 }
 
@@ -106,16 +106,16 @@ class DecoyTrafficController(
         try {
             val url = "http://10.255.255.1:8085"
             sendTrafficRequestInProgress =
-                when (apiCallManager.sendDecoyTraffic(url, data, dataToReceiveString)
-                    .timeout(100, TimeUnit.SECONDS).result<String>()) {
-                    is CallResult.Error -> {
-                        false
-                    }
+                    when (apiCallManager.sendDecoyTraffic(url, data, dataToReceiveString)
+                            .timeout(100, TimeUnit.SECONDS).result<String>()) {
+                        is CallResult.Error -> {
+                            false
+                        }
 
-                    is CallResult.Success -> {
-                        false
+                        is CallResult.Success -> {
+                            false
+                        }
                     }
-                }
         } catch (e: Exception) {
             lastRequestSendTime = System.currentTimeMillis()
             sendTrafficRequestInProgress = false

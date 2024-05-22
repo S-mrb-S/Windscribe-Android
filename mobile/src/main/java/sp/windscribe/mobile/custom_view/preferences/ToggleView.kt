@@ -11,9 +11,9 @@ import androidx.core.content.res.getResourceIdOrThrow
 import sp.windscribe.mobile.R
 
 class ToggleView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     interface Delegate {
@@ -24,7 +24,7 @@ class ToggleView @JvmOverloads constructor(
     var delegate: Delegate? = null
     var toggle: ImageView? = null
     private val attributes: TypedArray =
-        context.obtainStyledAttributes(attrs, R.styleable.ToggleView)
+            context.obtainStyledAttributes(attrs, R.styleable.ToggleView)
     private val view: View = View.inflate(context, R.layout.toggle_view, this)
 
     init {
@@ -32,13 +32,13 @@ class ToggleView @JvmOverloads constructor(
             view.findViewById<TextView>(R.id.description).text = it
         }
         view.findViewById<TextView>(R.id.label).text =
-            attributes.getString(R.styleable.ToggleView_ToggleTitle)
+                attributes.getString(R.styleable.ToggleView_ToggleTitle)
         val leftIcon = attributes.getResourceIdOrThrow(R.styleable.ToggleView_ToggleLeftIcon)
         view.findViewById<ImageView>(R.id.left_icon).setImageResource(leftIcon)
         view.findViewById<ImageView>(R.id.right_icon)
-            .setOnClickListener { delegate?.onExplainClick() }
+                .setOnClickListener { delegate?.onExplainClick() }
         view.findViewById<ImageView>(R.id.clickable_area)
-            .setOnClickListener { delegate?.onToggleClick() }
+                .setOnClickListener { delegate?.onToggleClick() }
         if (attributes.getBoolean(R.styleable.ToggleView_ToggleShowRightIcon, true).not()) {
             view.findViewById<ImageView>(R.id.right_icon).visibility = INVISIBLE
         }

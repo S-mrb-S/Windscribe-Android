@@ -65,7 +65,7 @@ class NetworkSecurityActivity : BaseActivity(), NetworkSecurityView, NetworkAdap
         setActivityModule(ActivityModule(this, this)).inject(this)
         setContentLayout(R.layout.activity_network_security, true)
         networkListRecyclerView.layoutManager =
-            GridLayoutManager(this, 1)
+                GridLayoutManager(this, 1)
         activityTitleView.text = getString(R.string.network_options)
         presenter.init()
         setCustomLayoutDelegates()
@@ -109,8 +109,8 @@ class NetworkSecurityActivity : BaseActivity(), NetworkSecurityView, NetworkAdap
         clCurrentNetwork.visibility = View.VISIBLE
         currentNetworkName.text = networkInfo.networkName
         val protectionStatus = if (networkInfo.isAutoSecureOn) appContext
-            .getText(R.string.network_secured)
-            .toString() else appContext.getText(R.string.network_unsecured).toString()
+                .getText(R.string.network_secured)
+                .toString() else appContext.getText(R.string.network_unsecured).toString()
         currentNetworkProtection.visibility = View.VISIBLE
         currentNetworkProtection.text = protectionStatus
     }
@@ -154,7 +154,7 @@ class NetworkSecurityActivity : BaseActivity(), NetworkSecurityView, NetworkAdap
         logger.info("Showing loading dialog...")
         customProgress.show()
         (customProgress.findViewById<View>(R.id.tv_dialog_header) as TextView).text =
-            progressTitle
+                progressTitle
     }
 
     companion object {

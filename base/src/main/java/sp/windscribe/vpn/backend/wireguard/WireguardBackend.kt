@@ -11,7 +11,6 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.os.Build
 import android.os.PowerManager
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.backend.Tunnel.State.DOWN
@@ -41,8 +40,6 @@ import sp.windscribe.vpn.backend.VpnBackend
 import sp.windscribe.vpn.backend.utils.SelectedLocationType
 import sp.windscribe.vpn.backend.utils.VPNProfileCreator
 import sp.windscribe.vpn.commonutils.WindUtilities
-import sp.windscribe.vpn.constants.NetworkErrorCodes.EXPIRED_OR_BANNED_ACCOUNT
-import sp.windscribe.vpn.repository.CallResult
 import sp.windscribe.vpn.repository.UserRepository
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.NetworkInfoManager
@@ -61,15 +58,15 @@ import kotlin.random.Random
 
 @Singleton
 class WireguardBackend(
-    var backend: GoBackend,
-    var scope: CoroutineScope,
-    var networkInfoManager: NetworkInfoManager,
-    vpnStateManager: VPNConnectionStateManager,
-    var serviceInteractor: ServiceInteractor,
-    val vpnProfileCreator: VPNProfileCreator,
-    val userRepository: Lazy<UserRepository>,
-    val deviceStateManager: DeviceStateManager,
-    val preferencesHelper: PreferencesHelper
+        var backend: GoBackend,
+        var scope: CoroutineScope,
+        var networkInfoManager: NetworkInfoManager,
+        vpnStateManager: VPNConnectionStateManager,
+        var serviceInteractor: ServiceInteractor,
+        val vpnProfileCreator: VPNProfileCreator,
+        val userRepository: Lazy<UserRepository>,
+        val deviceStateManager: DeviceStateManager,
+        val preferencesHelper: PreferencesHelper
 ) : VpnBackend(scope, vpnStateManager, serviceInteractor, networkInfoManager) {
 
     var service: WireGuardWrapperService? = null
@@ -81,11 +78,11 @@ class WireguardBackend(
     override var active = false
     private val maxHandshakeTimeInSeconds = 180L
     private val connectivityManager =
-        appContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            appContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val powerManager = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
     private val networkRequest =
-        NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
+            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
     private val callback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -110,7 +107,7 @@ class WireguardBackend(
     }
 
     private val testTunnel = WireGuardTunnel(
-        name = appContext.getString(R.string.app_name), config = null, state = DOWN
+            name = appContext.getString(R.string.app_name), config = null, state = DOWN
     )
 
     private var stickyDisconnectEvent = false
@@ -150,7 +147,7 @@ class WireguardBackend(
 
     @Suppress("UNUSED_VARIABLE")
     private fun sendUdpStuffingForWireGuard(
-        config: Config
+            config: Config
     ) {
         try {
             //Open a port to send the package
@@ -169,10 +166,10 @@ class WireguardBackend(
                 for (k in config.peers) {
                     k.endpoint.toSet().forEach {
                         val sendPacket = socket.send(
-                            DatagramPacket(
-                                ntpBuf, ntpBuf.size,
-                                InetAddress.getByName(it.host), it.port
-                            )
+                                DatagramPacket(
+                                        ntpBuf, ntpBuf.size,
+                                        InetAddress.getByName(it.host), it.port
+                                )
                         )
                     }
                 }

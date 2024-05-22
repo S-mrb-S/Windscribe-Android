@@ -44,8 +44,8 @@ class NewsFeedActivity : BaseActivity(), NewsFeedView {
         newsFeedRecyclerView.itemAnimator = DefaultItemAnimator()
         newsFeedRecyclerView.layoutManager = LinearLayoutManager(this)
         presenter.init(
-            intent.getBooleanExtra("showPopUp", false),
-            intent.getIntExtra("popUp", -1)
+                intent.getBooleanExtra("showPopUp", false),
+                intent.getIntExtra("popUp", -1)
         )
     }
 
@@ -86,7 +86,7 @@ class NewsFeedActivity : BaseActivity(), NewsFeedView {
         logger.info("User clicked on error button.")
         customProgressDialog.show()
         (customProgressDialog.findViewById<View>(R.id.tv_dialog_header) as TextView).text =
-            progressTitle
+                progressTitle
     }
 
     override fun startUpgradeActivity(pushNotificationAction: PushNotificationAction) {

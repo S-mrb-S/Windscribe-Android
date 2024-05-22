@@ -16,7 +16,7 @@ class SessionErrorHandler private constructor() {
             NetworkErrorCodes.ERROR_2FA_REQUIRED -> appContext.resources.getString(R.string.fa_required_error)
             NetworkErrorCodes.ERROR_INVALID_2FA -> appContext.resources.getString(R.string.fa_invalid_error)
             NetworkErrorCodes.ERROR_RESPONSE_ARGUMENT_INVALID -> appContext.resources.getString(
-                R.string.password_too_short
+                    R.string.password_too_short
             )
 
             else -> apiErrorResponse.errorMessage
@@ -28,7 +28,7 @@ class SessionErrorHandler private constructor() {
             NetworkErrorCodes.ERROR_2FA_REQUIRED -> appContext.resources.getString(R.string.fa_required_error)
             NetworkErrorCodes.ERROR_INVALID_2FA -> appContext.resources.getString(R.string.fa_invalid_error)
             NetworkErrorCodes.ERROR_RESPONSE_ARGUMENT_INVALID -> appContext.resources.getString(
-                R.string.password_too_short
+                    R.string.password_too_short
             )
 
             else -> error

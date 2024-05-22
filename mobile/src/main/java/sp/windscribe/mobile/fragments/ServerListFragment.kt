@@ -91,19 +91,19 @@ class ServerListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DaggerActivityComponent.builder().activityModule(ActivityModule())
-            .applicationComponent(
-                appContext
-                    .applicationComponent
-            ).build().inject(this)
+                .applicationComponent(
+                        appContext
+                                .applicationComponent
+                ).build().inject(this)
         arguments?.let {
             mFragmentNumber = it.getInt("fragment_number", 0)
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val fragmentView = inflater.inflate(R.layout.server_list_fragment_layout, container, false)
         ButterKnife.bind(this, fragmentView)
@@ -118,10 +118,10 @@ class ServerListFragment : Fragment() {
 
     fun addSwipeListener() {
         ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun getSwipeDirs(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder
             ): Int {
                 if (viewHolder is ConfigViewHolder) {
                     return ItemTouchHelper.LEFT
@@ -132,9 +132,9 @@ class ServerListFragment : Fragment() {
             }
 
             override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
             ): Boolean {
                 return false
             }
@@ -225,12 +225,12 @@ class ServerListFragment : Fragment() {
         if (configCount == 0) {
 
             imageViewBrokenHeart
-                ?.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.ic_custom_config_icon
+                    ?.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.ic_custom_config_icon
+                            )
                     )
-                )
             imageViewBrokenHeart?.visibility = View.VISIBLE
             textViewAdapterLoadError?.text = error
             textViewAdapterLoadError?.visibility = View.VISIBLE
@@ -334,7 +334,7 @@ class ServerListFragment : Fragment() {
         refreshViewEg.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
         swipeRefreshLayout?.isEnabled = canPullToRefresh()
         swipeRefreshLayout?.setRefreshInitialOffset(
-            -resources.getDimension(R.dimen.reg_68dp).roundToInt().toFloat()
+                -resources.getDimension(R.dimen.reg_68dp).roundToInt().toFloat()
         )
         swipeRefreshLayout?.setOnRefreshListener {
             if (fragmentClickListener != null) {

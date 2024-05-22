@@ -14,9 +14,9 @@ import androidx.core.content.res.getResourceIdOrThrow
 import sp.windscribe.mobile.R
 
 class DropDownView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), AdapterView.OnItemSelectedListener {
 
     interface Delegate {
@@ -28,7 +28,7 @@ class DropDownView @JvmOverloads constructor(
     private var spinner: Spinner? = null
     private var current: TextView? = null
     private val attributes: TypedArray =
-        context.obtainStyledAttributes(attrs, R.styleable.DropDownView)
+            context.obtainStyledAttributes(attrs, R.styleable.DropDownView)
     private val view: View = View.inflate(context, R.layout.drop_down_view, this)
     private var keys: Array<String>? = null
 
@@ -37,15 +37,15 @@ class DropDownView @JvmOverloads constructor(
             view.findViewById<TextView>(R.id.description).text = it
         }
         view.findViewById<TextView>(R.id.label).text =
-            attributes.getString(R.styleable.DropDownView_DropDownTitle)
+                attributes.getString(R.styleable.DropDownView_DropDownTitle)
         val leftIcon = attributes.getResourceIdOrThrow(R.styleable.DropDownView_DropDownLeftIcon)
         view.findViewById<ImageView>(R.id.left_icon).setImageResource(leftIcon)
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
         view.findViewById<ImageView>(R.id.right_icon)
-            .setOnClickListener { delegate?.onExplainClick() }
+                .setOnClickListener { delegate?.onExplainClick() }
         view.findViewById<ImageView>(R.id.clickable_area)
-            .setOnClickListener { spinner?.performClick() }
+                .setOnClickListener { spinner?.performClick() }
         if (attributes.getBoolean(R.styleable.DropDownView_DropDownShowRightIcon, true).not()) {
             view.findViewById<ImageView>(R.id.right_icon).visibility = GONE
         }
@@ -73,7 +73,7 @@ class DropDownView @JvmOverloads constructor(
     fun setAdapter(localiseValues: Array<String>, selectedKey: String, keys: Array<String>) {
         this.keys = keys
         val selectionAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            context, R.layout.drop_down_layout, R.id.tv_drop_down, localiseValues
+                context, R.layout.drop_down_layout, R.id.tv_drop_down, localiseValues
         )
         spinner?.adapter = selectionAdapter
         spinner?.isSelected = false

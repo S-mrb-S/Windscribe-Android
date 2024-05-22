@@ -9,9 +9,9 @@ import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 
 open class ConnectedAnimationState(
-    lastSelectedLocation: LastSelectedLocation,
-    connectionOptions: ConnectionOptions,
-    context: Context
+        lastSelectedLocation: LastSelectedLocation,
+        connectionOptions: ConnectionOptions,
+        context: Context
 ) : ConnectionUiState(lastSelectedLocation, connectionOptions, context) {
     override val badgeViewAlpha: Float
         get() = 1.0f

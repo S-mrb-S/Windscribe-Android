@@ -15,8 +15,8 @@ import javax.net.ssl.SSLSocketFactory
  * SSLSocketFactory that disables the DNS auto-fetch, then manually do DNS in the test.
  */
 internal class ManualEchSSLSocketFactory(
-    private val dohResolver: DohResolver,
-    private val delegate: SSLSocketFactory
+        private val dohResolver: DohResolver,
+        private val delegate: SSLSocketFactory
 ) : SSLSocketFactory() {
     private var host: String? = null
     private var sslSocket: SSLSocket? = null
@@ -42,7 +42,7 @@ internal class ManualEchSSLSocketFactory(
 
     @Throws(IOException::class, UnknownHostException::class)
     override fun createSocket(
-        host: String, port: Int, localAddress: InetAddress, localPort: Int
+            host: String, port: Int, localAddress: InetAddress, localPort: Int
     ): Socket {
         this.host = host
         return setEchSettings(delegate.createSocket(host, port, localAddress, localPort))!!
@@ -55,7 +55,7 @@ internal class ManualEchSSLSocketFactory(
 
     @Throws(IOException::class)
     override fun createSocket(
-        address: InetAddress, port: Int, localAddress: InetAddress, localPort: Int
+            address: InetAddress, port: Int, localAddress: InetAddress, localPort: Int
     ): Socket {
         return setEchSettings(delegate.createSocket(address, port, localAddress, localPort))!!
     }

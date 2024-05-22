@@ -12,7 +12,7 @@ import sp.windscribe.vpn.repository.UserRepository
 import javax.inject.Inject
 
 class ServerListWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
+        CoroutineWorker(context, workerParams) {
 
     private val logger = LoggerFactory.getLogger("server_list_worker")
 
@@ -29,17 +29,17 @@ class ServerListWorker(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         if (!userRepository.loggedIn()) return Result.failure()
         return serverListRepository.update()
-            .repeatWhen {
-                val reloadServerList =
-                    serverListRepository.globalServerList && appContext.appLifeCycleObserver.overriddenCountryCode != null
-                return@repeatWhen Flowable.just(reloadServerList)
-            }.result { success, error ->
-                if (success) {
-                    serverListRepository.load()
-                    logger.debug("Successfully updated server list. Global Server list: ${serverListRepository.globalServerList} CountryOverride: ${appContext.appLifeCycleObserver.overriddenCountryCode}")
-                } else {
-                    logger.debug("Failed to update server list: $error")
+                .repeatWhen {
+                    val reloadServerList =
+                            serverListRepository.globalServerList && appContext.appLifeCycleObserver.overriddenCountryCode != null
+                    return@repeatWhen Flowable.just(reloadServerList)
+                }.result { success, error ->
+                    if (success) {
+                        serverListRepository.load()
+                        logger.debug("Successfully updated server list. Global Server list: ${serverListRepository.globalServerList} CountryOverride: ${appContext.appLifeCycleObserver.overriddenCountryCode}")
+                    } else {
+                        logger.debug("Failed to update server list: $error")
+                    }
                 }
-            }
     }
 }

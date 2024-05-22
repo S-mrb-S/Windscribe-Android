@@ -60,28 +60,28 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  * @see ActivityInteractor
  */
 class ActivityInteractorImpl(
-    private val activityScope: LifecycleCoroutineScope,
-    private val mainScope: CoroutineScope,
-    val preferenceHelper: PreferencesHelper,
-    private val apiCallManager: IApiCallManager,
-    val localDbInterface: LocalDbInterface,
-    private val vpnConnectionStateManager: VPNConnectionStateManager,
-    private val userRepository: UserRepository,
-    private val networkInfoManager: NetworkInfoManager,
-    private val locationRepository: LocationRepository,
-    private val vpnController: WindVpnController,
-    private val connectionDataRepository: ConnectionDataRepository,
-    private val serverListRepository: ServerListRepository,
-    private val staticListUpdate: StaticIpRepository,
-    private val preferenceChangeObserver: PreferenceChangeObserver,
-    private val notificationRepository: NotificationRepository,
-    private val windScribeWorkManager: WindScribeWorkManager,
-    private val decoyTrafficController: DecoyTrafficController,
-    private val trafficCounter: TrafficCounter,
-    private val autoConnectionManager: AutoConnectionManager,
-    private val latencyRepository: LatencyRepository,
-    private val receiptValidator: ReceiptValidator,
-    private val firebaseManager: FirebaseManager
+        private val activityScope: LifecycleCoroutineScope,
+        private val mainScope: CoroutineScope,
+        val preferenceHelper: PreferencesHelper,
+        private val apiCallManager: IApiCallManager,
+        val localDbInterface: LocalDbInterface,
+        private val vpnConnectionStateManager: VPNConnectionStateManager,
+        private val userRepository: UserRepository,
+        private val networkInfoManager: NetworkInfoManager,
+        private val locationRepository: LocationRepository,
+        private val vpnController: WindVpnController,
+        private val connectionDataRepository: ConnectionDataRepository,
+        private val serverListRepository: ServerListRepository,
+        private val staticListUpdate: StaticIpRepository,
+        private val preferenceChangeObserver: PreferenceChangeObserver,
+        private val notificationRepository: NotificationRepository,
+        private val windScribeWorkManager: WindScribeWorkManager,
+        private val decoyTrafficController: DecoyTrafficController,
+        private val trafficCounter: TrafficCounter,
+        private val autoConnectionManager: AutoConnectionManager,
+        private val latencyRepository: LatencyRepository,
+        private val receiptValidator: ReceiptValidator,
+        private val firebaseManager: FirebaseManager
 ) : ActivityInteractor {
 
     interface PortMapLoadCallback {
@@ -173,7 +173,7 @@ class ActivityInteractorImpl(
 
     override fun addNetworkToKnown(networkName: String): Single<Long> {
         val networkInfo = NetworkInfo(
-            networkName, true, false, PreferencesKeyConstants.PROTO_IKev2, "500"
+                networkName, true, false, PreferencesKeyConstants.PROTO_IKev2, "500"
         )
         return this.localDbInterface.addNetwork(networkInfo)
     }
@@ -241,9 +241,9 @@ class ActivityInteractorImpl(
         var logLine: String?
         val debugFilePath = getDebugFilePath()
         val logFile = Windscribe.appContext.resources.getString(
-            string.log_file_header,
-            VERSION.SDK_INT, Build.BRAND, Build.DEVICE, Build.MODEL, Build.MANUFACTURER,
-            VERSION.RELEASE, WindUtilities.getVersionCode()
+                string.log_file_header,
+                VERSION.SDK_INT, Build.BRAND, Build.DEVICE, Build.MODEL, Build.MANUFACTURER,
+                VERSION.RELEASE, WindUtilities.getVersionCode()
         )
         val builder = StringBuilder()
         builder.append(logFile)
@@ -277,7 +277,7 @@ class ActivityInteractorImpl(
 
     override fun getLastTimeUpdated(): String {
         return this.preferenceHelper.getResponseString(RateDialogConstants.LAST_UPDATE_TIME)
-            ?: Date().time.toString()
+                ?: Date().time.toString()
     }
 
     override fun getAllConfigs(): Single<List<ConfigFile>> {
@@ -304,7 +304,7 @@ class ActivityInteractorImpl(
                 throw WindScribeException("Port map version outdated")
             }
             val jsonString: String? =
-                this.preferenceHelper.getResponseString(PreferencesKeyConstants.PORT_MAP)
+                    this.preferenceHelper.getResponseString(PreferencesKeyConstants.PORT_MAP)
             Gson().fromJson(jsonString, PortMapResponse::class.java)
         }.onErrorResumeNext {
             if (WindUtilities.isOnline()) {
@@ -321,30 +321,30 @@ class ActivityInteractorImpl(
     private fun getPortMapFromApi(): Single<PortMapResponse> {
         logger.debug("Loading port map from api")
         return this.apiCallManager.getPortMap()
-            .flatMap { responseClass: GenericResponseClass<PortMapResponse?, ApiErrorResponse?> ->
-                Single
-                    .fromCallable {
-                        logger.debug(responseClass.dataClass.toString())
-                        responseClass.dataClass?.let {
-                            this.preferenceHelper
-                                .savePortMapVersion(NetworkKeyConstants.PORT_MAP_VERSION)
-                            this.preferenceHelper.saveResponseStringData(
-                                PreferencesKeyConstants.PORT_MAP,
-                                Gson().toJson(it)
-                            )
-                            return@fromCallable it
-                        } ?: responseClass.errorClass?.let {
-                            logger.debug(it.errorMessage)
-                            throw WindScribeException(it.errorDescription)
-                        }
-                    }
-            }
+                .flatMap { responseClass: GenericResponseClass<PortMapResponse?, ApiErrorResponse?> ->
+                    Single
+                            .fromCallable {
+                                logger.debug(responseClass.dataClass.toString())
+                                responseClass.dataClass?.let {
+                                    this.preferenceHelper
+                                            .savePortMapVersion(NetworkKeyConstants.PORT_MAP_VERSION)
+                                    this.preferenceHelper.saveResponseStringData(
+                                            PreferencesKeyConstants.PORT_MAP,
+                                            Gson().toJson(it)
+                                    )
+                                    return@fromCallable it
+                                } ?: responseClass.errorClass?.let {
+                                    logger.debug(it.errorMessage)
+                                    throw WindScribeException(it.errorDescription)
+                                }
+                            }
+                }
     }
 
     override fun getRateAppPreference(): Int {
         return this.preferenceHelper.getResponseInt(
-            RateDialogConstants.CURRENT_STATUS_KEY,
-            RateDialogConstants.STATUS_DEFAULT
+                RateDialogConstants.CURRENT_STATUS_KEY,
+                RateDialogConstants.STATUS_DEFAULT
         )
     }
 
@@ -365,16 +365,16 @@ class ActivityInteractorImpl(
     override fun getUserSessionData(): Single<UserSessionResponse> {
         return Single.fromCallable {
             this.preferenceHelper.getResponseString(
-                PreferencesKeyConstants.GET_SESSION
+                    PreferencesKeyConstants.GET_SESSION
             )
         }.flatMap { userSessionString: String? ->
             Single
-                .fromCallable {
-                    Gson().fromJson(
-                        userSessionString,
-                        UserSessionResponse::class.java
-                    )
-                }
+                    .fromCallable {
+                        Gson().fromJson(
+                                userSessionString,
+                                UserSessionResponse::class.java
+                        )
+                    }
         }
     }
 
@@ -399,13 +399,13 @@ class ActivityInteractorImpl(
         }
         if (isPremiumUser() && enoughDataUsed && experiencedUser && lastShownDays(getLastTimeUpdated())) {
             logger
-                .debug(
-                    "Rate dialog check: IsPremiumUser:" + isPremiumUser() + ", Data Used:" + dataUsed + "GB" +
-                            " Dialog data limit:" + RateDialogConstants.MINIMUM_DATA_LIMIT + "GB," +
-                            " Registration(days):" + days + " Dialog days limit:" +
-                            RateDialogConstants.MINIMUM_DAYS_TO_START + ", Last choice:" + getLastChoiceLog() +
-                            " Last shown:" + logDate
-                )
+                    .debug(
+                            "Rate dialog check: IsPremiumUser:" + isPremiumUser() + ", Data Used:" + dataUsed + "GB" +
+                                    " Dialog data limit:" + RateDialogConstants.MINIMUM_DATA_LIMIT + "GB," +
+                                    " Registration(days):" + days + " Dialog days limit:" +
+                                    RateDialogConstants.MINIMUM_DAYS_TO_START + ", Last choice:" + getLastChoiceLog() +
+                                    " Last shown:" + logDate
+                    )
             return true
         }
         return false
@@ -417,19 +417,19 @@ class ActivityInteractorImpl(
             return
         }
         compositeDisposable.add(
-            getPortMap()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<PortMapResponse>() {
-                    override fun onError(e: Throwable) {
-                        logger.debug(e.toString())
-                    }
+                getPortMap()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableSingleObserver<PortMapResponse>() {
+                            override fun onError(e: Throwable) {
+                                logger.debug(e.toString())
+                            }
 
-                    override fun onSuccess(portMapResponse: PortMapResponse) {
-                        mapResponse = portMapResponse
-                        callback.onFinished(portMapResponse)
-                    }
-                })
+                            override fun onSuccess(portMapResponse: PortMapResponse) {
+                                mapResponse = portMapResponse
+                                callback.onFinished(portMapResponse)
+                            }
+                        })
         )
     }
 
@@ -439,8 +439,8 @@ class ActivityInteractorImpl(
 
     override fun setRateDialogUpdateTime() {
         this.preferenceHelper.saveResponseStringData(
-            RateDialogConstants.LAST_UPDATE_TIME,
-            Date().time.toString()
+                RateDialogConstants.LAST_UPDATE_TIME,
+                Date().time.toString()
         )
     }
 
@@ -510,7 +510,7 @@ class ActivityInteractorImpl(
     override fun getUserSessionDataFromStorage(): Single<UserSessionResponse> {
         return Single.fromCallable {
             preferenceHelper.getResponseString(
-                PreferencesKeyConstants.GET_SESSION
+                    PreferencesKeyConstants.GET_SESSION
             )
         }.flatMap {
             Single.fromCallable {
@@ -521,7 +521,7 @@ class ActivityInteractorImpl(
 
     override fun getSavedConnectionMode(): String {
         return preferenceHelper.getResponseString(PreferencesKeyConstants.CONNECTION_MODE_KEY)
-            ?: PreferencesKeyConstants.CONNECTION_MODE_AUTO
+                ?: PreferencesKeyConstants.CONNECTION_MODE_AUTO
     }
 
     override fun getSavedProtocol(): String {
@@ -554,8 +554,8 @@ class ActivityInteractorImpl(
 
     override fun saveConnectionMode(connectionMode: String) {
         preferenceHelper.saveResponseStringData(
-            PreferencesKeyConstants.CONNECTION_MODE_KEY,
-            connectionMode
+                PreferencesKeyConstants.CONNECTION_MODE_KEY,
+                connectionMode
         )
     }
 
@@ -603,10 +603,10 @@ class ActivityInteractorImpl(
         return Single.fromCallable {
             val username: String = preferenceHelper.userName
             localDbInterface.insertOrUpdateServerUpdateStatusTable(
-                ServerStatusUpdateTable(
-                    username,
-                    1
-                )
+                    ServerStatusUpdateTable(
+                            username,
+                            1
+                    )
             )
             true
         }
@@ -650,10 +650,10 @@ class ActivityInteractorImpl(
 
     override fun updateServerData(): Completable {
         return localDbInterface.insertOrUpdateStatus(
-            ServerStatusUpdateTable(
-                preferenceHelper.userName,
-                preferenceHelper.userStatus
-            )
+                ServerStatusUpdateTable(
+                        preferenceHelper.userName,
+                        preferenceHelper.userStatus
+                )
         )
     }
 
@@ -667,10 +667,10 @@ class ActivityInteractorImpl(
 
     override fun updateServerList(serverStatus: Int): Completable {
         return localDbInterface.insertOrUpdateStatus(
-            ServerStatusUpdateTable(
-                preferenceHelper.userName,
-                serverStatus
-            )
+                ServerStatusUpdateTable(
+                        preferenceHelper.userName,
+                        serverStatus
+                )
         )
     }
 
@@ -710,8 +710,8 @@ class ActivityInteractorImpl(
 
     private fun getFavoriteServers(jsonString: String?): List<ServerNodeListOverLoaded> {
         return Gson().fromJson(
-            jsonString,
-            object : TypeToken<List<ServerNodeListOverLoaded>>() {}.type
+                jsonString,
+                object : TypeToken<List<ServerNodeListOverLoaded>>() {}.type
         )
     }
 

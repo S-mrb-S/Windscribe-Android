@@ -36,7 +36,7 @@ object Ext {
             response.callResult()
         } catch (e: Exception) {
             CallResult.Error(
-                NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API, WindError.instance.rxErrorToString(e)
+                    NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API, WindError.instance.rxErrorToString(e)
             )
         }
     }
@@ -75,8 +75,8 @@ object Ext {
     }
 
     fun CoroutineScope.launchPeriodicAsync(
-        repeatMillis: Long,
-        action: () -> Unit
+            repeatMillis: Long,
+            action: () -> Unit
     ) = this.async {
         if (repeatMillis > 0) {
             while (isActive) {
@@ -89,5 +89,5 @@ object Ext {
     }
 
     fun Context.toPx(dp: Float): Float =
-        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
 }

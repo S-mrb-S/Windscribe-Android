@@ -87,8 +87,8 @@ class NetworkWhiteListService : Service(), NetworkInfoListener {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         startForeground(
-            NotificationConstants.SERVICE_NOTIFICATION_ID,
-            notificationBuilder.buildNotification(UnsecuredNetwork)
+                NotificationConstants.SERVICE_NOTIFICATION_ID,
+                notificationBuilder.buildNotification(UnsecuredNetwork)
         )
         if (intent.action != null && intent.action == DISCONNECT_ACTION) {
             stopService()
@@ -96,8 +96,8 @@ class NetworkWhiteListService : Service(), NetworkInfoListener {
         }
         if (intent.action != null && intent.action == UNSECURED_NETWORK_ACTION) {
             startForeground(
-                NotificationConstants.SERVICE_NOTIFICATION_ID,
-                notificationBuilder.buildNotification(UnsecuredNetwork)
+                    NotificationConstants.SERVICE_NOTIFICATION_ID,
+                    notificationBuilder.buildNotification(UnsecuredNetwork)
             )
             networkInfoManager.addNetworkInfoListener(this)
             return START_NOT_STICKY

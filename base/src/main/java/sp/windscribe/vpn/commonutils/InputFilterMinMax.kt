@@ -7,12 +7,12 @@ class InputFilterMinMax(min: String, max: String) : InputFilter {
     private val max: Int = max.toInt()
     private val min: Int = min.toInt()
     override fun filter(
-        source: CharSequence,
-        start: Int,
-        end: Int,
-        dest: Spanned,
-        dStart: Int,
-        dEnd: Int
+            source: CharSequence,
+            start: Int,
+            end: Int,
+            dest: Spanned,
+            dStart: Int,
+            dEnd: Int
     ): CharSequence? {
         try {
             val input = (dest.toString() + source.toString()).toInt()

@@ -89,13 +89,13 @@ class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
 
     override fun afterTextChanged(s: Editable) {
         val message = Objects.requireNonNull(
-            messageView.text
+                messageView.text
         ).toString()
         val email = Objects.requireNonNull(
-            emailView.text
+                emailView.text
         ).toString()
         val subject = Objects.requireNonNull(
-            subjectView.text
+                subjectView.text
         ).toString()
         presenter.onInputChanged(email, subject, message)
     }
@@ -135,11 +135,11 @@ class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
         hideKeyBoard()
         messageView.clearFocus()
         presenter.onSendTicketClicked(
-            Objects.requireNonNull(
-                emailView.text
-            ).toString(), Objects
+                Objects.requireNonNull(
+                        emailView.text
+                ).toString(), Objects
                 .requireNonNull(subjectView.text).toString(),
-            Objects.requireNonNull(messageView.text).toString()
+                Objects.requireNonNull(messageView.text).toString()
         )
     }
 
@@ -174,10 +174,10 @@ class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
 
     override fun setQueryTypeSpinner() {
         val queryAdapter = ArrayAdapter(
-            this,
-            R.layout.drop_down_layout,
-            R.id.tv_drop_down,
-            resources.getStringArray(R.array.query_types)
+                this,
+                R.layout.drop_down_layout,
+                R.id.tv_drop_down,
+                resources.getStringArray(R.array.query_types)
         )
         queryTypeSpinner.adapter = queryAdapter
     }
@@ -192,10 +192,10 @@ class SendTicketActivity : BaseActivity(), SendTicketView, TextWatcher {
         messageView.setText("")
         queryTypeSpinner.setSelection(0)
         SuccessDialog.show(
-            this,
-            message,
-            ThemeUtils.getColor(this, R.attr.wdPrimaryInvertedColor, R.color.colorBackgroundDark),
-            true
+                this,
+                message,
+                ThemeUtils.getColor(this, R.attr.wdPrimaryInvertedColor, R.color.colorBackgroundDark),
+                true
         )
     }
 

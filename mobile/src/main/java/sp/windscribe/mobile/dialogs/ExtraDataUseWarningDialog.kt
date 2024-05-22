@@ -21,7 +21,7 @@ class ExtraDataUseWarningDialog : FullScreenDialog() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentExtraDataUseWarningBinding.inflate(inflater, container, false)
         return binding?.root

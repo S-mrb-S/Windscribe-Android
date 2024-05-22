@@ -18,11 +18,11 @@ import sp.windscribe.vpn.constants.ApiConstants.XPRESS_CODE
 object CreateHashMap {
 
     fun buildTicketMap(
-        email: String,
-        subject: String,
-        message: String,
-        username: String,
-        queryType: QueryType
+            email: String,
+            subject: String,
+            message: String,
+            username: String,
+            queryType: QueryType
     ): Map<String, String> {
         val queryMap: MutableMap<String, String> = HashMap()
         queryMap["support_email"] = email
@@ -37,14 +37,14 @@ object CreateHashMap {
         queryMap["issue_metadata[type]"] = queryType.name
         queryMap["issue_metadata[channel]"] = "app_android"
         val deviceInfo =
-            String.format("%s | %s | %s", Build.MANUFACTURER, Build.MODEL, Build.VERSION.SDK_INT)
+                String.format("%s | %s | %s", Build.MANUFACTURER, Build.MODEL, Build.VERSION.SDK_INT)
         queryMap["issue_metadata[platform]"] = deviceInfo
         return queryMap
     }
 
     fun createClaimAccountMap(
-        username: String,
-        password: String
+            username: String,
+            password: String
     ): MutableMap<String, String> {
         val paramMap: MutableMap<String, String> = HashMap()
         paramMap[USER_NAME_KEY] = username

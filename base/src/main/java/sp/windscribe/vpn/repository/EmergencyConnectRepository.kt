@@ -10,7 +10,7 @@ import sp.windscribe.vpn.model.OpenVPNConnectionInfo
 import java.io.InputStreamReader
 import java.net.Inet4Address
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Calendar
 
 interface EmergencyConnectRepository {
     suspend fun getConnectionInfo(): Result<List<OpenVPNConnectionInfo>>
@@ -49,7 +49,7 @@ class EmergencyConnectRepositoryImpl : EmergencyConnectRepository {
         }.recoverCatching {
             logger.debug("Failed to resolve e-connect domain.")
             return@recoverCatching listOf<String>(
-                BuildConfig.EMERGENCY_IP1, BuildConfig.EMERGENCY_IP2
+                    BuildConfig.EMERGENCY_IP1, BuildConfig.EMERGENCY_IP2
             )
         }.mapCatching {
             val inputStream = appContext.assets.open("emergency.ovpn")
@@ -58,21 +58,21 @@ class EmergencyConnectRepositoryImpl : EmergencyConnectRepository {
             logger.debug("Building VPN Profiles.")
             it.map { ip ->
                 listOf(
-                    OpenVPNConnectionInfo(
-                        serverConfig,
-                        ip,
-                        "443",
-                        "udp",
-                        BuildConfig.EMERGENCY_USERNAME,
-                        BuildConfig.EMERGENCY_PASSWORD
-                    ), OpenVPNConnectionInfo(
+                        OpenVPNConnectionInfo(
+                                serverConfig,
+                                ip,
+                                "443",
+                                "udp",
+                                BuildConfig.EMERGENCY_USERNAME,
+                                BuildConfig.EMERGENCY_PASSWORD
+                        ), OpenVPNConnectionInfo(
                         serverConfig,
                         ip,
                         "443",
                         "tcp",
                         BuildConfig.EMERGENCY_USERNAME,
                         BuildConfig.EMERGENCY_PASSWORD
-                    )
+                )
                 )
             }.reduce { l1, l2 ->
                 l1.plus(l2)
@@ -87,8 +87,8 @@ class EmergencyConnectRepositoryImpl : EmergencyConnectRepository {
         val cohort = (1..3).random()
         val calenderInfo = "${calendar.get(Calendar.MONTH) + 1}${calendar.get(Calendar.YEAR)}"
         val hash = Hashing.sha1().hashString(
-            "${BuildConfig.BACKUP_API_ENDPOINT_STRING}$cohort$calenderInfo",
-            Charset.defaultCharset()
+                "${BuildConfig.BACKUP_API_ENDPOINT_STRING}$cohort$calenderInfo",
+                Charset.defaultCharset()
         )
         return "econnect.$hash.com"
     }

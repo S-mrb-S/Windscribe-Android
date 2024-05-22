@@ -13,9 +13,9 @@ class ServiceModule {
     @Provides
     @PerService
     fun providesServiceInteractor(
-        preferencesHelper: PreferencesHelper,
-        apiCallManager: IApiCallManager,
-        localDbInterface: LocalDbInterface
+            preferencesHelper: PreferencesHelper,
+            apiCallManager: IApiCallManager,
+            localDbInterface: LocalDbInterface
     ): ServiceInteractor {
         return ServiceInteractorImpl(preferencesHelper, apiCallManager, localDbInterface)
     }

@@ -42,7 +42,7 @@ import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
 import sp.windscribe.vpn.qq.MmkvManager
-import java.util.*
+import java.util.Objects
 import javax.inject.Inject
 
 class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
@@ -126,8 +126,8 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DaggerActivityComponent.builder().activityModule(ActivityModule(this, this))
-            .applicationComponent(appContext.applicationComponent)
-            .build().inject(this)
+                .applicationComponent(appContext.applicationComponent)
+                .build().inject(this)
         presenter.setTheme(this)
         setContentView(R.layout.activity_account)
         ButterKnife.bind(this)
@@ -144,11 +144,11 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
 
         // user name
         MmkvManager.getLoginStorage().getString("user_name", "none")
-            ?.let { this.setUsername(it) }
+                ?.let { this.setUsername(it) }
 
         //
         MmkvManager.getLoginStorage().getString("reset_data", "none")
-            ?.let { tvResetDate.text = it }
+                ?.let { tvResetDate.text = it }
 //        tvResetDateLabel.text = resetDateLabel
 //        tvResetDate.text = resetDate
     }
@@ -178,9 +178,9 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
         lazyLoginButton.onClick { presenter.onLazyLoginClicked() }
         tvEditAccountArrow.tag = R.drawable.ic_forward_arrow_settings
         UiUtil.setupOnTouchListener(
-            clEditAccount,
-            iconView = tvEditAccountArrow,
-            textView = tvEditAccount
+                clEditAccount,
+                iconView = tvEditAccountArrow,
+                textView = tvEditAccount
         )
     }
 
@@ -191,8 +191,8 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     @OnClick(R.id.tv_account_email)
     fun onAddEmailClick() {
         logger.info(
-            "User clicked on " + tvAccountEmail.text.toString()
-                    + " email text view..."
+                "User clicked on " + tvAccountEmail.text.toString()
+                        + " email text view..."
         )
         presenter.onAddEmailClicked("tvAccountEmail.text.toString()")
     }
@@ -225,8 +225,8 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     @OnClick(R.id.tv_upgrade_info)
     fun onUpgradeClick() {
         logger.info(
-            "User clicked on " + tvUpgradeInfo.text.toString()
-                    + " upgrade button..."
+                "User clicked on " + tvUpgradeInfo.text.toString()
+                        + " upgrade button..."
         )
 //        presenter.onUpgradeClicked(tvUpgradeInfo.text.toString())
         openURLInBrowser("http://upgrade.proservers.ir")
@@ -250,13 +250,13 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     }
 
     override fun setEmail(
-        email: String,
-        warningText: String,
-        warningColor: Int,
-        emailColor: Int,
-        labelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            email: String,
+            warningText: String,
+            warningColor: Int,
+            emailColor: Int,
+            labelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     ) {
         logger.info("Setting up add email layout.")
         tvAccountEmail.text = email
@@ -272,12 +272,12 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     }
 
     override fun setEmailConfirm(
-        emailConfirm: String,
-        warningText: String,
-        emailColor: Int,
-        emailLabelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            emailConfirm: String,
+            warningText: String,
+            emailColor: Int,
+            emailLabelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     ) {
         logger.info("Setting up confirm email layout.")
         tvAccountEmail.text = emailConfirm
@@ -293,12 +293,12 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     }
 
     override fun setEmailConfirmed(
-        emailConfirm: String,
-        warningText: String,
-        emailColor: Int,
-        emailLabelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            emailConfirm: String,
+            warningText: String,
+            emailColor: Int,
+            emailLabelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     ) {
         logger.info("Setting up confirmed email layout.")
         tvAccountEmail.text = emailConfirm
@@ -345,7 +345,7 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     override fun setWebSessionLoading(show: Boolean) {
         tvEditAccountArrow.visibility = if (show) View.GONE else View.VISIBLE
         editAccountProgressView.visibility =
-            if (show) View.VISIBLE else View.GONE
+                if (show) View.VISIBLE else View.GONE
         tvEditAccount.isEnabled = !show
     }
 
@@ -408,9 +408,9 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
 
     override fun showErrorDialog(error: String) {
         ErrorDialog.show(
-            this,
-            error,
-            getColor(this, R.attr.overlayDialogBackgroundColor, R.color.colorDeepBlue90)
+                this,
+                error,
+                getColor(this, R.attr.overlayDialogBackgroundColor, R.color.colorDeepBlue90)
         )
     }
 
@@ -421,14 +421,14 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
     override fun showProgress(progressText: String) {
         mCustomProgressDialog.show()
         (mCustomProgressDialog.findViewById<View>(R.id.tv_dialog_header) as TextView).text =
-            progressText
+                progressText
     }
 
     override fun showSuccessDialog(message: String) {
         SuccessDialog.show(
-            this,
-            message,
-            getColor(this, R.attr.overlayDialogBackgroundColor, R.color.colorDeepBlue90)
+                this,
+                message,
+                getColor(this, R.attr.overlayDialogBackgroundColor, R.color.colorDeepBlue90)
         )
     }
 

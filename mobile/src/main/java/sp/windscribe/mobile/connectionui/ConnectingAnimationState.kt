@@ -7,9 +7,9 @@ import sp.windscribe.mobile.R
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 
 open class ConnectingAnimationState(
-    lastSelectedLocation: LastSelectedLocation,
-    connectionOptions: ConnectionOptions,
-    context: Context
+        lastSelectedLocation: LastSelectedLocation,
+        connectionOptions: ConnectionOptions,
+        context: Context
 ) : ConnectionUiState(lastSelectedLocation, connectionOptions, context) {
     override val connectingIconVisibility: Int
         get() = ConstraintSet.VISIBLE

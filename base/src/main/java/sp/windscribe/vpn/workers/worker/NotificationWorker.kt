@@ -15,7 +15,7 @@ import sp.windscribe.vpn.repository.UserRepository
 import javax.inject.Inject
 
 class NotificationWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
+        CoroutineWorker(context, workerParams) {
 
     private val logger = LoggerFactory.getLogger("notification_updater")
 

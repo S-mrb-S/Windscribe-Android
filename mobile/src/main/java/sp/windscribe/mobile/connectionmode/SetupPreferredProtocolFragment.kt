@@ -23,7 +23,7 @@ class SetupPreferredProtocolFragment : DialogFragment() {
     private var autoConnectionModeCallback: AutoConnectionModeCallback? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.setup_preferred_protocol, container, false)
         ButterKnife.bind(this, view)
@@ -34,7 +34,7 @@ class SetupPreferredProtocolFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         protocolInformation?.let {
             titleView.text = getString(
-                R.string.set_this_protocol_as_preferred, Util.getProtocolLabel(it.protocol)
+                    R.string.set_this_protocol_as_preferred, Util.getProtocolLabel(it.protocol)
             )
         } ?: kotlin.run {
             dismiss()
@@ -55,8 +55,8 @@ class SetupPreferredProtocolFragment : DialogFragment() {
 
     companion object {
         fun newInstance(
-            protocolInformation: ProtocolInformation?,
-            autoConnectionModeCallback: AutoConnectionModeCallback
+                protocolInformation: ProtocolInformation?,
+                autoConnectionModeCallback: AutoConnectionModeCallback
         ): SetupPreferredProtocolFragment {
             val fragment = SetupPreferredProtocolFragment()
             fragment.protocolInformation = protocolInformation

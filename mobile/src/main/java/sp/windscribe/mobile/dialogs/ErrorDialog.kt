@@ -14,7 +14,7 @@ class ErrorDialog : FullScreenDialog() {
     private var binding: FragmentErrorBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentErrorBinding.inflate(inflater, container, false)
         return binding?.root
@@ -54,10 +54,10 @@ class ErrorDialog : FullScreenDialog() {
 
         @JvmStatic
         fun show(
-            activity: AppCompatActivity,
-            error: String?,
-            @ColorInt backgroundColor: Int? = null,
-            closeActivity: Boolean = false
+                activity: AppCompatActivity,
+                error: String?,
+                @ColorInt backgroundColor: Int? = null,
+                closeActivity: Boolean = false
         ) {
             if (activity.supportFragmentManager.findFragmentByTag(tag) != null) {
                 return

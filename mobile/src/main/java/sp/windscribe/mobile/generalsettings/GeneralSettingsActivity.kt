@@ -197,7 +197,7 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
             override fun onFirstRightIconClick() {
                 logger.info("User clicked on disconnected flag edit button...")
                 presenter.onDisconnectedFlagEditClicked(
-                    DISCONNECTED_FLAG_PATH_PICK_REQUEST
+                        DISCONNECTED_FLAG_PATH_PICK_REQUEST
                 )
             }
 
@@ -228,17 +228,17 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
     }
 
     override fun resetTextResources(
-        title: String,
-        sortBy: String,
-        latencyDisplay: String,
-        language: String,
-        appearance: String,
-        notificationState: String,
-        hapticFeedback: String,
-        version: String,
-        connected: String,
-        disconnected: String,
-        appBackground: String
+            title: String,
+            sortBy: String,
+            latencyDisplay: String,
+            language: String,
+            appearance: String,
+            notificationState: String,
+            hapticFeedback: String,
+            version: String,
+            connected: String,
+            disconnected: String,
+            appBackground: String
     ) {
         tvActivityTitle.text = title
         locationSelectionDropDown.setTitle(sortBy)
@@ -288,9 +288,9 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
     }
 
     override fun setupCustomFlagAdapter(
-        localiseValues: Array<String>,
-        selectedKey: String,
-        keys: Array<String>
+            localiseValues: Array<String>,
+            selectedKey: String,
+            keys: Array<String>
     ) {
         appBackgroundDropDown.setAdapter(localiseValues, selectedKey, keys)
     }
@@ -300,18 +300,18 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
     }
 
     override fun setupLanguageAdapter(
-        localiseValues: Array<String>,
-        selectedKey: String,
-        keys: Array<String>
+            localiseValues: Array<String>,
+            selectedKey: String,
+            keys: Array<String>
     ) {
         logger.info("Setting up language adapter...")
         languageDropDown.setAdapter(localiseValues, selectedKey, keys)
     }
 
     override fun setupLatencyAdapter(
-        localiseValues: Array<String>,
-        selelctedKey: String,
-        keys: Array<String>
+            localiseValues: Array<String>,
+            selelctedKey: String,
+            keys: Array<String>
     ) {
         logger.info("Setting up latency adapter...")
         latencyDropDown.setAdapter(localiseValues, selelctedKey, keys)
@@ -326,18 +326,18 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
     }
 
     override fun setupSelectionAdapter(
-        localiseValues: Array<String>,
-        selectedKey: String,
-        keys: Array<String>
+            localiseValues: Array<String>,
+            selectedKey: String,
+            keys: Array<String>
     ) {
         logger.info("Setting up selection adapter...")
         locationSelectionDropDown.setAdapter(localiseValues, selectedKey, keys)
     }
 
     override fun setupThemeAdapter(
-        localiseValues: Array<String>,
-        selectedKey: String,
-        keys: Array<String>
+            localiseValues: Array<String>,
+            selectedKey: String,
+            keys: Array<String>
     ) {
         logger.info("Setting up theme adapter..")
         themeDropDown.setAdapter(localiseValues, selectedKey, keys)
@@ -361,15 +361,15 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
 
     override fun reloadApp() {
         TaskStackBuilder.create(this).addNextIntent(WindscribeActivity.getStartIntent(this))
-            .addNextIntent(MainMenuActivity.getStartIntent(this))
-            .addNextIntentWithParentStack(intent).startActivities()
+                .addNextIntent(MainMenuActivity.getStartIntent(this))
+                .addNextIntentWithParentStack(intent).startActivities()
     }
 
     private fun uriToFile(fileUri: Uri): File? {
         val fileName = getFileName(fileUri)
         if (fileName != null) {
             if (fileName.endsWith(".jpeg") or fileName.endsWith(".jpg") or fileName.endsWith(".png") or fileName
-                    .endsWith(".gif")
+                            .endsWith(".gif")
             ) {
                 return File(filesDir, fileName)
             }

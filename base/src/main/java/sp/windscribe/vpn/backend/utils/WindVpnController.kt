@@ -28,8 +28,6 @@ import sp.windscribe.vpn.backend.VPNState
 import sp.windscribe.vpn.backend.VPNState.Status.*
 import sp.windscribe.vpn.backend.VpnBackendHolder
 import sp.windscribe.vpn.backend.openvpn.WindStunnelUtility
-import sp.windscribe.vpn.backend.utils.SelectedLocationType.CityLocation
-import sp.windscribe.vpn.backend.utils.SelectedLocationType.StaticIp
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.AdvanceParamKeys
 import sp.windscribe.vpn.constants.NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API
@@ -43,12 +41,9 @@ import sp.windscribe.vpn.constants.NetworkErrorCodes.EXPIRED_OR_BANNED_ACCOUNT
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_IKev2
 import sp.windscribe.vpn.constants.PreferencesKeyConstants.PROTO_WIRE_GUARD
-import sp.windscribe.vpn.errormodel.WindError
-import sp.windscribe.vpn.exceptions.InvalidVPNConfigException
 import sp.windscribe.vpn.exceptions.WindScribeException
 import sp.windscribe.vpn.repository.*
 import sp.windscribe.vpn.serverlist.entity.City
-import sp.windscribe.vpn.serverlist.entity.Node
 import sp.windscribe.vpn.services.NetworkWhiteListService
 import sp.windscribe.vpn.services.canAccessNetworkName
 import sp.windscribe.vpn.services.startAutoConnectService
@@ -61,16 +56,16 @@ import kotlin.coroutines.coroutineContext
 
 @Singleton
 open class WindVpnController @Inject constructor(
-    val scope: CoroutineScope,
-    private val interactor: ServiceInteractor,
-    private val vpnProfileCreator: VPNProfileCreator,
-    private val vpnConnectionStateManager: VPNConnectionStateManager,
-    val vpnBackendHolder: VpnBackendHolder,
-    private val locationRepository: LocationRepository,
-    private val wgConfigRepository: WgConfigRepository,
-    private val userRepository: Lazy<UserRepository>,
-    private val autoConnectionManager: AutoConnectionManager,
-    private val emergencyConnectRepository: EmergencyConnectRepository
+        val scope: CoroutineScope,
+        private val interactor: ServiceInteractor,
+        private val vpnProfileCreator: VPNProfileCreator,
+        private val vpnConnectionStateManager: VPNConnectionStateManager,
+        val vpnBackendHolder: VpnBackendHolder,
+        private val locationRepository: LocationRepository,
+        private val wgConfigRepository: WgConfigRepository,
+        private val userRepository: Lazy<UserRepository>,
+        private val autoConnectionManager: AutoConnectionManager,
+        private val emergencyConnectRepository: EmergencyConnectRepository
 
 ) {
 
@@ -94,7 +89,7 @@ open class WindVpnController @Inject constructor(
 //    }
 
     open suspend fun launchVPNService(
-        protocolInformation: ProtocolInformation, connectionId: UUID
+            protocolInformation: ProtocolInformation, connectionId: UUID
     ) {
         try {
             if (VpnService.prepare(appContext) == null) {
@@ -242,9 +237,9 @@ open class WindVpnController @Inject constructor(
     fun disconnectAsync(waitForNextProtocol: Boolean = false, reconnecting: Boolean = false) {
         scope.launch {
             disconnect(
-                waitForNextProtocol,
-                reconnecting,
-                error = VPNState.Error(error = VPNState.ErrorType.UserDisconnect)
+                    waitForNextProtocol,
+                    reconnecting,
+                    error = VPNState.Error(error = VPNState.ErrorType.UserDisconnect)
             )
         }
     }
@@ -254,9 +249,9 @@ open class WindVpnController @Inject constructor(
      * @param alwaysOnVPN if vpn service was launched by system.
      */
     open suspend fun connect(
-        connectionId: UUID = UUID.randomUUID(),
-        protocolInformation: ProtocolInformation? = null,
-        attempt: Int = 0
+            connectionId: UUID = UUID.randomUUID(),
+            protocolInformation: ProtocolInformation? = null,
+            attempt: Int = 0
     ) {
 //        when {
 //            // Disconnect from VPN and connect to next selected location.
@@ -320,21 +315,21 @@ open class WindVpnController @Inject constructor(
         // use default protocol if list protocol is not ready yet.
         if (autoConnectionManager.listOfProtocols.isEmpty()) {
             return ProtocolInformation(
-                PROTO_IKev2,
-                PreferencesKeyConstants.DEFAULT_IKEV2_PORT,
-                "IKEv2 is an IPsec based tunneling protocol.",
-                ProtocolConnectionStatus.Disconnected
+                    PROTO_IKev2,
+                    PreferencesKeyConstants.DEFAULT_IKEV2_PORT,
+                    "IKEv2 is an IPsec based tunneling protocol.",
+                    ProtocolConnectionStatus.Disconnected
             )
         }
         val config: ProtocolInformation =
-            autoConnectionManager.listOfProtocols.firstOrNull { it.type == ProtocolConnectionStatus.NextUp }
-                ?: autoConnectionManager.listOfProtocols.first()
+                autoConnectionManager.listOfProtocols.firstOrNull { it.type == ProtocolConnectionStatus.NextUp }
+                        ?: autoConnectionManager.listOfProtocols.first()
         //Decoy traffic only works in Wireguard
         if (interactor.preferenceHelper.isDecoyTrafficOn) {
             Util.buildProtocolInformation(
-                autoConnectionManager.listOfProtocols,
-                PROTO_WIRE_GUARD,
-                interactor.preferenceHelper.wireGuardPort
+                    autoConnectionManager.listOfProtocols,
+                    PROTO_WIRE_GUARD,
+                    interactor.preferenceHelper.wireGuardPort
             )
         }
         autoConnectionManager.setSelectedProtocol(config)
@@ -351,9 +346,9 @@ open class WindVpnController @Inject constructor(
      * @param reconnecting only disconnecting to change location/protocol config.
      * */
     private suspend fun disconnect(
-        waitForNextProtocol: Boolean = false,
-        reconnecting: Boolean = false,
-        error: VPNState.Error? = null
+            waitForNextProtocol: Boolean = false,
+            reconnecting: Boolean = false,
+            error: VPNState.Error? = null
     ) {
         if (waitForNextProtocol && isServiceRunning(NetworkWhiteListService::class.java) && vpnConnectionStateManager.state.value.status == UnsecuredNetwork) {
             return
@@ -394,7 +389,7 @@ open class WindVpnController @Inject constructor(
      */
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val manager: ActivityManager? =
-            appContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+                appContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager?
         if (manager != null) {
             for (service in manager.getRunningServices(Int.MAX_VALUE)) {
                 if (serviceClass.name == service.service.className) {
@@ -406,7 +401,7 @@ open class WindVpnController @Inject constructor(
     }
 
     private suspend fun handleVPNError(
-        error: CallResult.Error, connectionId: UUID, protocolInformation: ProtocolInformation?
+            error: CallResult.Error, connectionId: UUID, protocolInformation: ProtocolInformation?
     ) {
         logger.debug("code: ${error.code} error: ${error.errorMessage}")
         val context = coroutineContext
@@ -420,10 +415,10 @@ open class WindVpnController @Inject constructor(
                     CoroutineScope(context).launch {
                         vpnProfileCreator.wgForceInit.set(true)
                         val vpnState = VPNState(
-                            Disconnected, error = VPNState.Error(
+                                Disconnected, error = VPNState.Error(
                                 error = VPNState.ErrorType.WireguardAuthenticationError,
                                 "Wireguard wg key limit exceeded."
-                            )
+                        )
                         )
                         vpnState.protocolInformation = protocolInformation
                         vpnState.connectionId = connectionId
@@ -432,10 +427,10 @@ open class WindVpnController @Inject constructor(
                 }, {
                     CoroutineScope(context).launch {
                         disconnect(
-                            error = VPNState.Error(
-                                error = VPNState.ErrorType.WireguardApiError,
-                                "Wireguard key limited exceeded."
-                            )
+                                error = VPNState.Error(
+                                        error = VPNState.ErrorType.WireguardApiError,
+                                        "Wireguard key limited exceeded."
+                                )
                         )
                     }
                 })
@@ -443,22 +438,22 @@ open class WindVpnController @Inject constructor(
 
             ERROR_UNABLE_TO_SELECT_WIRE_GUARD_IP, ERROR_WG_UNABLE_TO_GENERATE_PSK -> {
                 disconnect(
-                    error = VPNState.Error(
-                        error = VPNState.ErrorType.WireguardApiError,
-                        error.errorMessage,
-                        showError = true
-                    )
+                        error = VPNState.Error(
+                                error = VPNState.ErrorType.WireguardApiError,
+                                error.errorMessage,
+                                showError = true
+                        )
                 )
             }
 
             ERROR_WG_INVALID_PUBLIC_KEY -> {
                 wgConfigRepository.deleteKeys()
                 disconnect(
-                    error = VPNState.Error(
-                        error = VPNState.ErrorType.WireguardApiError,
-                        error.errorMessage,
-                        showError = true
-                    )
+                        error = VPNState.Error(
+                                error = VPNState.ErrorType.WireguardApiError,
+                                error.errorMessage,
+                                showError = true
+                        )
                 )
             }
 
@@ -467,11 +462,11 @@ open class WindVpnController @Inject constructor(
                 val data = Data.Builder().putBoolean("forceUpdate", true).build()
                 appContext.workManager.updateSession(data)
                 disconnect(
-                    error = VPNState.Error(
-                        error = VPNState.ErrorType.WireguardApiError,
-                        error.errorMessage,
-                        showError = true
-                    )
+                        error = VPNState.Error(
+                                error = VPNState.ErrorType.WireguardApiError,
+                                error.errorMessage,
+                                showError = true
+                        )
                 )
             }
         }
@@ -496,9 +491,9 @@ open class WindVpnController @Inject constructor(
                     val openVPNInfo = connectionInfo[connectionAttempt]
                     vpnProfileCreator.createOpenVPNProfile(openVPNInfo)
                     val lastSelectedLocation = LastSelectedLocation(
-                        -1,
-                        nodeName = "Emergency",
-                        nickName = "Windscribe location"
+                            -1,
+                            nodeName = "Emergency",
+                            nickName = "Windscribe location"
                     )
                     Util.saveSelectedLocation(lastSelectedLocation)
                     val protocolInformation = openVPNInfo.getProtocolInformation()

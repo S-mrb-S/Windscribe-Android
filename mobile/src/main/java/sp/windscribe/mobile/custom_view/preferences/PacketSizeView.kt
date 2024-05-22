@@ -11,7 +11,7 @@ import sp.windscribe.vpn.commonutils.InputFilterMinMax
 class PacketSizeView(childView: View) : BaseView(childView) {
     private val edPackageSize: EditText = childView.findViewById(R.id.edit_packet_size)
     private val makePacketSizeEditable: ImageView =
-        childView.findViewById(R.id.make_packet_size_editable)
+            childView.findViewById(R.id.make_packet_size_editable)
     private val autoFillBtn: ImageView = childView.findViewById(R.id.img_auto_fill_packet_size)
     private val progressBar: ProgressBar = childView.findViewById(R.id.progress_packet_size)
     private val autoFillProgress: TextView = childView.findViewById(R.id.edit_packet_progress)

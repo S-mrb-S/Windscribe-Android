@@ -19,8 +19,8 @@ import sp.windscribe.vpn.services.DeviceStateService
 import javax.inject.Inject
 
 class NetworkDetailPresenterImp @Inject constructor(
-    private val networkView: NetworkDetailView,
-    private val interactor: ActivityInteractor
+        private val networkView: NetworkDetailView,
+        private val interactor: ActivityInteractor
 ) : NetworkDetailPresenter {
 
     private val logger = LoggerFactory.getLogger("network_detail_p")
@@ -40,19 +40,19 @@ class NetworkDetailPresenterImp @Inject constructor(
         networkInfo?.let {
             networkInfo.port = port
             interactor.getCompositeDisposable().add(
-                interactor.saveNetwork(networkInfo)
-                    .subscribeOn(Schedulers.io())
-                    .flatMap { interactor.getNetwork(networkInfo.networkName) }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
-                        override fun onError(ignored: Throwable) {
-                            networkView.showToast("Error Loading network.")
-                        }
+                    interactor.saveNetwork(networkInfo)
+                            .subscribeOn(Schedulers.io())
+                            .flatMap { interactor.getNetwork(networkInfo.networkName) }
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
+                                override fun onError(ignored: Throwable) {
+                                    networkView.showToast("Error Loading network.")
+                                }
 
-                        override fun onSuccess(updatedNetwork: NetworkInfo) {
-                            networkView.networkInfo = updatedNetwork
-                        }
-                    })
+                                override fun onSuccess(updatedNetwork: NetworkInfo) {
+                                    networkView.networkInfo = updatedNetwork
+                                }
+                            })
             )
         }
     }
@@ -63,24 +63,24 @@ class NetworkDetailPresenterImp @Inject constructor(
                 val networkInfo = networkView.networkInfo
                 networkInfo?.let {
                     networkInfo.protocol =
-                        getProtocolFromHeading(portMapResponse, protocol)
+                            getProtocolFromHeading(portMapResponse, protocol)
                     interactor.getCompositeDisposable()
-                        .add(
-                            interactor.saveNetwork(networkInfo)
-                                .subscribeOn(Schedulers.io())
-                                .flatMap { interactor.getNetwork(networkInfo.networkName) }
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
-                                    override fun onError(ignored: Throwable) {
-                                        networkView.showToast("Error saving network information.")
-                                    }
+                            .add(
+                                    interactor.saveNetwork(networkInfo)
+                                            .subscribeOn(Schedulers.io())
+                                            .flatMap { interactor.getNetwork(networkInfo.networkName) }
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
+                                                override fun onError(ignored: Throwable) {
+                                                    networkView.showToast("Error saving network information.")
+                                                }
 
-                                    override fun onSuccess(updatedNetwork: NetworkInfo) {
-                                        networkView.networkInfo = updatedNetwork
-                                        setPorts()
-                                    }
-                                })
-                        )
+                                                override fun onSuccess(updatedNetwork: NetworkInfo) {
+                                                    networkView.networkInfo = updatedNetwork
+                                                    setPorts()
+                                                }
+                                            })
+                            )
                 }
             }
         })
@@ -88,45 +88,46 @@ class NetworkDetailPresenterImp @Inject constructor(
 
     override fun removeNetwork(name: String) {
         interactor.getCompositeDisposable()
-            .add(
-                interactor.removeNetwork(name)
-                    .flatMap {
-                        interactor.getNetworkInfoManager().reload(true)
-                        return@flatMap Single.just(it)
-                    }.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object : DisposableSingleObserver<Int?>() {
-                        override fun onError(ignored: Throwable) {
-                            networkView.showToast("Error deleting network")
-                        }
+                .add(
+                        interactor.removeNetwork(name)
+                                .flatMap {
+                                    interactor.getNetworkInfoManager().reload(true)
+                                    return@flatMap Single.just(it)
+                                }.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(object : DisposableSingleObserver<Int?>() {
+                                    override fun onError(ignored: Throwable) {
+                                        networkView.showToast("Error deleting network")
+                                    }
 
-                        override fun onSuccess(integer: Int) {
-                            networkView.onNetworkDeleted()
-                        }
-                    })
-            )
+                                    override fun onSuccess(integer: Int) {
+                                        networkView.onNetworkDeleted()
+                                    }
+                                })
+                )
     }
 
     override fun setNetworkDetails(name: String) {
         networkView.setNetworkDetailError(false, null)
         interactor.getCompositeDisposable().add(
-            interactor.getNetwork(name)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
-                    override fun onError(ignored: Throwable) {
-                        networkView.setNetworkDetailError(true, "Network name not found.")
-                    }
+                interactor.getNetwork(name)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
+                            override fun onError(ignored: Throwable) {
+                                networkView.setNetworkDetailError(true, "Network name not found.")
+                            }
 
-                    override fun onSuccess(networkInfo: NetworkInfo) {
-                        val currentNetworkName =
-                            interactor.getNetworkInfoManager().networkInfo?.networkName ?: ""
-                        networkView.onNetworkDetailAvailable(
-                            networkInfo,
-                            currentNetworkName == networkInfo.networkName
-                        )
-                    }
-                })
+                            override fun onSuccess(networkInfo: NetworkInfo) {
+                                val currentNetworkName =
+                                        interactor.getNetworkInfoManager().networkInfo?.networkName
+                                                ?: ""
+                                networkView.onNetworkDetailAvailable(
+                                        networkInfo,
+                                        currentNetworkName == networkInfo.networkName
+                                )
+                            }
+                        })
         )
     }
 
@@ -164,8 +165,8 @@ class NetworkDetailPresenterImp @Inject constructor(
                         }
                         selectedPortMap?.let { portMap ->
                             networkView.setupProtocolAdapter(
-                                portMap.heading,
-                                protocols.toTypedArray()
+                                    portMap.heading,
+                                    protocols.toTypedArray()
                             )
                             setPorts()
                         }
@@ -194,25 +195,25 @@ class NetworkDetailPresenterImp @Inject constructor(
         networkInfo.isAutoSecureOn = !networkInfo.isAutoSecureOn
         logger.debug("Auto secure toggle: ${!networkInfo.isAutoSecureOn}")
         interactor.getCompositeDisposable().add(
-            interactor.saveNetwork(networkInfo)
-                .subscribeOn(Schedulers.io())
-                .flatMap { interactor.getNetwork(networkInfo.networkName) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
-                    override fun onError(ignored: Throwable) {
-                        logger.debug("Auto secure toggle: ${!networkInfo.isAutoSecureOn}")
-                        networkView.showToast("Failed to save network details.")
-                    }
+                interactor.saveNetwork(networkInfo)
+                        .subscribeOn(Schedulers.io())
+                        .flatMap { interactor.getNetwork(networkInfo.networkName) }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
+                            override fun onError(ignored: Throwable) {
+                                logger.debug("Auto secure toggle: ${!networkInfo.isAutoSecureOn}")
+                                networkView.showToast("Failed to save network details.")
+                            }
 
-                    override fun onSuccess(updatedNetwork: NetworkInfo) {
-                        logger.debug("SSID: ${networkInfo.networkName} AutoSecure: ${networkInfo.isAutoSecureOn} Preferred Protocols: ${networkInfo.isPreferredOn} ${networkInfo.protocol} ${networkInfo.port}")
-                        networkView.networkInfo = updatedNetwork
-                        networkView.setAutoSecureToggle(updatedNetwork.isAutoSecureOn)
-                        logger.debug("Reloading network info.")
-                        interactor.getNetworkInfoManager().reload(true)
-                        DeviceStateService.enqueueWork(appContext)
-                    }
-                })
+                            override fun onSuccess(updatedNetwork: NetworkInfo) {
+                                logger.debug("SSID: ${networkInfo.networkName} AutoSecure: ${networkInfo.isAutoSecureOn} Preferred Protocols: ${networkInfo.isPreferredOn} ${networkInfo.protocol} ${networkInfo.port}")
+                                networkView.networkInfo = updatedNetwork
+                                networkView.setAutoSecureToggle(updatedNetwork.isAutoSecureOn)
+                                logger.debug("Reloading network info.")
+                                interactor.getNetworkInfoManager().reload(true)
+                                DeviceStateService.enqueueWork(appContext)
+                            }
+                        })
         )
     }
 
@@ -224,20 +225,20 @@ class NetworkDetailPresenterImp @Inject constructor(
         }
         networkInfo.isPreferredOn = !networkInfo.isPreferredOn
         interactor.getCompositeDisposable().add(
-            interactor.saveNetwork(networkInfo)
-                .subscribeOn(Schedulers.io())
-                .flatMap { interactor.getNetwork(networkInfo.networkName) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
-                    override fun onError(e: Throwable) {
-                        networkView.showToast("Error...")
-                    }
+                interactor.saveNetwork(networkInfo)
+                        .subscribeOn(Schedulers.io())
+                        .flatMap { interactor.getNetwork(networkInfo.networkName) }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableSingleObserver<NetworkInfo?>() {
+                            override fun onError(e: Throwable) {
+                                networkView.showToast("Error...")
+                            }
 
-                    override fun onSuccess(updatedNetwork: NetworkInfo) {
-                        networkView.networkInfo = updatedNetwork
-                        networkView.setPreferredProtocolToggle(updatedNetwork.isPreferredOn)
-                    }
-                })
+                            override fun onSuccess(updatedNetwork: NetworkInfo) {
+                                networkView.networkInfo = updatedNetwork
+                                networkView.setPreferredProtocolToggle(updatedNetwork.isPreferredOn)
+                            }
+                        })
         )
     }
 

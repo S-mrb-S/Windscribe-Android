@@ -18,16 +18,16 @@ import sp.windscribe.vpn.commonutils.Ext.toPx
 import sp.windscribe.vpn.commonutils.ThemeUtils
 
 class ProtocolInformationAdapter(
-    val data: MutableList<ProtocolInformation>,
-    private val listener: ItemSelectListener
+        val data: MutableList<ProtocolInformation>,
+        private val listener: ItemSelectListener
 ) :
-    RecyclerView.Adapter<ProtocolInformationViewHolder>() {
+        RecyclerView.Adapter<ProtocolInformationViewHolder>() {
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+            parent: ViewGroup,
+            viewType: Int
     ): ProtocolInformationViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.protocol_information, parent, false)
+                .inflate(R.layout.protocol_information, parent, false)
         return ProtocolInformationViewHolder(view, listener)
     }
 
@@ -74,7 +74,7 @@ interface ItemSelectListener {
 
 
 class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelectListener) :
-    RecyclerView.ViewHolder(itemView) {
+        RecyclerView.ViewHolder(itemView) {
     private val protocolView: TextView = itemView.findViewById(R.id.protocol)
     private val portView: TextView = itemView.findViewById(R.id.port)
     private val descriptionView: TextView = itemView.findViewById(R.id.description)
@@ -107,36 +107,36 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
             when (protocolInformation.type) {
                 ProtocolConnectionStatus.Connected -> {
                     containerView.background = AppCompatResources.getDrawable(
-                        context,
-                        R.drawable.protocol_connected_background
+                            context,
+                            R.drawable.protocol_connected_background
                     )
                     protocolView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdActionColor,
-                            R.color.colorNeonGreen
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdActionColor,
+                                    R.color.colorNeonGreen
+                            )
                     )
                     portView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdActionColor50,
-                            R.color.colorNeonGreen50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdActionColor50,
+                                    R.color.colorNeonGreen50
+                            )
                     )
                     descriptionView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdActionColor50,
-                            R.color.colorNeonGreen50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdActionColor50,
+                                    R.color.colorNeonGreen50
+                            )
                     )
                     dividerView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdActionColor25,
-                            R.color.colorNeonGreen25
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdActionColor25,
+                                    R.color.colorNeonGreen25
+                            )
                     )
                     statusView.text = "Connected to"
                     statusView.visibility = View.VISIBLE
@@ -155,36 +155,36 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
 
                 ProtocolConnectionStatus.Disconnected -> {
                     containerView.background = AppCompatResources.getDrawable(
-                        context,
-                        R.drawable.protocol_disconnected_background
+                            context,
+                            R.drawable.protocol_disconnected_background
                     )
                     protocolView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdPrimaryColor,
-                            R.color.colorWhite
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdPrimaryColor,
+                                    R.color.colorWhite
+                            )
                     )
                     portView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     descriptionView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     dividerView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdPrimaryColor25,
-                            R.color.colorWhite25
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdPrimaryColor25,
+                                    R.color.colorWhite25
+                            )
                     )
                     statusView.visibility = View.GONE
                     checkView.visibility = View.GONE
@@ -194,36 +194,36 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
 
                 ProtocolConnectionStatus.Failed -> {
                     containerView.background = AppCompatResources.getDrawable(
-                        context,
-                        R.drawable.protocol_failed_background
+                            context,
+                            R.drawable.protocol_failed_background
                     )
                     protocolView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     portView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     descriptionView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     dividerView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdPrimaryColor25,
-                            R.color.colorWhite25
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdPrimaryColor25,
+                                    R.color.colorWhite25
+                            )
                     )
                     statusView.visibility = View.GONE
                     checkView.visibility = View.GONE
@@ -233,36 +233,36 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
 
                 ProtocolConnectionStatus.NextUp -> {
                     containerView.background = AppCompatResources.getDrawable(
-                        context,
-                        R.drawable.protocol_disconnected_background
+                            context,
+                            R.drawable.protocol_disconnected_background
                     )
                     protocolView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdPrimaryColor,
-                            R.color.colorWhite
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdPrimaryColor,
+                                    R.color.colorWhite
+                            )
                     )
                     portView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     descriptionView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     dividerView.setTextColor(
-                        ThemeUtils.getColor(
-                            context,
-                            R.attr.wdPrimaryColor25,
-                            R.color.colorWhite25
-                        )
+                            ThemeUtils.getColor(
+                                    context,
+                                    R.attr.wdPrimaryColor25,
+                                    R.color.colorWhite25
+                            )
                     )
                     statusView.text = "NEXT UP IN ${protocolInformation.autoConnectTimeLeft}s"
                     statusView.visibility = View.VISIBLE
@@ -273,7 +273,7 @@ class ProtocolInformationViewHolder(val itemView: View, val listener: ItemSelect
                     //The corners are ordered top-left, top-right, bottom-right, bottom-left
                     val radius = context.toPx(8F)
                     background.cornerRadii =
-                        floatArrayOf(0F, 0F, radius, radius, 0F, 0F, radius, radius)
+                            floatArrayOf(0F, 0F, radius, radius, 0F, 0F, radius, radius)
                     val param = statusView.layoutParams as ViewGroup.MarginLayoutParams
                     param.setMargins(0, 0, 0, 0)
                     statusView.layoutParams = param

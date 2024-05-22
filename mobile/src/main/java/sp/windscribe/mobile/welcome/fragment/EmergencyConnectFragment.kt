@@ -24,7 +24,7 @@ class EmergencyConnectFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEmergencyConnectBinding.inflate(inflater, container, false)
         return _binding?.root
@@ -51,7 +51,7 @@ class EmergencyConnectFragment : Fragment() {
                             _binding?.tvStatus?.visibility = View.INVISIBLE
                             _binding?.progressBar?.visibility = View.INVISIBLE
                             _binding?.tvDescription?.text =
-                                getString(R.string.emergency_connect_description)
+                                    getString(R.string.emergency_connect_description)
                             _binding?.ok?.text = getString(R.string.connect)
 
                         }
@@ -68,7 +68,7 @@ class EmergencyConnectFragment : Fragment() {
                             _binding?.tvStatus?.visibility = View.INVISIBLE
                             _binding?.progressBar?.visibility = View.INVISIBLE
                             _binding?.tvDescription?.text =
-                                getString(R.string.emergency_connected_description)
+                                    getString(R.string.emergency_connected_description)
                             _binding?.ok?.text = getString(R.string.disconnect)
                         }
                     }
@@ -101,7 +101,7 @@ class EmergencyConnectFragment : Fragment() {
         fun show(manager: FragmentManager, container: Int) {
             val fragment = EmergencyConnectFragment()
             manager.beginTransaction().addToBackStack(backStackKey).add(container, fragment)
-                .commit()
+                    .commit()
         }
     }
 }

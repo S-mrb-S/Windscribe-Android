@@ -26,10 +26,10 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository(
-    private val scope: CoroutineScope,
-    private val serviceInteractor: ServiceInteractor,
-    private val vpnController: WindVpnController,
-    private val autoConnectionManager: AutoConnectionManager
+        private val scope: CoroutineScope,
+        private val serviceInteractor: ServiceInteractor,
+        private val vpnController: WindVpnController,
+        private val autoConnectionManager: AutoConnectionManager
 ) {
     var user = MutableLiveData<User>()
     private val logger = LoggerFactory.getLogger("user_repo")
@@ -42,13 +42,13 @@ class UserRepository(
     }
 
     fun reload(
-        response: UserSessionResponse? = null, callback: (suspend (user: User) -> Unit)? = null
+            response: UserSessionResponse? = null, callback: (suspend (user: User) -> Unit)? = null
     ) {
         scope.launch(Dispatchers.IO) {
             response?.let { it ->
                 serviceInteractor.preferenceHelper.saveResponseStringData(
-                    PreferencesKeyConstants.GET_SESSION,
-                    Gson().toJson(it)
+                        PreferencesKeyConstants.GET_SESSION,
+                        Gson().toJson(it)
                 )
                 val newUser = User(it)
                 user.postValue(newUser)
@@ -60,9 +60,9 @@ class UserRepository(
                 try {
                     logger.debug("Loading user info from cache")
                     val cachedSessionResponse =
-                        serviceInteractor.preferenceHelper.getResponseString(PreferencesKeyConstants.GET_SESSION)
+                            serviceInteractor.preferenceHelper.getResponseString(PreferencesKeyConstants.GET_SESSION)
                     val userSession =
-                        Gson().fromJson(cachedSessionResponse, UserSessionResponse::class.java)
+                            Gson().fromJson(cachedSessionResponse, UserSessionResponse::class.java)
                     user.postValue(User(userSession))
                     _userInfo.emit(User(userSession))
                 } catch (ignored: Exception) {
@@ -76,9 +76,9 @@ class UserRepository(
         try {
             logger.debug("Loading user info from cache")
             val cachedSessionResponse =
-                serviceInteractor.preferenceHelper.getResponseString(PreferencesKeyConstants.GET_SESSION)
+                    serviceInteractor.preferenceHelper.getResponseString(PreferencesKeyConstants.GET_SESSION)
             val userSession =
-                Gson().fromJson(cachedSessionResponse, UserSessionResponse::class.java)
+                    Gson().fromJson(cachedSessionResponse, UserSessionResponse::class.java)
             user.postValue(User(userSession))
             _userInfo.tryEmit(User(userSession))
         } catch (ignored: Exception) {
@@ -99,10 +99,10 @@ class UserRepository(
             val emailStatusChanged = it.emailStatus != newUser.emailStatus
             logger.info("What changed: Server list: $locationHashChanged | Alc: $alcListChanged | Sip: $sipChanged | User Status: $userStatusChanged | Account Status: $accountStatusChanged | Migration: $migrationRequired | Email Status: $emailStatusChanged")
             return listOf(
-                alcListChanged or locationHashChanged,
-                sipChanged,
-                userStatusChanged or accountStatusChanged or migrationRequired,
-                emailStatusChanged
+                    alcListChanged or locationHashChanged,
+                    sipChanged,
+                    userStatusChanged or accountStatusChanged or migrationRequired,
+                    emailStatusChanged
             )
         } ?: kotlin.run {
             logger.debug("No user information found to compare.")
@@ -144,7 +144,7 @@ class UserRepository(
             appContext.activeActivity?.let {
                 val intent = appContext.applicationInterface.welcomeIntent
                 intent.addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 )
                 it.startActivity(intent)
                 it.finish()

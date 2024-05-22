@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
 
 data class NewsFeedNotification(
-    @SerializedName("notifications")
-    @Expose
-    val notifications: List<WindNotification>?
+        @SerializedName("notifications")
+        @Expose
+        val notifications: List<WindNotification>?
 )

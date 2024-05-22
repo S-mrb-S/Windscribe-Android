@@ -17,12 +17,12 @@ class GetLoginWithKeyQuery {
     suspend fun performWork(key: String, callback: GetLoginCallback) {
         try {
             val apolloClient = ApolloClient.Builder()
-                .httpMethod(HttpMethod.Get)
-                .httpServerUrl(Data.Api)
-                .build()
+                    .httpMethod(HttpMethod.Get)
+                    .httpServerUrl(Data.Api)
+                    .build()
 
             val response = apolloClient.query(GetLoginQuery(key = key))
-                .execute()
+                    .execute()
 
             fun success() {
                 MmkvManager.getLoginStorage().encode("key_login", key)

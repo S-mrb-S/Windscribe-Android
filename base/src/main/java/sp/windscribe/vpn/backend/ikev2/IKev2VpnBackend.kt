@@ -34,12 +34,12 @@ import javax.inject.Singleton
 
 @Singleton
 class IKev2VpnBackend(
-    var scope: CoroutineScope,
-    var networkInfoManager: NetworkInfoManager,
-    var vpnStateManager: VPNConnectionStateManager,
-    var serviceInteractor: ServiceInteractor
+        var scope: CoroutineScope,
+        var networkInfoManager: NetworkInfoManager,
+        var vpnStateManager: VPNConnectionStateManager,
+        var serviceInteractor: ServiceInteractor
 ) : VpnBackend(scope, vpnStateManager, serviceInteractor, networkInfoManager), VpnStateListener,
-    NetworkInfoListener {
+        NetworkInfoListener {
 
     private var vpnService: VpnStateService? = null
     private val stateServiceChannel = Channel<VpnStateService>()
@@ -91,8 +91,8 @@ class IKev2VpnBackend(
         }
         serviceConnection?.let {
             context.bindService(
-                Intent(context, VpnStateService::class.java),
-                it, Service.BIND_AUTO_CREATE
+                    Intent(context, VpnStateService::class.java),
+                    it, Service.BIND_AUTO_CREATE
             )
         }
     }
@@ -137,7 +137,7 @@ class IKev2VpnBackend(
 
     private fun checkLogFileSize() {
         val logFile =
-            File(appContext.filesDir.absolutePath + File.separator + CharonVpnService.LOG_FILE)
+                File(appContext.filesDir.absolutePath + File.separator + CharonVpnService.LOG_FILE)
         if (logFile.exists()) {
             try {
                 val sizeInMb = logFile.length() / (1024 * 1024)
@@ -152,29 +152,29 @@ class IKev2VpnBackend(
     }
 
     private fun serviceStateToVPNStatus(
-        state: VpnStateService.State,
-        error: VpnStateService.ErrorState
+            state: VpnStateService.State,
+            error: VpnStateService.ErrorState
     ): VPNState? =
-        if (error == VpnStateService.ErrorState.NO_ERROR) when (state) {
-            VpnStateService.State.DISABLED -> {
-                connectionJob?.cancel()
-                VPNState(Disconnected)
-            }
-
-            VpnStateService.State.CONNECTING -> VPNState(VPNState.Status.Connecting)
-            VpnStateService.State.CONNECTED -> VPNState(VPNState.Status.Connected)
-            VpnStateService.State.DISCONNECTING -> VPNState(VPNState.Status.Disconnecting)
-        } else {
-            if (error == VpnStateService.ErrorState.AUTH_FAILED) {
-                scope.launch {
-                    disconnect(
-                        VPNState.Error(
-                            error = VPNState.ErrorType.AuthenticationError,
-                            message = "Authentication failed."
-                        )
-                    )
+            if (error == VpnStateService.ErrorState.NO_ERROR) when (state) {
+                VpnStateService.State.DISABLED -> {
+                    connectionJob?.cancel()
+                    VPNState(Disconnected)
                 }
+
+                VpnStateService.State.CONNECTING -> VPNState(VPNState.Status.Connecting)
+                VpnStateService.State.CONNECTED -> VPNState(VPNState.Status.Connected)
+                VpnStateService.State.DISCONNECTING -> VPNState(VPNState.Status.Disconnecting)
+            } else {
+                if (error == VpnStateService.ErrorState.AUTH_FAILED) {
+                    scope.launch {
+                        disconnect(
+                                VPNState.Error(
+                                        error = VPNState.ErrorType.AuthenticationError,
+                                        message = "Authentication failed."
+                                )
+                        )
+                    }
+                }
+                null
             }
-            null
-        }
 }

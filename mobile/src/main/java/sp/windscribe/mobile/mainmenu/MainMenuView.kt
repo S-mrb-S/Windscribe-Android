@@ -11,21 +11,21 @@ interface MainMenuView {
     fun openConfirmEmailActivity()
     fun openUpgradeActivity()
     fun resetAllTextResources(
-        activityTitle: String,
-        general: String,
-        account: String,
-        connection: String,
-        helpMe: String,
-        signOut: String,
-        about: String,
-        robert: String
+            activityTitle: String,
+            general: String,
+            account: String,
+            connection: String,
+            helpMe: String,
+            signOut: String,
+            about: String,
+            robert: String
     )
 
     fun setActionButtonVisibility(
-        loginButtonVisibility: Int,
-        addEmailButtonVisibility: Int,
-        setUpAccountButtonVisibility: Int,
-        confirmEmailButtonVisibility: Int
+            loginButtonVisibility: Int,
+            addEmailButtonVisibility: Int,
+            setUpAccountButtonVisibility: Int,
+            confirmEmailButtonVisibility: Int
     )
 
     fun setActivityTitle(title: String)

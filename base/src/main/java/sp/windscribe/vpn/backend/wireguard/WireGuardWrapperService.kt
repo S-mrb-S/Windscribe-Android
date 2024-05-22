@@ -51,8 +51,8 @@ class WireGuardWrapperService : GoBackend.VpnService() {
             return START_NOT_STICKY
         }
         startForeground(
-            NotificationConstants.SERVICE_NOTIFICATION_ID,
-            windNotificationBuilder.buildNotification(Connecting)
+                NotificationConstants.SERVICE_NOTIFICATION_ID,
+                windNotificationBuilder.buildNotification(Connecting)
         )
         return if (serviceInteractor.preferenceHelper.globalUserConnectionPreference) {
             START_STICKY

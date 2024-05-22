@@ -68,8 +68,8 @@ class LoginFragment : Fragment(), TextWatcher, WelcomeActivityCallback {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
         ButterKnife.bind(this, view)
@@ -110,9 +110,9 @@ class LoginFragment : Fragment(), TextWatcher, WelcomeActivityCallback {
     @OnClick(R.id.loginButton)
     fun onLoginButtonClick() {
         fragmentCallBack?.onLoginButtonClick(usernameEditText.text.toString()
-            .trim { it <= ' ' },
-            passwordEditText.text.toString().trim { it <= ' ' },
-            twoFaEditText.text.toString().trim { it <= ' ' })
+                .trim { it <= ' ' },
+                passwordEditText.text.toString().trim { it <= ' ' },
+                twoFaEditText.text.toString().trim { it <= ' ' })
     }
 
     @OnClick(R.id.nav_button)
@@ -177,7 +177,7 @@ class LoginFragment : Fragment(), TextWatcher, WelcomeActivityCallback {
         twoFaEditText.visibility = visibility
         twoFaHintView.visibility = visibility
         twoFaToggle.visibility =
-            if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
     override fun setUsernameError(error: String) {

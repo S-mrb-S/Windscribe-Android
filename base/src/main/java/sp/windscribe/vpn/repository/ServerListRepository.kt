@@ -25,13 +25,13 @@ import javax.inject.Singleton
 
 @Singleton
 class ServerListRepository @Inject constructor(
-    private val scope: CoroutineScope,
-    private val apiCallManager: IApiCallManager,
-    private val localDbInterface: LocalDbInterface,
-    private val preferenceChangeObserver: PreferenceChangeObserver,
-    private val userRepository: UserRepository,
-    private val appLifeCycleObserver: AppLifeCycleObserver,
-    private val workManager: WindScribeWorkManager
+        private val scope: CoroutineScope,
+        private val apiCallManager: IApiCallManager,
+        private val localDbInterface: LocalDbInterface,
+        private val preferenceChangeObserver: PreferenceChangeObserver,
+        private val userRepository: UserRepository,
+        private val appLifeCycleObserver: AppLifeCycleObserver,
+        private val workManager: WindScribeWorkManager
 ) {
     private val logger = LoggerFactory.getLogger("server_list_repository")
     private var _events = MutableSharedFlow<List<RegionAndCities>>(replay = 1)
@@ -69,8 +69,8 @@ class ServerListRepository @Inject constructor(
             str = "{}"
         }
         val list: List<Region> = Gson().fromJson<List<Region>>(
-            str.trimIndent(),
-            object : TypeToken<ArrayList<Region?>?>() {}.type
+                str.trimIndent(),
+                object : TypeToken<ArrayList<Region?>?>() {}.type
         )
 
         return addToDatabase(list)
@@ -88,9 +88,9 @@ class ServerListRepository @Inject constructor(
             }
         }
         return localDbInterface.addToRegions(regions)
-            .andThen(localDbInterface.addToCities(cities))
-            .andThen(Completable.fromAction { preferenceChangeObserver.postCityServerChange() })
-            .doOnError { logger.debug("Error saving server list to database") }
+                .andThen(localDbInterface.addToCities(cities))
+                .andThen(Completable.fromAction { preferenceChangeObserver.postCityServerChange() })
+                .doOnError { logger.debug("Error saving server list to database") }
     }
 
 

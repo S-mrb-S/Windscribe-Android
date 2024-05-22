@@ -26,10 +26,10 @@ import javax.inject.Singleton
 
 @Singleton
 class VPNConnectionStateManager(
-    val scope: CoroutineScope,
-    val autoConnectionManager: AutoConnectionManager,
-    val preferencesHelper: PreferencesHelper,
-    val userRepository: Lazy<UserRepository>
+        val scope: CoroutineScope,
+        val autoConnectionManager: AutoConnectionManager,
+        val preferencesHelper: PreferencesHelper,
+        val userRepository: Lazy<UserRepository>
 ) {
     private val logger = LoggerFactory.getLogger("vpn_backend")
 
@@ -65,14 +65,14 @@ class VPNConnectionStateManager(
                     logger.debug("VPN state changed to ${it.status}")
                 } else {
                     val logFile = Windscribe.appContext.resources.getString(
-                        R.string.log_file_header,
-                        Build.VERSION.SDK_INT,
-                        Build.BRAND,
-                        Build.DEVICE,
-                        Build.MODEL,
-                        Build.MANUFACTURER,
-                        Build.VERSION.RELEASE,
-                        WindUtilities.getVersionCode()
+                            R.string.log_file_header,
+                            Build.VERSION.SDK_INT,
+                            Build.BRAND,
+                            Build.DEVICE,
+                            Build.MODEL,
+                            Build.MANUFACTURER,
+                            Build.VERSION.RELEASE,
+                            WindUtilities.getVersionCode()
                     )
                     logger.info(logFile)
                     logger.debug("VPN state initialized with ${it.status}")

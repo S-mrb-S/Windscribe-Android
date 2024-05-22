@@ -21,8 +21,8 @@ import java.util.Collections
 import javax.inject.Inject
 
 class SplitTunnelingPresenterImpl @Inject constructor(
-    private val splitTunnelView: SplitTunnelingView,
-    private val interactor: ActivityInteractor
+        private val splitTunnelView: SplitTunnelingView,
+        private val interactor: ActivityInteractor
 ) : SplitTunnelingPresenter, InstalledAppsAdapter.InstalledAppListener {
     var installedAppsAdapter: InstalledAppsAdapter? = null
     private val mInstalledAppList: MutableList<InstalledAppsData> = ArrayList()
@@ -37,12 +37,12 @@ class SplitTunnelingPresenterImpl @Inject constructor(
 
     override fun onBackPressed() {
         val isReconnectRequired =
-            interactor.getAppPreferenceInterface().requiredReconnect()
+                interactor.getAppPreferenceInterface().requiredReconnect()
         if (isReconnectRequired && interactor.getVpnConnectionStateManager()
-                .isVPNActive()
+                        .isVPNActive()
         ) {
             logger
-                .info("Split routing settings were changes and connection state is connected. Reconnecting to apply settings..")
+                    .info("Split routing settings were changes and connection state is connected. Reconnecting to apply settings..")
             interactor.getAppPreferenceInterface().setReconnectRequired(false)
             splitTunnelView.restartConnection()
         }
@@ -54,21 +54,21 @@ class SplitTunnelingPresenterImpl @Inject constructor(
 
     override fun onInstalledAppClick(updatedApp: InstalledAppsData, reloadAdapter: Boolean) {
         interactor.getCompositeDisposable()
-            .add(
-                interactor.getAppPreferenceInterface().installedApps
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribeWith(object : DisposableSingleObserver<List<String>>() {
-                        override fun onError(ignore: Throwable) {
-                            val list: MutableList<String> = ArrayList()
-                            saveApps(list, updatedApp, reloadAdapter)
-                        }
+                .add(
+                        interactor.getAppPreferenceInterface().installedApps
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribeWith(object : DisposableSingleObserver<List<String>>() {
+                                    override fun onError(ignore: Throwable) {
+                                        val list: MutableList<String> = ArrayList()
+                                        saveApps(list, updatedApp, reloadAdapter)
+                                    }
 
-                        override fun onSuccess(installedAppsData: List<String>) {
-                            saveApps(installedAppsData.toMutableList(), updatedApp, reloadAdapter)
-                        }
-                    })
-            )
+                                    override fun onSuccess(installedAppsData: List<String>) {
+                                        saveApps(installedAppsData.toMutableList(), updatedApp, reloadAdapter)
+                                    }
+                                })
+                )
     }
 
     override fun onNewRoutingModeSelected(mode: String) {
@@ -78,18 +78,18 @@ class SplitTunnelingPresenterImpl @Inject constructor(
             interactor.getAppPreferenceInterface().saveSplitRoutingMode(mode)
             if (mode == PreferencesKeyConstants.EXCLUSIVE_MODE) {
                 splitTunnelView.setSplitModeTextView(
-                    mode,
-                    R.string.feature_tunnel_mode_exclusive
+                        mode,
+                        R.string.feature_tunnel_mode_exclusive
                 )
             } else {
                 val pm = appContext.packageManager
                 val packageName = appContext.packageName
                 try {
                     val applicationInfo = pm
-                        .getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+                            .getApplicationInfo(packageName, PackageManager.GET_META_DATA)
                     val mData = InstalledAppsData(
-                        pm.getApplicationLabel(applicationInfo).toString(),
-                        applicationInfo.packageName, pm.getApplicationIcon(applicationInfo)
+                            pm.getApplicationLabel(applicationInfo).toString(),
+                            applicationInfo.packageName, pm.getApplicationIcon(applicationInfo)
                     )
                     mData.isChecked = true
                     onInstalledAppClick(mData, true)
@@ -97,8 +97,8 @@ class SplitTunnelingPresenterImpl @Inject constructor(
                     e.printStackTrace()
                 }
                 splitTunnelView.setSplitModeTextView(
-                    mode,
-                    R.string.feature_tunnel_mode_inclusive
+                        mode,
+                        R.string.feature_tunnel_mode_inclusive
                 )
             }
         }
@@ -150,49 +150,49 @@ class SplitTunnelingPresenterImpl @Inject constructor(
     private fun modifyList(savedApps: List<String>) {
         val pm = appContext.packageManager
         interactor.getCompositeDisposable()
-            .add(Single.fromCallable { pm.getInstalledApplications(PackageManager.GET_META_DATA) }
-                .flatMap { packages: List<ApplicationInfo> ->
-                    for (applicationInfo in packages) {
-                        val mData = InstalledAppsData(
-                            pm.getApplicationLabel(applicationInfo).toString(),
-                            applicationInfo.packageName,
-                            pm.getApplicationIcon(applicationInfo)
-                        )
-                        for (installedAppsData in savedApps) {
-                            if (mData.packageName == installedAppsData) {
-                                mData.isChecked = true
+                .add(Single.fromCallable { pm.getInstalledApplications(PackageManager.GET_META_DATA) }
+                        .flatMap { packages: List<ApplicationInfo> ->
+                            for (applicationInfo in packages) {
+                                val mData = InstalledAppsData(
+                                        pm.getApplicationLabel(applicationInfo).toString(),
+                                        applicationInfo.packageName,
+                                        pm.getApplicationIcon(applicationInfo)
+                                )
+                                for (installedAppsData in savedApps) {
+                                    if (mData.packageName == installedAppsData) {
+                                        mData.isChecked = true
+                                    }
+                                }
+                                mInstalledAppList.add(mData)
                             }
-                        }
-                        mInstalledAppList.add(mData)
-                    }
-                    Collections.sort(mInstalledAppList, SortByName())
-                    Collections.sort(mInstalledAppList, SortBySelected())
-                    Single.fromCallable { mInstalledAppList }
-                }.cache()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(object : DisposableSingleObserver<List<InstalledAppsData?>?>() {
-                    override fun onError(ignored: Throwable) {
-                        splitTunnelView.showProgress(false)
-                    }
+                            Collections.sort(mInstalledAppList, SortByName())
+                            Collections.sort(mInstalledAppList, SortBySelected())
+                            Single.fromCallable { mInstalledAppList }
+                        }.cache()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(object : DisposableSingleObserver<List<InstalledAppsData?>?>() {
+                            override fun onError(ignored: Throwable) {
+                                splitTunnelView.showProgress(false)
+                            }
 
-                    override fun onSuccess(packages: List<InstalledAppsData?>) {
-                        splitTunnelView.showProgress(false)
-                        installedAppsAdapter = InstalledAppsAdapter(
-                            mInstalledAppList,
-                            this@SplitTunnelingPresenterImpl
-                        )
-                        splitTunnelView.setRecyclerViewAdapter(installedAppsAdapter!!)
-                    }
-                })
-            )
+                            override fun onSuccess(packages: List<InstalledAppsData?>) {
+                                splitTunnelView.showProgress(false)
+                                installedAppsAdapter = InstalledAppsAdapter(
+                                        mInstalledAppList,
+                                        this@SplitTunnelingPresenterImpl
+                                )
+                                splitTunnelView.setRecyclerViewAdapter(installedAppsAdapter!!)
+                            }
+                        })
+                )
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun saveApps(
-        savedList: MutableList<String>,
-        updatedApp: InstalledAppsData,
-        reloadAdapter: Boolean
+            savedList: MutableList<String>,
+            updatedApp: InstalledAppsData,
+            reloadAdapter: Boolean
     ) {
         interactor.getAppPreferenceInterface().setReconnectRequired(true)
         if (updatedApp.isChecked) {
@@ -210,30 +210,30 @@ class SplitTunnelingPresenterImpl @Inject constructor(
     private fun setupAppListAdapter() {
         splitTunnelView.showProgress(true)
         interactor.getCompositeDisposable()
-            .add(
-                interactor.getAppPreferenceInterface().installedApps
-                    .cache()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribeWith(object : DisposableSingleObserver<List<String>>() {
-                        override fun onError(ignored: Throwable) {
-                            splitTunnelView.showProgress(false)
-                            modifyList(emptyList())
-                        }
+                .add(
+                        interactor.getAppPreferenceInterface().installedApps
+                                .cache()
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribeWith(object : DisposableSingleObserver<List<String>>() {
+                                    override fun onError(ignored: Throwable) {
+                                        splitTunnelView.showProgress(false)
+                                        modifyList(emptyList())
+                                    }
 
-                        override fun onSuccess(installedAppsData: List<String>) {
-                            modifyList(installedAppsData)
-                        }
-                    })
-            )
+                                    override fun onSuccess(installedAppsData: List<String>) {
+                                        modifyList(installedAppsData)
+                                    }
+                                })
+                )
     }
 
     private fun setupSplitRoutingMode() {
         val mode = interactor.getAppPreferenceInterface().splitRoutingMode
         splitTunnelView.setSplitRoutingModeAdapter(
-            splitTunnelView.splitRoutingModes,
-            mode,
-            arrayOf(PreferencesKeyConstants.EXCLUSIVE_MODE, PreferencesKeyConstants.INCLUSIVE_MODE)
+                splitTunnelView.splitRoutingModes,
+                mode,
+                arrayOf(PreferencesKeyConstants.EXCLUSIVE_MODE, PreferencesKeyConstants.INCLUSIVE_MODE)
         )
         if (mode == PreferencesKeyConstants.EXCLUSIVE_MODE) {
             splitTunnelView.setSplitModeTextView(mode, R.string.feature_tunnel_mode_exclusive)

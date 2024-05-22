@@ -51,9 +51,9 @@ class RobertSettingsActivity : BaseActivity(), RobertSettingsView {
         presenter.init()
         customRulesArrow.tag = R.drawable.link_arrow_icon
         UiUtil.setupOnTouchListener(
-            container = clCustomRules,
-            iconView = customRulesArrow,
-            textView = customRulesLabel
+                container = clCustomRules,
+                iconView = customRulesArrow,
+                textView = customRulesLabel
         )
     }
 
@@ -82,7 +82,7 @@ class RobertSettingsActivity : BaseActivity(), RobertSettingsView {
     override fun setWebSessionLoading(loading: Boolean) {
         customRulesArrow.visibility = if (loading) View.GONE else View.VISIBLE
         customRulesProgressView.visibility =
-            if (loading) View.VISIBLE else View.GONE
+                if (loading) View.VISIBLE else View.GONE
         clCustomRules.isEnabled = !loading
     }
 

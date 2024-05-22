@@ -8,31 +8,31 @@ interface AccountView {
     fun openUpgradeActivity()
     fun setActivityTitle(title: String)
     fun setEmail(
-        email: String,
-        warningText: String,
-        emailColor: Int,
-        warningColor: Int,
-        labelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            email: String,
+            warningText: String,
+            emailColor: Int,
+            warningColor: Int,
+            labelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     )
 
     fun setEmailConfirm(
-        emailConfirm: String,
-        warningText: String,
-        emailColor: Int,
-        emailLabelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            emailConfirm: String,
+            warningText: String,
+            emailColor: Int,
+            emailLabelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     )
 
     fun setEmailConfirmed(
-        emailConfirm: String,
-        warningText: String,
-        emailColor: Int,
-        emailLabelColor: Int,
-        infoIcon: Int,
-        containerBackground: Int
+            emailConfirm: String,
+            warningText: String,
+            emailColor: Int,
+            emailLabelColor: Int,
+            infoIcon: Int,
+            containerBackground: Int
     )
 
     fun setPlanName(planName: String)

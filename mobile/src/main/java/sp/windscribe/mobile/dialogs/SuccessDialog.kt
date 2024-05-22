@@ -12,7 +12,7 @@ class SuccessDialog : FullScreenDialog() {
     private var binding: FragmentSuccessBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSuccessBinding.inflate(inflater, container, false)
         return binding?.root
@@ -45,10 +45,10 @@ class SuccessDialog : FullScreenDialog() {
         private const val messageKey = "message"
         private const val exitKey = "exitKey"
         fun show(
-            activity: AppCompatActivity,
-            message: String?,
-            backgroundColor: Int? = null,
-            exitOnClose: Boolean = false
+                activity: AppCompatActivity,
+                message: String?,
+                backgroundColor: Int? = null,
+                exitOnClose: Boolean = false
         ) {
             if (activity.supportFragmentManager.findFragmentByTag(tag) != null) {
                 return

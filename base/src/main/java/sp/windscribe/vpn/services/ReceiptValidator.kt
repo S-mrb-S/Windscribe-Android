@@ -9,9 +9,9 @@ import sp.windscribe.vpn.workers.WindScribeWorkManager.Companion.PENDING_AMAZON_
 import sp.windscribe.vpn.workers.WindScribeWorkManager.Companion.PENDING_GOGGLE_RECEIPT_WORKER_KEY
 
 class ReceiptValidator(
-    private val context: Context,
-    private val amazon: OneTimeWorkRequest? = null,
-    private val google: OneTimeWorkRequest? = null
+        private val context: Context,
+        private val amazon: OneTimeWorkRequest? = null,
+        private val google: OneTimeWorkRequest? = null
 ) {
     fun checkPendingAccountUpgrades() {
         if (amazon == null || google == null) {
@@ -21,15 +21,15 @@ class ReceiptValidator(
         val installerPackageName = pkgManager.getInstallerPackageName(context.packageName)
         if (installerPackageName != null && installerPackageName.startsWith("com.amazon")) {
             WorkManager.getInstance(context).enqueueUniqueWork(
-                PENDING_AMAZON_RECEIPT_WORKER_KEY,
-                ExistingWorkPolicy.REPLACE,
-                amazon
+                    PENDING_AMAZON_RECEIPT_WORKER_KEY,
+                    ExistingWorkPolicy.REPLACE,
+                    amazon
             )
         } else {
             WorkManager.getInstance(context).enqueueUniqueWork(
-                PENDING_GOGGLE_RECEIPT_WORKER_KEY,
-                ExistingWorkPolicy.REPLACE,
-                google
+                    PENDING_GOGGLE_RECEIPT_WORKER_KEY,
+                    ExistingWorkPolicy.REPLACE,
+                    google
             )
         }
     }

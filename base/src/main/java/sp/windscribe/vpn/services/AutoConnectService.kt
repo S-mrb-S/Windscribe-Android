@@ -90,7 +90,7 @@ class AutoConnectService : Service(), NetworkInfoListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification =
-            windNotificationBuilder.buildNotification(VPNState.Status.UnsecuredNetwork)
+                windNotificationBuilder.buildNotification(VPNState.Status.UnsecuredNetwork)
         notification.contentIntent = null
         notification.actions = null
         startForeground(NotificationConstants.AUTO_CONNECT_SERVICE_NOTIFICATION_ID, notification)
@@ -142,6 +142,6 @@ fun Context.canAccessNetworkName(): Boolean {
         return true
     }
     val isForegroundPermissionGranted =
-        checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     return isBackgroundPermissionGranted && isForegroundPermissionGranted
 }

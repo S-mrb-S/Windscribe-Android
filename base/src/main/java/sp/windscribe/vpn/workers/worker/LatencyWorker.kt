@@ -10,7 +10,7 @@ import sp.windscribe.vpn.repository.LatencyRepository
 import javax.inject.Inject
 
 class LatencyWorker(context: Context, parameters: WorkerParameters) :
-    CoroutineWorker(context, parameters) {
+        CoroutineWorker(context, parameters) {
 
     @Inject
     lateinit var latencyRepository: LatencyRepository

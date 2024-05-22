@@ -19,8 +19,8 @@ import sp.windscribe.vpn.model.User
 import javax.inject.Inject
 
 class MainMenuPresenterImpl @Inject constructor(
-    private var mainMenuView: MainMenuView,
-    private var interactor: ActivityInteractor
+        private var mainMenuView: MainMenuView,
+        private var interactor: ActivityInteractor
 ) : MainMenuPresenter {
     private val mPresenterLog = LoggerFactory.getLogger(TAG)
     override fun onDestroy() {
@@ -41,7 +41,7 @@ class MainMenuPresenterImpl @Inject constructor(
     override fun savedLocale(): String {
         val selectedLanguage = interactor.getAppPreferenceInterface().savedLanguage
         return selectedLanguage
-            .substring(selectedLanguage.indexOf("(") + 1, selectedLanguage.indexOf(")"))
+                .substring(selectedLanguage.indexOf("(") + 1, selectedLanguage.indexOf(")"))
     }
 
     override fun onAboutClicked() {
@@ -77,14 +77,14 @@ class MainMenuPresenterImpl @Inject constructor(
 
     override fun onLanguageChanged() {
         mainMenuView.resetAllTextResources(
-            interactor.getResourceString(R.string.preference),
-            interactor.getResourceString(R.string.general),
-            interactor.getResourceString(R.string.my_account),
-            interactor.getResourceString(R.string.connection),
-            interactor.getResourceString(R.string.help_me),
-            interactor.getResourceString(R.string.logout),
-            interactor.getResourceString(R.string.about),
-            interactor.getResourceString(R.string.robert)
+                interactor.getResourceString(R.string.preference),
+                interactor.getResourceString(R.string.general),
+                interactor.getResourceString(R.string.my_account),
+                interactor.getResourceString(R.string.connection),
+                interactor.getResourceString(R.string.help_me),
+                interactor.getResourceString(R.string.logout),
+                interactor.getResourceString(R.string.about),
+                interactor.getResourceString(R.string.robert)
         )
     }
 
@@ -120,32 +120,32 @@ class MainMenuPresenterImpl @Inject constructor(
 
     override fun setLayoutFromApiSession() {
         interactor.getCompositeDisposable().add(
-            interactor.getApiCallManager()
-                .getSessionGeneric(null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(
-                    object :
-                        DisposableSingleObserver<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>?>() {
-                        override fun onError(e: Throwable) {
-                            mPresenterLog.debug(
-                                "Error while making get session call:" +
-                                        instance.convertThrowableToString(e)
-                            )
-                        }
+                interactor.getApiCallManager()
+                        .getSessionGeneric(null)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(
+                                object :
+                                        DisposableSingleObserver<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>?>() {
+                                    override fun onError(e: Throwable) {
+                                        mPresenterLog.debug(
+                                                "Error while making get session call:" +
+                                                        instance.convertThrowableToString(e)
+                                        )
+                                    }
 
-                        override fun onSuccess(response: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>) {
-                            if (response.dataClass != null) {
-                                interactor.getUserRepository().reload(response.dataClass)
-                            } else if (response.errorClass != null) {
-                                mPresenterLog
-                                    .debug(
-                                        "Server returned error during get session call." +
-                                                response.errorClass.toString()
-                                    )
-                            }
-                        }
-                    })
+                                    override fun onSuccess(response: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>) {
+                                        if (response.dataClass != null) {
+                                            interactor.getUserRepository().reload(response.dataClass)
+                                        } else if (response.errorClass != null) {
+                                            mPresenterLog
+                                                    .debug(
+                                                            "Server returned error during get session call." +
+                                                                    response.errorClass.toString()
+                                                    )
+                                        }
+                                    }
+                                })
         )
     }
 
@@ -190,9 +190,9 @@ class MainMenuPresenterImpl @Inject constructor(
             user.dataLeft?.let {
                 val dataRemaining = interactor.getDataLeftString(R.string.data_left, it)
                 mainMenuView.setupLayoutForFreeUser(
-                    dataRemaining,
-                    interactor.getResourceString(R.string.get_more_data),
-                    getDataRemainingColor(it, user.maxData)
+                        dataRemaining,
+                        interactor.getResourceString(R.string.get_more_data),
+                        getDataRemainingColor(it, user.maxData)
                 )
             }
         } else {

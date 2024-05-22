@@ -46,16 +46,16 @@ interface IApiCallManager {
     fun getServerCredentials(extraParams: Map<String, String>? = null): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>>
     fun getServerCredentialsForIKev2(extraParams: Map<String, String>? = null): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>>
     fun getServerList(
-        extraParams: Map<String, String>? = null,
-        billingPlan: String?,
-        locHash: String?,
-        alcList: String?,
-        overriddenCountryCode: String?
+            extraParams: Map<String, String>? = null,
+            billingPlan: String?,
+            locHash: String?,
+            alcList: String?,
+            overriddenCountryCode: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>>
 
     fun getSessionGeneric(
-        extraParams: Map<String, String>? = null,
-        protect: Boolean = false
+            extraParams: Map<String, String>? = null,
+            protect: Boolean = false
     ): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
 
     fun getSessionGeneric(extraParams: Map<String, String>? = null): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>>
@@ -79,23 +79,23 @@ interface IApiCallManager {
     fun syncRobert(extraParams: Map<String, String>? = null): Single<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>
     fun deleteSession(extraParams: Map<String, String>? = null): Single<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>
     fun wgInit(
-        extraParams: Map<String, String>? = null,
-        protect: Boolean
+            extraParams: Map<String, String>? = null,
+            protect: Boolean
     ): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>>
 
     fun wgConnect(
-        extraParams: Map<String, String>? = null,
-        protect: Boolean
+            extraParams: Map<String, String>? = null,
+            protect: Boolean
     ): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>>
 
     fun sendDecoyTraffic(
-        url: String,
-        data: String,
-        sizeToReceive: String?
+            url: String,
+            data: String,
+            sizeToReceive: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>>
 
     suspend fun getLatency(
-        url: String,
-        ip: String
+            url: String,
+            ip: String
     ): Result<GenericResponseClass<Latency?, ApiErrorResponse?>>
 }

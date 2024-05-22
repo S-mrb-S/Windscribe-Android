@@ -14,7 +14,6 @@ import android.os.StrictMode.VmPolicy
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.multidex.MultiDexApplication
 import de.blinkt.openvpn.core.PRNGFixes
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +48,7 @@ import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 import sp.windscribe.vpn.workers.WindScribeWorkManager
 import java.security.Security
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -67,10 +66,10 @@ open class Windscribe : sp.openconnect.Application() {
         val isTV: Boolean
         fun setTheme()
         fun launchFragment(
-            protocolInformationList: List<ProtocolInformation>,
-            fragmentType: FragmentType,
-            autoConnectionModeCallback: AutoConnectionModeCallback,
-            protocolInformation: ProtocolInformation? = null
+                protocolInformationList: List<ProtocolInformation>,
+                fragmentType: FragmentType,
+                autoConnectionModeCallback: AutoConnectionModeCallback,
+                protocolInformation: ProtocolInformation? = null
         ): Boolean
     }
 
@@ -120,8 +119,8 @@ open class Windscribe : sp.openconnect.Application() {
         applicationComponent = getApplicationModuleComponent()
         applicationComponent.inject(this)
         activityComponent = DaggerActivityComponent.builder()
-            .applicationComponent(applicationComponent)
-            .build()
+                .applicationComponent(applicationComponent)
+                .build()
         serviceComponent = serviceComponent()
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLifeCycleObserver)
         preference.isNewApplicationInstance = true
@@ -183,15 +182,15 @@ open class Windscribe : sp.openconnect.Application() {
     private fun setUpNewInstallation() {
         if (preference.getResponseString(PreferencesKeyConstants.NEW_INSTALLATION) == null) {
             preference.saveResponseStringData(
-                PreferencesKeyConstants.NEW_INSTALLATION,
-                PreferencesKeyConstants.I_OLD
+                    PreferencesKeyConstants.NEW_INSTALLATION,
+                    PreferencesKeyConstants.I_OLD
             )
             // This will be true for legacy app but not beta version users
             if (preference.getResponseString(PreferencesKeyConstants.CONNECTION_STATUS) == null) {
                 // Only Recording for legacy to new version
                 preference.saveResponseStringData(
-                    PreferencesKeyConstants.NEW_INSTALLATION,
-                    PreferencesKeyConstants.I_NEW
+                        PreferencesKeyConstants.NEW_INSTALLATION,
+                        PreferencesKeyConstants.I_NEW
                 )
                 preference.removeResponseData(PreferencesKeyConstants.SESSION_HASH)
             }
@@ -204,20 +203,20 @@ open class Windscribe : sp.openconnect.Application() {
     private fun setupStrictMode() {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             StrictMode.setThreadPolicy(
-                Builder()
-                    .detectAll()
-                    .permitDiskReads()
-                    .permitDiskWrites()
-                    .permitUnbufferedIo()
-                    .penaltyLog()
-                    .build()
+                    Builder()
+                            .detectAll()
+                            .permitDiskReads()
+                            .permitDiskWrites()
+                            .permitUnbufferedIo()
+                            .penaltyLog()
+                            .build()
             )
             StrictMode.setVmPolicy(
-                VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects().detectActivityLeaks().detectFileUriExposure()
-                    .detectLeakedRegistrationObjects().detectContentUriWithoutPermission()
-                    .penaltyLog().build()
+                    VmPolicy.Builder()
+                            .detectLeakedSqlLiteObjects()
+                            .detectLeakedClosableObjects().detectActivityLeaks().detectFileUriExposure()
+                            .detectLeakedRegistrationObjects().detectContentUriWithoutPermission()
+                            .penaltyLog().build()
             )
         }
     }
@@ -225,7 +224,7 @@ open class Windscribe : sp.openconnect.Application() {
     private fun setupConscrypt() {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             Security.insertProviderAt(
-                Conscrypt.newProviderBuilder().defaultTlsProtocol("TLSv1.3").build(), 1
+                    Conscrypt.newProviderBuilder().defaultTlsProtocol("TLSv1.3").build(), 1
             )
             Security.removeProvider("AndroidOpenSSL")
         }
@@ -248,14 +247,14 @@ open class Windscribe : sp.openconnect.Application() {
 
     open fun getApplicationModuleComponent(): ApplicationComponent {
         return DaggerApplicationComponent.builder()
-            .applicationModule(ApplicationModule(this)).build()
+                .applicationModule(ApplicationModule(this)).build()
     }
 
     private fun serviceComponent(): ServiceComponent {
         return DaggerServiceComponent.builder()
-            .serviceModule(ServiceModule())
-            .applicationComponent(applicationComponent)
-            .build()
+                .serviceModule(ServiceModule())
+                .applicationComponent(applicationComponent)
+                .build()
     }
 
     override fun onLowMemory() {

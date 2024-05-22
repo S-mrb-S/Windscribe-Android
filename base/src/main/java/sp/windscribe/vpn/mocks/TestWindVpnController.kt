@@ -18,32 +18,32 @@ import sp.windscribe.vpn.state.VPNConnectionStateManager
 import java.util.UUID
 
 class TestWindVpnController(
-    scope: CoroutineScope,
-    interactor: ServiceInteractor,
-    vpnProfileCreator: VPNProfileCreator,
-    private val vpnConnectionStateManager: VPNConnectionStateManager,
-    vpnBackendHolder: VpnBackendHolder,
-    locationRepository: LocationRepository,
-    autoConnectionManager: AutoConnectionManager,
-    wgConfigRepository: WgConfigRepository,
-    userRepository: Lazy<UserRepository>,
-    emergencyConnectRepository: EmergencyConnectRepository
+        scope: CoroutineScope,
+        interactor: ServiceInteractor,
+        vpnProfileCreator: VPNProfileCreator,
+        private val vpnConnectionStateManager: VPNConnectionStateManager,
+        vpnBackendHolder: VpnBackendHolder,
+        locationRepository: LocationRepository,
+        autoConnectionManager: AutoConnectionManager,
+        wgConfigRepository: WgConfigRepository,
+        userRepository: Lazy<UserRepository>,
+        emergencyConnectRepository: EmergencyConnectRepository
 ) : WindVpnController(
-    scope,
-    interactor,
-    vpnProfileCreator,
-    vpnConnectionStateManager,
-    vpnBackendHolder,
-    locationRepository,
-    wgConfigRepository,
-    userRepository,
-    autoConnectionManager,
-    emergencyConnectRepository
+        scope,
+        interactor,
+        vpnProfileCreator,
+        vpnConnectionStateManager,
+        vpnBackendHolder,
+        locationRepository,
+        wgConfigRepository,
+        userRepository,
+        autoConnectionManager,
+        emergencyConnectRepository
 ) {
     var mockState: VPNState = VPNState(VPNState.Status.Disconnected)
     override suspend fun launchVPNService(
-        protocolInformation: ProtocolInformation,
-        connectionId: UUID
+            protocolInformation: ProtocolInformation,
+            connectionId: UUID
     ) {
         delay(5000L)
         mockState.protocolInformation = protocolInformation

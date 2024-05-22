@@ -111,7 +111,7 @@ class HelpActivity : BaseActivity(), HelpView {
         } else {
             labelProgress.visibility = View.VISIBLE
             val msg =
-                if (success) resources.getString(R.string.sent_thanks) else getString(R.string.error_try_again)
+                    if (success) resources.getString(R.string.sent_thanks) else getString(R.string.error_try_again)
             labelProgress.text = msg
             imgProgress.visibility = View.INVISIBLE
             sendDebugLogLabel.text = getString(R.string.send_log)

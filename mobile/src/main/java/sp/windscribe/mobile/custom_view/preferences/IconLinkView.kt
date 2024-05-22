@@ -15,13 +15,13 @@ import sp.windscribe.mobile.utils.UiUtil
 
 @SuppressLint("ClickableViewAccessibility")
 class IconLinkView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val attributes: TypedArray =
-        context.obtainStyledAttributes(attrs, R.styleable.ItemLinkView)
+            context.obtainStyledAttributes(attrs, R.styleable.ItemLinkView)
     private val view: View = View.inflate(context, R.layout.icon_link_item_view, this)
     var text: String
         get() {
@@ -33,7 +33,7 @@ class IconLinkView @JvmOverloads constructor(
 
     init {
         view.findViewById<TextView>(R.id.title).text =
-            attributes.getString(R.styleable.ItemLinkView_ItemLinkViewTitle)
+                attributes.getString(R.styleable.ItemLinkView_ItemLinkViewTitle)
         val leftIcon = attributes.getResourceId(R.styleable.ItemLinkView_ItemLinkViewLeftIcon, -1)
         if (leftIcon == -1) {
             view.findViewById<ImageView>(R.id.left_icon).visibility = GONE
@@ -46,9 +46,9 @@ class IconLinkView @JvmOverloads constructor(
             view.findViewById<ImageView>(R.id.right_icon).tag = rightIcon
         }
         UiUtil.setupOnTouchListener(
-            container = view.findViewById(R.id.container),
-            textView = view.findViewById(R.id.title),
-            iconView = view.findViewById(R.id.right_icon)
+                container = view.findViewById(R.id.container),
+                textView = view.findViewById(R.id.title),
+                iconView = view.findViewById(R.id.right_icon)
         )
     }
 

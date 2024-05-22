@@ -17,9 +17,9 @@ class AutoScrollTextView : AppCompatEditText {
      */
     private class CursorScrollingMovementMethod : ScrollingMovementMethod() {
         override fun onTouchEvent(
-            widget: TextView,
-            buffer: Spannable,
-            event: MotionEvent
+                widget: TextView,
+                buffer: Spannable,
+                event: MotionEvent
         ): Boolean {
             widget.moveCursorToVisibleOffset()
             return super.onTouchEvent(widget, buffer, event)
@@ -28,11 +28,11 @@ class AutoScrollTextView : AppCompatEditText {
 
     @JvmOverloads
     constructor(context: Context, attrs: AttributeSet? = null) : super(
-        context, attrs
+            context, attrs
     )
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
-        context, attrs, defStyle
+            context, attrs, defStyle
     )
 
     override fun append(text: CharSequence, start: Int, end: Int) {

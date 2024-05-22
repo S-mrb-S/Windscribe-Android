@@ -11,7 +11,7 @@ import sp.windscribe.vpn.serverlist.entity.Favourite
 import javax.inject.Inject
 
 class FavouriteRepository @Inject constructor(
-    private val scope: CoroutineScope, private val localDbInterface: LocalDbInterface
+        private val scope: CoroutineScope, private val localDbInterface: LocalDbInterface
 ) {
     private val _favourites = MutableSharedFlow<List<City>>(replay = 1)
     val favourites: SharedFlow<List<City>> = _favourites

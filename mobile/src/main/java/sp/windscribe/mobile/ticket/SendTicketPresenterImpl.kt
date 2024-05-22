@@ -18,8 +18,8 @@ import sp.windscribe.vpn.repository.CallResult
 import javax.inject.Inject
 
 class SendTicketPresenterImpl @Inject constructor(
-    private val sendTicketView: SendTicketView,
-    private val interactor: ActivityInteractor
+        private val sendTicketView: SendTicketView,
+        private val interactor: ActivityInteractor
 ) : SendTicketPresenter {
     private var queryType = QueryType.Account
     override fun init() {
@@ -33,9 +33,9 @@ class SendTicketPresenterImpl @Inject constructor(
 
     override fun onInputChanged(email: String, subject: String, message: String) {
         sendTicketView.setSendButtonState(
-            validEmail(email) && validMessage(message) && validSubject(
-                subject
-            )
+                validEmail(email) && validMessage(message) && validSubject(
+                        subject
+                )
         )
     }
 
@@ -48,36 +48,36 @@ class SendTicketPresenterImpl @Inject constructor(
         val username = interactor.getAppPreferenceInterface().userName
         val queryMap = buildTicketMap(email, subject, message, username, queryType)
         interactor.getCompositeDisposable()
-            .add(
-                interactor.getApiCallManager().sendTicket(queryMap)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(
-                        object :
-                            DisposableSingleObserver<GenericResponseClass<TicketResponse?, ApiErrorResponse?>>() {
-                            override fun onError(e: Throwable) {
-                                sendTicketView.setProgressView(false)
-                                sendTicketView.setErrorLayout("Failed to submit ticket. Try again.")
-                            }
+                .add(
+                        interactor.getApiCallManager().sendTicket(queryMap)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(
+                                        object :
+                                                DisposableSingleObserver<GenericResponseClass<TicketResponse?, ApiErrorResponse?>>() {
+                                            override fun onError(e: Throwable) {
+                                                sendTicketView.setProgressView(false)
+                                                sendTicketView.setErrorLayout("Failed to submit ticket. Try again.")
+                                            }
 
-                            override fun onSuccess(
-                                response: GenericResponseClass<TicketResponse?, ApiErrorResponse?>
-                            ) {
-                                sendTicketView.setProgressView(false)
-                                when (val result = response.callResult<TicketResponse>()) {
-                                    is CallResult.Error -> {
-                                        if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                            sendTicketView.setErrorLayout("Failed to submit ticket. Try again.")
-                                        } else {
-                                            sendTicketView.setErrorLayout(result.errorMessage)
-                                        }
-                                    }
+                                            override fun onSuccess(
+                                                    response: GenericResponseClass<TicketResponse?, ApiErrorResponse?>
+                                            ) {
+                                                sendTicketView.setProgressView(false)
+                                                when (val result = response.callResult<TicketResponse>()) {
+                                                    is CallResult.Error -> {
+                                                        if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                                            sendTicketView.setErrorLayout("Failed to submit ticket. Try again.")
+                                                        } else {
+                                                            sendTicketView.setErrorLayout(result.errorMessage)
+                                                        }
+                                                    }
 
-                                    is CallResult.Success -> sendTicketView.setSuccessLayout("Sweet, we’ll get back to you as soon as one of our agents is back from lunch.")
-                                }
-                            }
-                        })
-            )
+                                                    is CallResult.Success -> sendTicketView.setSuccessLayout("Sweet, we’ll get back to you as soon as one of our agents is back from lunch.")
+                                                }
+                                            }
+                                        })
+                )
     }
 
     override fun setTheme(context: Context) {

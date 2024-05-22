@@ -22,7 +22,13 @@ import sp.windscribe.mobile.dialogs.ErrorDialog
 import sp.windscribe.mobile.dialogs.ProgressDialog
 import sp.windscribe.mobile.dialogs.UnknownErrorDialog
 import sp.windscribe.mobile.dialogs.UnknownErrorDialogCallback
-import sp.windscribe.mobile.welcome.fragment.*
+import sp.windscribe.mobile.welcome.fragment.EmergencyConnectFragment
+import sp.windscribe.mobile.welcome.fragment.FragmentCallback
+import sp.windscribe.mobile.welcome.fragment.LoginFragment
+import sp.windscribe.mobile.welcome.fragment.NoEmailAttentionFragment
+import sp.windscribe.mobile.welcome.fragment.SignUpFragment
+import sp.windscribe.mobile.welcome.fragment.WelcomeActivityCallback
+import sp.windscribe.mobile.welcome.fragment.WelcomeFragment
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.mobile.welcome.viewmodal.EmergencyConnectViewModal
 import sp.windscribe.mobile.windscribe.WindscribeActivity
@@ -47,9 +53,9 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
         DaggerActivityComponent.builder().activityModule(ActivityModule(this, this))
-            .applicationComponent(
-                appContext.applicationComponent
-            ).build().inject(this)
+                .applicationComponent(
+                        appContext.applicationComponent
+                ).build().inject(this)
         ButterKnife.bind(this)
         addStartFragment()
     }
@@ -71,7 +77,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+            requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         if (requestCode == requestLocationPermissionCode) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -101,7 +107,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     override fun goToSignUp() {
         val signUpFragment = SignUpFragment.newInstance(false)
         val direction = GravityCompat.getAbsoluteGravity(
-            GravityCompat.END, resources.configuration.layoutDirection
+                GravityCompat.END, resources.configuration.layoutDirection
         )
         signUpFragment.enterTransition = Slide(direction).addTarget(R.id.sign_up_container)
         replaceFragment(signUpFragment, true)
@@ -122,19 +128,19 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     override fun hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(
-            window.decorView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
+                window.decorView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
         )
     }
 
     override fun launchShareIntent(file: File) {
         val fileUri = FileProvider.getUriForFile(
-            this, "sp.windscribe.vpn.provider", file
+                this, "sp.windscribe.vpn.provider", file
         )
         ShareCompat.IntentBuilder.from(this).setType("*/*").setStream(fileUri).startChooser()
     }
 
     override fun onAccountClaimButtonClick(
-        username: String, password: String, email: String, ignoreEmptyEmail: Boolean
+            username: String, password: String, email: String, ignoreEmptyEmail: Boolean
     ) {
         presenter.startAccountClaim(username, password, email, ignoreEmptyEmail)
     }
@@ -167,24 +173,24 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     override fun onLoginClick() {
         val loginFragment = LoginFragment()
         val direction = GravityCompat.getAbsoluteGravity(
-            GravityCompat.END, resources.configuration.layoutDirection
+                GravityCompat.END, resources.configuration.layoutDirection
         )
         loginFragment.enterTransition = Slide(direction).addTarget(R.id.login_container)
         replaceFragment(loginFragment, true)
     }
 
     override fun onSignUpButtonClick(
-        username: String,
-        password: String,
-        email: String,
-        referralUsername: String,
-        ignoreEmptyEmail: Boolean
+            username: String,
+            password: String,
+            email: String,
+            referralUsername: String,
+            ignoreEmptyEmail: Boolean
     ) {
         if (ignoreEmptyEmail) {
             supportFragmentManager.popBackStack()
         }
         presenter.startSignUpProcess(
-            username, password, email, referralUsername, ignoreEmptyEmail
+                username, password, email, referralUsername, ignoreEmptyEmail
         )
     }
 
@@ -212,7 +218,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
 
     private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {
         val transaction =
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
         if (addToBackStack) {
             transaction.addToBackStack(fragment.javaClass.name)
         }
@@ -264,7 +270,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     override fun setWindow() {
         val statusBarColor = resources.getColor(android.R.color.transparent)
         window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.statusBarColor = statusBarColor
     }
 
@@ -277,15 +283,15 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
     }
 
     override fun showNoEmailAttentionFragment(
-        username: String, password: String, accountClaim: Boolean, pro: Boolean
+            username: String, password: String, accountClaim: Boolean, pro: Boolean
     ) {
         val noEmailAttentionFragment =
-            NoEmailAttentionFragment(accountClaim, username, password, pro)
+                NoEmailAttentionFragment(accountClaim, username, password, pro)
         noEmailAttentionFragment.enterTransition =
-            Slide(Gravity.BOTTOM).addTarget(R.id.email_fragment_container)
+                Slide(Gravity.BOTTOM).addTarget(R.id.email_fragment_container)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, noEmailAttentionFragment)
-            .addToBackStack(noEmailAttentionFragment.javaClass.name).commit()
+                .replace(R.id.fragment_container, noEmailAttentionFragment)
+                .addToBackStack(noEmailAttentionFragment.javaClass.name).commit()
     }
 
     override fun showToast(message: String) {
@@ -311,7 +317,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
             fragment = SignUpFragment.newInstance(false)
         } else if (startFragmentName != null && startFragmentName == "AccountSetUp") {
             softInputAssist =
-                SoftInputAssist(this, intArrayOf(R.id.forgot_password, R.id.set_up_later_button))
+                    SoftInputAssist(this, intArrayOf(R.id.forgot_password, R.id.set_up_later_button))
             val proAccount = presenter.isUserPro
             fragment = SignUpFragment.newInstance(proAccount)
         } else {
@@ -323,7 +329,7 @@ class WelcomeActivity : BaseActivity(), FragmentCallback, WelcomeView, UnknownEr
         bundle.putBoolean("skipToHome", skipToHome)
         fragment.arguments = bundle
         val direction = GravityCompat.getAbsoluteGravity(
-            GravityCompat.END, resources.configuration.layoutDirection
+                GravityCompat.END, resources.configuration.layoutDirection
         )
         fragment.enterTransition = Slide(direction).addTarget(R.id.welcome_container)
         replaceFragment(fragment, false)

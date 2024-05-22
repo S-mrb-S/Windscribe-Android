@@ -20,9 +20,9 @@ import sp.windscribe.mobile.R
 
 
 class ExpandableDropDownView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), AdapterView.OnItemSelectedListener {
 
     interface Delegate {
@@ -38,7 +38,7 @@ class ExpandableDropDownView @JvmOverloads constructor(
     private var spinner: Spinner? = null
     private var current: TextView? = null
     private val attributes: TypedArray =
-        context.obtainStyledAttributes(attrs, R.styleable.ExpandableDropDownView)
+            context.obtainStyledAttributes(attrs, R.styleable.ExpandableDropDownView)
     private val view: View = View.inflate(context, R.layout.expandable_dropdown_view, this)
     var childView: BaseView? = null
 
@@ -46,25 +46,25 @@ class ExpandableDropDownView @JvmOverloads constructor(
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
         attributes.getString(R.styleable.ExpandableDropDownView_ExpandableDropDownDescription)
-            ?.let {
-                view.findViewById<TextView>(R.id.description).text = it
-            }
+                ?.let {
+                    view.findViewById<TextView>(R.id.description).text = it
+                }
         view.findViewById<TextView>(R.id.label).text =
-            attributes.getString(R.styleable.ExpandableDropDownView_ExpandableDropDownTitle)
+                attributes.getString(R.styleable.ExpandableDropDownView_ExpandableDropDownTitle)
         val leftIcon =
-            attributes.getResourceIdOrThrow(R.styleable.ExpandableDropDownView_ExpandableDropDownLeftIcon)
+                attributes.getResourceIdOrThrow(R.styleable.ExpandableDropDownView_ExpandableDropDownLeftIcon)
         view.findViewById<ImageView>(R.id.left_icon).setImageResource(leftIcon)
         val showRightIcon = attributes.getBoolean(
-            R.styleable.ExpandableDropDownView_ExpandableDropDownShowRightIcon,
-            true
+                R.styleable.ExpandableDropDownView_ExpandableDropDownShowRightIcon,
+                true
         )
         view.findViewById<ImageView>(R.id.right_icon).visibility = if (showRightIcon) {
             VISIBLE
         } else INVISIBLE
         view.findViewById<ImageView>(R.id.right_icon)
-            .setOnClickListener { delegate?.onExplainClick() }
+                .setOnClickListener { delegate?.onExplainClick() }
         view.findViewById<ImageView>(R.id.clickable_area)
-            .setOnClickListener { spinner?.performClick() }
+                .setOnClickListener { spinner?.performClick() }
         spinner?.onItemSelectedListener = this
         attachChildView()
     }
@@ -94,8 +94,8 @@ class ExpandableDropDownView @JvmOverloads constructor(
 
     fun setAdapter(savedSelection: String, selections: Array<String>) {
         val selectionAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            context, R.layout.drop_down_layout,
-            R.id.tv_drop_down, selections
+                context, R.layout.drop_down_layout,
+                R.id.tv_drop_down, selections
         )
         spinner?.adapter = selectionAdapter
         spinner?.isSelected = false
@@ -106,9 +106,9 @@ class ExpandableDropDownView @JvmOverloads constructor(
 
     private fun attachChildView() {
         val childType =
-            attributes.getString(R.styleable.ExpandableDropDownView_ExpandableDropDownChildType)
-                ?.let { ChildType.valueOf(it) }
-                ?: ChildType.ConnectionMode
+                attributes.getString(R.styleable.ExpandableDropDownView_ExpandableDropDownChildType)
+                        ?.let { ChildType.valueOf(it) }
+                        ?: ChildType.ConnectionMode
         val placeHolder = view.findViewById<FrameLayout>(R.id.place_holder_view)
         childView = when (childType) {
             ChildType.PacketSize -> {

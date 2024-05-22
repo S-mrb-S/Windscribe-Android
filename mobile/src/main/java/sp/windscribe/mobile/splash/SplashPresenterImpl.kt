@@ -15,8 +15,8 @@ import sp.windscribe.vpn.errormodel.WindError
 import javax.inject.Inject
 
 class SplashPresenterImpl @Inject constructor(
-    private var view: SplashView,
-    private var interactor: ActivityInteractor
+        private var view: SplashView,
+        private var interactor: ActivityInteractor
 ) : SplashPresenter {
 
     private val logger = LoggerFactory.getLogger("splash_p")
@@ -45,45 +45,45 @@ class SplashPresenterImpl @Inject constructor(
         if (interactor.getAppPreferenceInterface().isNewApplicationInstance) {
             interactor.getAppPreferenceInterface().isNewApplicationInstance = false
             val installation = interactor.getAppPreferenceInterface()
-                .getResponseString(PreferencesKeyConstants.NEW_INSTALLATION)
+                    .getResponseString(PreferencesKeyConstants.NEW_INSTALLATION)
             if (PreferencesKeyConstants.I_NEW == installation) {
                 //Record new install
                 logger.info("Recording new installation of the app")
                 interactor.getAppPreferenceInterface()
-                    .saveResponseStringData(
-                        PreferencesKeyConstants.NEW_INSTALLATION,
-                        PreferencesKeyConstants.I_OLD
-                    )
+                        .saveResponseStringData(
+                                PreferencesKeyConstants.NEW_INSTALLATION,
+                                PreferencesKeyConstants.I_OLD
+                        )
                 interactor.getCompositeDisposable().add(
-                    interactor.getApiCallManager()
-                        .recordAppInstall(null)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(
-                            object :
-                                DisposableSingleObserver<GenericResponseClass<String?, ApiErrorResponse?>>() {
-                                override fun onError(e: Throwable) {
-                                    logger.debug(WindError.instance.rxErrorToString(e as Exception))
-                                    decideActivity()
-                                }
+                        interactor.getApiCallManager()
+                                .recordAppInstall(null)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(
+                                        object :
+                                                DisposableSingleObserver<GenericResponseClass<String?, ApiErrorResponse?>>() {
+                                            override fun onError(e: Throwable) {
+                                                logger.debug(WindError.instance.rxErrorToString(e as Exception))
+                                                decideActivity()
+                                            }
 
-                                override fun onSuccess(
-                                    recordInstallResponse: GenericResponseClass<String?, ApiErrorResponse?>
-                                ) {
-                                    if (recordInstallResponse.dataClass != null) {
-                                        logger.info(
-                                            "Recording app install success. "
-                                                    + recordInstallResponse.dataClass
-                                        )
-                                    } else if (recordInstallResponse.errorClass != null) {
-                                        logger.debug(
-                                            "Recording app install failed. "
-                                                    + recordInstallResponse.errorClass.toString()
-                                        )
-                                    }
-                                    decideActivity()
-                                }
-                            })
+                                            override fun onSuccess(
+                                                    recordInstallResponse: GenericResponseClass<String?, ApiErrorResponse?>
+                                            ) {
+                                                if (recordInstallResponse.dataClass != null) {
+                                                    logger.info(
+                                                            "Recording app install success. "
+                                                                    + recordInstallResponse.dataClass
+                                                    )
+                                                } else if (recordInstallResponse.errorClass != null) {
+                                                    logger.debug(
+                                                            "Recording app install failed. "
+                                                                    + recordInstallResponse.errorClass.toString()
+                                                    )
+                                                }
+                                                decideActivity()
+                                            }
+                                        })
                 )
             } else {
                 //Not a new install, decide activity
@@ -101,23 +101,23 @@ class SplashPresenterImpl @Inject constructor(
         val userLoggedIn = interactor.getAppPreferenceInterface().sessionHash != null
         if (userLoggedIn) {
             interactor.getCompositeDisposable().add(
-                interactor.serverDataAvailable()
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object : DisposableSingleObserver<Boolean?>() {
-                        override fun onError(ignored: Throwable) {
-                            checkApplicationInstanceAndDecideActivity()
-                        }
+                    interactor.serverDataAvailable()
+                            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                            .subscribeWith(object : DisposableSingleObserver<Boolean?>() {
+                                override fun onError(ignored: Throwable) {
+                                    checkApplicationInstanceAndDecideActivity()
+                                }
 
-                        override fun onSuccess(serverListAvailable: Boolean) {
-                            if (serverListAvailable) {
-                                logger.info("Migration not required.")
-                                checkApplicationInstanceAndDecideActivity()
-                            } else {
-                                logger.info("Migration required. updating server list.")
-                                updateDataFromApiAndOldStorage()
-                            }
-                        }
-                    })
+                                override fun onSuccess(serverListAvailable: Boolean) {
+                                    if (serverListAvailable) {
+                                        logger.info("Migration not required.")
+                                        checkApplicationInstanceAndDecideActivity()
+                                    } else {
+                                        logger.info("Migration required. updating server list.")
+                                        updateDataFromApiAndOldStorage()
+                                    }
+                                }
+                            })
             )
         } else {
             checkApplicationInstanceAndDecideActivity()
@@ -164,34 +164,34 @@ class SplashPresenterImpl @Inject constructor(
 
     private fun updateDataFromApiAndOldStorage() {
         interactor.getCompositeDisposable().add(
-            interactor.getServerListUpdater().update()
-                .doOnError { logger.info("Failed to download server list.") }
-                .andThen(interactor.getStaticListUpdater().update())
-                .doOnError { logger.info("Failed to download static server list.") }
-                .andThen(interactor.updateUserData())
-                .andThen(Completable.fromAction {
-                    interactor.getPreferenceChangeObserver().postCityServerChange()
-                })
-                .onErrorResumeNext { throwable: Throwable ->
-                    logger.info(
-                        "*********Preparing dashboard failed: " + throwable.toString()
-                                + " Use reload button in server list in home activity.*******"
-                    )
-                    interactor.updateUserData().andThen(
-                        Completable.fromAction {
+                interactor.getServerListUpdater().update()
+                        .doOnError { logger.info("Failed to download server list.") }
+                        .andThen(interactor.getStaticListUpdater().update())
+                        .doOnError { logger.info("Failed to download static server list.") }
+                        .andThen(interactor.updateUserData())
+                        .andThen(Completable.fromAction {
                             interactor.getPreferenceChangeObserver().postCityServerChange()
                         })
-                }
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableCompletableObserver() {
-                    override fun onComplete() {
-                        checkApplicationInstanceAndDecideActivity()
-                    }
+                        .onErrorResumeNext { throwable: Throwable ->
+                            logger.info(
+                                    "*********Preparing dashboard failed: " + throwable.toString()
+                                            + " Use reload button in server list in home activity.*******"
+                            )
+                            interactor.updateUserData().andThen(
+                                    Completable.fromAction {
+                                        interactor.getPreferenceChangeObserver().postCityServerChange()
+                                    })
+                        }
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableCompletableObserver() {
+                            override fun onComplete() {
+                                checkApplicationInstanceAndDecideActivity()
+                            }
 
-                    override fun onError(ignored: Throwable) {
-                        checkApplicationInstanceAndDecideActivity()
-                    }
-                })
+                            override fun onError(ignored: Throwable) {
+                                checkApplicationInstanceAndDecideActivity()
+                            }
+                        })
         )
     }
 }

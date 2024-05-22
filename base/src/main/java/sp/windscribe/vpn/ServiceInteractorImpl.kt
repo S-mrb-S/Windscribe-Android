@@ -35,9 +35,9 @@ import javax.inject.Inject
  * @see ServiceInteractor
  */
 class ServiceInteractorImpl @Inject constructor(
-    override val preferenceHelper: PreferencesHelper,
-    override val apiManager: IApiCallManager,
-    private val localDbInterface: LocalDbInterface
+        override val preferenceHelper: PreferencesHelper,
+        override val apiManager: IApiCallManager,
+        private val localDbInterface: LocalDbInterface
 ) : ServiceInteractor {
 
     override val compositeDisposable = CompositeDisposable()
@@ -53,8 +53,8 @@ class ServiceInteractorImpl @Inject constructor(
         get() {
             val selectedLanguage = preferenceHelper.savedLanguage
             return selectedLanguage.substring(
-                selectedLanguage.indexOf("(") + 1,
-                selectedLanguage.indexOf(")")
+                    selectedLanguage.indexOf("(") + 1,
+                    selectedLanguage.indexOf(")")
             )
         }
 
@@ -101,17 +101,17 @@ class ServiceInteractorImpl @Inject constructor(
 
     override fun getStaticIpCount(): Int {
         return localDbInterface.staticRegionCount
-            .onErrorReturnItem(0)
-            .blockingGet()
+                .onErrorReturnItem(0)
+                .blockingGet()
     }
 
     override fun addNetworkToKnown(networkName: String): Single<Long> {
         val networkInfo = NetworkInfo(
-            networkName,
-            preferenceHelper.isAutoSecureOn,
-            false,
-            PreferencesKeyConstants.PROTO_IKev2,
-            PreferencesKeyConstants.DEFAULT_IKEV2_PORT
+                networkName,
+                preferenceHelper.isAutoSecureOn,
+                false,
+                PreferencesKeyConstants.PROTO_IKev2,
+                PreferencesKeyConstants.DEFAULT_IKEV2_PORT
         )
         return localDbInterface.addNetwork(networkInfo)
     }
@@ -167,9 +167,9 @@ class ServiceInteractorImpl @Inject constructor(
         var logLine: String?
         val debugFilePath = getDebugFilePath()
         val logFile = Windscribe.appContext.resources.getString(
-            R.string.log_file_header,
-            Build.VERSION.SDK_INT, Build.BRAND, Build.DEVICE, Build.MODEL, Build.MANUFACTURER,
-            Build.VERSION.RELEASE, WindUtilities.getVersionCode()
+                R.string.log_file_header,
+                Build.VERSION.SDK_INT, Build.BRAND, Build.DEVICE, Build.MODEL, Build.MANUFACTURER,
+                Build.VERSION.RELEASE, WindUtilities.getVersionCode()
         )
         val builder = StringBuilder()
         builder.append(logFile)

@@ -12,8 +12,8 @@ class GenericResponseClass<D, E>(val dataClass: D?, val errorClass: E?) {
             CallResult.Error(errorClass.errorCode, errorClass.errorMessage)
         } else {
             CallResult.Error(
-                NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA,
-                "Unexpected Api data returned from Api."
+                    NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA,
+                    "Unexpected Api data returned from Api."
             )
         }
     }

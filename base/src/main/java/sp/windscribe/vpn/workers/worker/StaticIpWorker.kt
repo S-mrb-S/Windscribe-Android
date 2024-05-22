@@ -12,7 +12,7 @@ import sp.windscribe.vpn.repository.UserRepository
 import javax.inject.Inject
 
 class StaticIpWorker(context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
+        CoroutineWorker(context, params) {
     @Inject
     lateinit var staticIpRepository: StaticIpRepository
 

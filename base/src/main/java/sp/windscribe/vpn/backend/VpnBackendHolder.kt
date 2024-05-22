@@ -26,11 +26,11 @@ import javax.inject.Singleton
 
 @Singleton
 class VpnBackendHolder(
-    val scope: CoroutineScope,
-    private val preferenceHelper: AppPreferenceHelper,
-    private val iKev2VpnBackend: IKev2VpnBackend,
-    private val wireguardBackend: WireguardBackend,
-    private val openVPNBackend: OpenVPNBackend
+        val scope: CoroutineScope,
+        private val preferenceHelper: AppPreferenceHelper,
+        private val iKev2VpnBackend: IKev2VpnBackend,
+        private val wireguardBackend: WireguardBackend,
+        private val openVPNBackend: OpenVPNBackend
 ) {
 
     var activeBackend: VpnBackend? = null

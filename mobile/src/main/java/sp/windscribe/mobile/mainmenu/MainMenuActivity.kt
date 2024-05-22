@@ -222,7 +222,7 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
     override fun gotoLoginRegistrationActivity() {
         val intent = WelcomeActivity.getStartIntent(this)
         intent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_CLEAR_TASK
         )
         startActivity(intent)
         finish()
@@ -277,14 +277,14 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
     }
 
     override fun resetAllTextResources(
-        activityTitle: String,
-        general: String,
-        account: String,
-        connection: String,
-        helpMe: String,
-        signOut: String,
-        about: String,
-        robert: String
+            activityTitle: String,
+            general: String,
+            account: String,
+            connection: String,
+            helpMe: String,
+            signOut: String,
+            about: String,
+            robert: String
     ) {
         tvActivityTitle?.text = activityTitle
         generalView.text = general
@@ -297,10 +297,10 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
     }
 
     override fun setActionButtonVisibility(
-        loginButtonVisibility: Int,
-        addEmailButtonVisibility: Int,
-        setUpAccountButtonVisibility: Int,
-        confirmEmailButtonVisibility: Int
+            loginButtonVisibility: Int,
+            addEmailButtonVisibility: Int,
+            setUpAccountButtonVisibility: Int,
+            confirmEmailButtonVisibility: Int
     ) {
         loginButton?.visibility = loginButtonVisibility
         addEmail?.visibility = addEmailButtonVisibility
@@ -329,10 +329,10 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
 
     override fun showLogoutAlert() {
         showAlertDialog(
-            getString(R.string.logout),
-            getString(R.string.logout_alert_description),
-            getString(R.string.logout),
-            getString(R.string.cancel)
+                getString(R.string.logout),
+                getString(R.string.logout_alert_description),
+                getString(R.string.logout),
+                getString(R.string.cancel)
         ) {
             presenter.continueWithLogoutClicked()
         }
@@ -359,8 +359,8 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
         if (presenter.isHapticFeedbackEnabled()) {
             view?.isHapticFeedbackEnabled = true
             view?.performHapticFeedback(
-                HapticFeedbackConstants.VIRTUAL_KEY,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                    HapticFeedbackConstants.VIRTUAL_KEY,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
         }
     }

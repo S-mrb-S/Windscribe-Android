@@ -12,7 +12,7 @@ open class BaseView(val view: View) {
 
     fun showKeyboard(editText: EditText) {
         val keyboard =
-            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         keyboard.showSoftInput(editText, 0)
     }
 }

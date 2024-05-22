@@ -11,7 +11,7 @@ import sp.windscribe.vpn.repository.UserRepository
 import javax.inject.Inject
 
 class CredentialsWorker(appContext: Context, params: WorkerParameters) :
-    CoroutineWorker(appContext, params) {
+        CoroutineWorker(appContext, params) {
     private val logger = LoggerFactory.getLogger("credentials_updater")
 
     @Inject

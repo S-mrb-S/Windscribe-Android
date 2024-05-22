@@ -22,7 +22,7 @@ open class FullScreenDialog : DialogFragment() {
         super.onStart()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         )
     }
 
@@ -40,10 +40,10 @@ open class FullScreenDialog : DialogFragment() {
             val boundingRectHeight = boundingRect[0].height()
             val backButton = view.findViewById<ConstraintLayout>(R.id.nav_button)
             backButton?.setPaddingRelative(
-                backButton.paddingStart,
-                backButton.paddingTop + boundingRectHeight / 2,
-                backButton.paddingEnd,
-                backButton.paddingBottom
+                    backButton.paddingStart,
+                    backButton.paddingTop + boundingRectHeight / 2,
+                    backButton.paddingEnd,
+                    backButton.paddingBottom
             )
         }
     }

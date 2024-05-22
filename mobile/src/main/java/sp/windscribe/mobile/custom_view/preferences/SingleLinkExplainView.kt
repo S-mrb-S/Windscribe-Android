@@ -17,20 +17,20 @@ import sp.windscribe.mobile.utils.UiUtil
 
 @SuppressLint("ClickableViewAccessibility")
 class SingleLinkExplainView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val attributes: TypedArray =
-        context.obtainStyledAttributes(attrs, R.styleable.SingleLinkExplainView)
+            context.obtainStyledAttributes(attrs, R.styleable.SingleLinkExplainView)
     private val view: View = View.inflate(context, R.layout.lable_link_explain_view, this)
 
     init {
         view.findViewById<TextView>(R.id.title).text =
-            attributes.getString(R.styleable.SingleLinkExplainView_Title)
+                attributes.getString(R.styleable.SingleLinkExplainView_Title)
         view.findViewById<TextView>(R.id.description).text =
-            attributes.getString(R.styleable.SingleLinkExplainView_Description)
+                attributes.getString(R.styleable.SingleLinkExplainView_Description)
         val leftIcon = attributes.getResourceId(R.styleable.SingleLinkExplainView_LeftIcon, -1)
         if (leftIcon == -1) {
             view.findViewById<ImageView>(R.id.left_icon).visibility = GONE
@@ -40,19 +40,19 @@ class SingleLinkExplainView @JvmOverloads constructor(
         val rightIcon = view.findViewById<ImageView>(R.id.right_icon)
         rightIcon.tag = R.drawable.ic_forward_arrow_settings
         UiUtil.setupOnTouchListener(
-            container = view.findViewById(R.id.container),
-            textView = view.findViewById(R.id.title),
-            iconView = view.findViewById(R.id.right_icon)
+                container = view.findViewById(R.id.container),
+                textView = view.findViewById(R.id.title),
+                iconView = view.findViewById(R.id.right_icon)
         )
         UiUtil.setupOnTouchListener(
-            imageViewContainer = view.findViewById(R.id.clip_corner_background),
-            textView = view.findViewById(R.id.title)
+                imageViewContainer = view.findViewById(R.id.clip_corner_background),
+                textView = view.findViewById(R.id.title)
         )
         val rightMargin = attributes.getFloat(R.styleable.SingleLinkExplainView_RightMargin, 11F)
         val rightMarginPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            rightMargin,
-            resources.displayMetrics
+                TypedValue.COMPLEX_UNIT_DIP,
+                rightMargin,
+                resources.displayMetrics
         ).toInt()
         rightIcon.updateLayoutParams {
             val params = this as ConstraintLayout.LayoutParams

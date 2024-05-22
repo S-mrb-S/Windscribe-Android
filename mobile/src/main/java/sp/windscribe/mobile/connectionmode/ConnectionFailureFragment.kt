@@ -32,9 +32,9 @@ class ConnectionFailureFragment : DialogFragment(), ItemSelectListener {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.connection_failure, container, false)
         ButterKnife.bind(this, view)
@@ -91,8 +91,8 @@ class ConnectionFailureFragment : DialogFragment(), ItemSelectListener {
 
     companion object {
         fun newInstance(
-            protocolInformationList: List<ProtocolInformation>,
-            autoConnectionModeCallback: AutoConnectionModeCallback
+                protocolInformationList: List<ProtocolInformation>,
+                autoConnectionModeCallback: AutoConnectionModeCallback
         ): DialogFragment {
             val fragment = ConnectionFailureFragment()
             fragment.protocolInformation = protocolInformationList

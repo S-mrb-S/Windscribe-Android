@@ -75,19 +75,19 @@ class DeviceStateService : JobIntentWorkAroundService() {
 
     private fun addToKnownNetworks(networkName: String) {
         compositeDisposable.add(
-            interactor.getNetwork(networkName)
-                .onErrorResumeNext {
-                    logger.debug("Saving $networkName(SSID) to database.")
-                    interactor.addNetworkToKnown(networkName)
-                        .flatMap { interactor.getNetwork(networkName) }
-                }.subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe({
-                    resetConnectState(it)
-                }, {
-                    logger.debug("Ignore: no network information for network name: $networkName")
-                    interactor.compositeDisposable.dispose()
-                })
+                interactor.getNetwork(networkName)
+                        .onErrorResumeNext {
+                            logger.debug("Saving $networkName(SSID) to database.")
+                            interactor.addNetworkToKnown(networkName)
+                                    .flatMap { interactor.getNetwork(networkName) }
+                        }.subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribe({
+                            resetConnectState(it)
+                        }, {
+                            logger.debug("Ignore: no network information for network name: $networkName")
+                            interactor.compositeDisposable.dispose()
+                        })
         )
     }
 
@@ -107,11 +107,11 @@ class DeviceStateService : JobIntentWorkAroundService() {
         @JvmStatic
         fun enqueueWork(context: Context) {
             enqueueWork(
-                context, DeviceStateService::class.java, JOB_ID,
-                Intent(
-                    context,
-                    DeviceStateService::class.java
-                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context, DeviceStateService::class.java, JOB_ID,
+                    Intent(
+                            context,
+                            DeviceStateService::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }
     }

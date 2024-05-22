@@ -32,7 +32,7 @@ import sp.windscribe.vpn.workers.WindScribeWorkManager
 import javax.inject.Inject
 
 class SessionWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
+        CoroutineWorker(context, workerParams) {
 
     val logger: Logger = LoggerFactory.getLogger("session_worker")
 
@@ -90,8 +90,8 @@ class SessionWorker(context: Context, workerParams: WorkerParameters) :
     }
 
     private suspend fun updateIfRequired(
-        changed: List<Boolean>,
-        userSessionResponse: UserSessionResponse
+            changed: List<Boolean>,
+            userSessionResponse: UserSessionResponse
     ) {
         userRepository.reload(userSessionResponse) {
             if (changed[0]) {

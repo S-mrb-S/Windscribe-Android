@@ -13,7 +13,7 @@ class LocationPermissionMissingDialog : FullScreenDialog() {
     private var binding: LocationPermissionMissingDialogBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = LocationPermissionMissingDialogBinding.inflate(inflater, container, false)
         return binding?.root

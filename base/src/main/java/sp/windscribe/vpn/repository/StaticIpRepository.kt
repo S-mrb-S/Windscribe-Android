@@ -20,10 +20,10 @@ import javax.inject.Singleton
 
 @Singleton
 class StaticIpRepository @Inject constructor(
-    val scope: CoroutineScope,
-    private val preferencesHelper: PreferencesHelper,
-    private val apiCallManager: IApiCallManager,
-    private val localDbInterface: LocalDbInterface,
+        val scope: CoroutineScope,
+        private val preferencesHelper: PreferencesHelper,
+        private val apiCallManager: IApiCallManager,
+        private val localDbInterface: LocalDbInterface,
 ) {
     private var _events = MutableStateFlow(emptyList<StaticRegion>())
     val regions: StateFlow<List<StaticRegion>> = _events
@@ -51,8 +51,8 @@ class StaticIpRepository @Inject constructor(
         val regions = response.dataClass?.let {
             val jsonObject = JSONObject(Gson().toJson(it))
             Gson().fromJson<List<StaticRegion>>(
-                jsonObject.getJSONArray("static_ips").toString(),
-                object : TypeToken<List<StaticRegion>?>() {}.type
+                    jsonObject.getJSONArray("static_ips").toString(),
+                    object : TypeToken<List<StaticRegion>?>() {}.type
             )
         } ?: emptyList()
         if (regions.isNotEmpty()) {

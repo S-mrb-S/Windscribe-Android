@@ -4,8 +4,8 @@ import sp.windscribe.vpn.apppreference.PreferencesHelper
 import javax.inject.Inject
 
 class AdvanceParamsPresenterImpl @Inject constructor(
-    private var advanceParamsView: AdvanceParamView,
-    private val preferencesHelper: PreferencesHelper
+        private var advanceParamsView: AdvanceParamView,
+        private val preferencesHelper: PreferencesHelper
 ) : AdvanceParamPresenter {
     override fun setup() {
         advanceParamsView.setupActivityTitle()

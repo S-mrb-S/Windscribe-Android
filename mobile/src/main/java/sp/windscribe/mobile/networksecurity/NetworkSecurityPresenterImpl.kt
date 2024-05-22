@@ -14,8 +14,8 @@ import sp.windscribe.vpn.state.NetworkInfoListener
 import javax.inject.Inject
 
 class NetworkSecurityPresenterImpl @Inject constructor(
-    private val networkSecurityView: NetworkSecurityView,
-    private val interactor: ActivityInteractor
+        private val networkSecurityView: NetworkSecurityView,
+        private val interactor: ActivityInteractor
 ) : NetworkSecurityPresenter, NetworkInfoListener {
     private val logger = LoggerFactory.getLogger("net_security_p")
     override fun onDestroy() {
@@ -39,8 +39,8 @@ class NetworkSecurityPresenterImpl @Inject constructor(
         get() {
             val selectedLanguage = interactor.getAppPreferenceInterface().savedLanguage
             return selectedLanguage.substring(
-                selectedLanguage.indexOf("(") + 1,
-                selectedLanguage.indexOf(")")
+                    selectedLanguage.indexOf("(") + 1,
+                    selectedLanguage.indexOf(")")
             )
         }
 
@@ -65,36 +65,36 @@ class NetworkSecurityPresenterImpl @Inject constructor(
         logger.info("Setting up network list adapter...")
         networkSecurityView.showProgress(interactor.getResourceString(R.string.loading_network_list))
         interactor.getCompositeDisposable().add(
-            interactor.getNetworkInfoUpdated()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSubscriber<List<NetworkInfo>>() {
-                    override fun onComplete() {
-                        networkSecurityView.setAdapter(null)
-                    }
+                interactor.getNetworkInfoUpdated()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(object : DisposableSubscriber<List<NetworkInfo>>() {
+                            override fun onComplete() {
+                                networkSecurityView.setAdapter(null)
+                            }
 
-                    override fun onError(e: Throwable) {
-                        networkSecurityView.setAdapter(null)
-                        logger.debug(
-                            "Error reading network list data..." +
-                                    instance.convertThrowableToString(e)
-                        )
-                        networkSecurityView.onAdapterLoadFailed(
-                            interactor.getResourceString(R.string.no_saved_network_list)
-                        )
-                        networkSecurityView.hideProgress()
-                    }
+                            override fun onError(e: Throwable) {
+                                networkSecurityView.setAdapter(null)
+                                logger.debug(
+                                        "Error reading network list data..." +
+                                                instance.convertThrowableToString(e)
+                                )
+                                networkSecurityView.onAdapterLoadFailed(
+                                        interactor.getResourceString(R.string.no_saved_network_list)
+                                )
+                                networkSecurityView.hideProgress()
+                            }
 
-                    override fun onNext(networks: List<NetworkInfo>?) {
-                        logger.info("Reading network list data successful...")
-                        val networkList = networks?.toMutableList() ?: mutableListOf()
-                        val activeNetworkInfo = interactor.getNetworkInfoManager().networkInfo
-                        if (activeNetworkInfo != null) {
-                            networkList.removeIf { networkInfo: NetworkInfo -> networkInfo.networkName == activeNetworkInfo.networkName }
-                        }
-                        networkSecurityView.setAdapter(networkList)
-                    }
-                })
+                            override fun onNext(networks: List<NetworkInfo>?) {
+                                logger.info("Reading network list data successful...")
+                                val networkList = networks?.toMutableList() ?: mutableListOf()
+                                val activeNetworkInfo = interactor.getNetworkInfoManager().networkInfo
+                                if (activeNetworkInfo != null) {
+                                    networkList.removeIf { networkInfo: NetworkInfo -> networkInfo.networkName == activeNetworkInfo.networkName }
+                                }
+                                networkSecurityView.setAdapter(networkList)
+                            }
+                        })
         )
     }
 

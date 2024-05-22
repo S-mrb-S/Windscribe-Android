@@ -16,12 +16,12 @@ class GetServersWithKeyQuery {
     suspend fun performWork(key: String, callback: GetServersCallback) {
         try {
             val apolloClient = ApolloClient.Builder()
-                .httpMethod(HttpMethod.Get)
-                .httpServerUrl(Data.Api)
-                .build()
+                    .httpMethod(HttpMethod.Get)
+                    .httpServerUrl(Data.Api)
+                    .build()
 
             val response = apolloClient.query(GetServersQuery(key = key))
-                .execute()
+                    .execute()
 
             if (!response.hasErrors()) {
                 callback.onSuccess(response.data)

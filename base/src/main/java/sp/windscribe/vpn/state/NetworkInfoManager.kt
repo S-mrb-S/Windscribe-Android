@@ -20,11 +20,11 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkInfoManager(
-    private val preferencesHelper: PreferencesHelper,
-    private val localDbInterface: LocalDbInterface,
-    deviceStateManager: DeviceStateManager
+        private val preferencesHelper: PreferencesHelper,
+        private val localDbInterface: LocalDbInterface,
+        deviceStateManager: DeviceStateManager
 ) :
-    DeviceStateListener {
+        DeviceStateListener {
 
     private val compositeDisposable = CompositeDisposable()
     var networkInfo: NetworkInfo? = null
@@ -36,11 +36,11 @@ class NetworkInfoManager(
 
     private fun addNetworkToKnown(networkName: String): Single<Long> {
         val networkInfo = NetworkInfo(
-            networkName,
-            preferencesHelper.isAutoSecureOn,
-            false,
-            PreferencesKeyConstants.PROTO_IKev2,
-            PreferencesKeyConstants.DEFAULT_IKEV2_PORT
+                networkName,
+                preferencesHelper.isAutoSecureOn,
+                false,
+                PreferencesKeyConstants.PROTO_IKev2,
+                PreferencesKeyConstants.DEFAULT_IKEV2_PORT
         )
         return localDbInterface.addNetwork(networkInfo)
     }
@@ -59,34 +59,34 @@ class NetworkInfoManager(
 
     fun updateNetworkInfo(networkInfo: NetworkInfo) {
         compositeDisposable.add(
-            localDbInterface.updateNetwork(networkInfo).doOnSuccess { reloadCurrentNetwork(true) }
-                .subscribeOn(Schedulers.io())
-                .subscribe()
+                localDbInterface.updateNetwork(networkInfo).doOnSuccess { reloadCurrentNetwork(true) }
+                        .subscribeOn(Schedulers.io())
+                        .subscribe()
         )
     }
 
     private fun reloadCurrentNetwork(userReload: Boolean) {
         compositeDisposable.add(
-            Single.fromCallable(Callable { WindUtilities.getNetworkName() } as Callable<String>)
-                .flatMap { name ->
-                    localDbInterface
-                        .getNetwork(name).onErrorResumeNext(
-                            addNetworkToKnown(name)
-                                .flatMap { localDbInterface.getNetwork(name) }
-                        )
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    this.networkInfo = it
-                    for (listener in listeners) {
-                        listener.onNetworkInfoUpdate(networkInfo, userReload)
-                    }
-                }.doOnError {
-                    networkInfo = null
-                    for (listener in listeners) {
-                        listener.onNetworkInfoUpdate(null, userReload)
-                    }
-                }.subscribeOn(Schedulers.io()).subscribe({}, {})
+                Single.fromCallable(Callable { WindUtilities.getNetworkName() } as Callable<String>)
+                        .flatMap { name ->
+                            localDbInterface
+                                    .getNetwork(name).onErrorResumeNext(
+                                            addNetworkToKnown(name)
+                                                    .flatMap { localDbInterface.getNetwork(name) }
+                                    )
+                        }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSuccess {
+                            this.networkInfo = it
+                            for (listener in listeners) {
+                                listener.onNetworkInfoUpdate(networkInfo, userReload)
+                            }
+                        }.doOnError {
+                            networkInfo = null
+                            for (listener in listeners) {
+                                listener.onNetworkInfoUpdate(null, userReload)
+                            }
+                        }.subscribeOn(Schedulers.io()).subscribe({}, {})
         )
     }
 

@@ -21,9 +21,9 @@ open class Ping {
     @Throws(Exception::class)
     fun run(mDest: InetAddress?, timeoutMs: Int): Long {
         val type =
-            if (mDest is Inet6Address) EchoPacketBuilder.TYPE_ICMP_V6 else EchoPacketBuilder.TYPE_ICMP_V4
+                if (mDest is Inet6Address) EchoPacketBuilder.TYPE_ICMP_V6 else EchoPacketBuilder.TYPE_ICMP_V4
         val mEchoPacketBuilder = EchoPacketBuilder(
-            type, "abcdefghijklmnopqrstuvwabcdefghi".toByteArray()
+                type, "abcdefghijklmnopqrstuvwabcdefghi".toByteArray()
         )
         val inet: Int
         val proto: Int
@@ -115,11 +115,11 @@ open class Ping {
         } else {
             try {
                 val method = Os::class.java.getMethod(
-                    "setsockoptInt",
-                    FileDescriptor::class.java,
-                    Int::class.javaPrimitiveType,
-                    Int::class.javaPrimitiveType,
-                    Int::class.javaPrimitiveType
+                        "setsockoptInt",
+                        FileDescriptor::class.java,
+                        Int::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType
                 )
                 method.invoke(null, fd, OsConstants.IPPROTO_IP, OsConstants.IP_TOS, ipTosLowDelay)
             } catch (ignored: Exception) {

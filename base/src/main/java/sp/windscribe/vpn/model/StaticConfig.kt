@@ -35,8 +35,8 @@ class StaticConfig(staticRegion: StaticRegion) {
         wgPubKey = staticRegion.wgPubKey
         x509Name = staticRegion.ovpnX509
         appContext.preference.saveCredentials(
-            PreferencesKeyConstants.STATIC_IP_CREDENTIAL,
-            staticRegion.credentials
+                PreferencesKeyConstants.STATIC_IP_CREDENTIAL,
+                staticRegion.credentials
         )
     }
 }

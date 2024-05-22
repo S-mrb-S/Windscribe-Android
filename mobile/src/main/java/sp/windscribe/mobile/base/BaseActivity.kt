@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +27,7 @@ import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.qq.MmkvManager
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class BaseActivity : CiscoMainActivity() {
@@ -42,19 +41,19 @@ abstract class BaseActivity : CiscoMainActivity() {
     // cisco
     override fun CurrentUserName(): String {
         var ul = MmkvManager.getLoginStorage().getString(
-            "username_ovpn",
-            ""
+                "username_ovpn",
+                ""
         )
-        if(ul == null) ul = ""
+        if (ul == null) ul = ""
         return ul
     }
 
     override fun CurrentPassWord(): String {
         var ul = MmkvManager.getLoginStorage().getString(
-            "password_ovpn",
-            ""
+                "password_ovpn",
+                ""
         )
-        if(ul == null) ul = ""
+        if (ul == null) ul = ""
         return ul
     }
 
@@ -87,9 +86,9 @@ abstract class BaseActivity : CiscoMainActivity() {
             } else {
                 val backButton = findViewById<ConstraintLayout>(R.id.nav_bar)
                 backButton?.setPaddingRelative(
-                    backButton.paddingStart,
-                    backButton.paddingTop + boundingRectHeight / 2, backButton.paddingEnd,
-                    backButton.paddingBottom
+                        backButton.paddingStart,
+                        backButton.paddingTop + boundingRectHeight / 2, backButton.paddingEnd,
+                        backButton.paddingBottom
                 )
             }
         }
@@ -123,20 +122,20 @@ abstract class BaseActivity : CiscoMainActivity() {
             startActivity(browserIntent)
         } else {
             Toast.makeText(
-                this,
-                "No available browser found to open the desired url!",
-                Toast.LENGTH_SHORT
+                    this,
+                    "No available browser found to open the desired url!",
+                    Toast.LENGTH_SHORT
             ).show()
         }
     }
 
     protected fun setActivityModule(activityModule: ActivityModule?): ActivityComponent {
         return sp.windscribe.mobile.di.DaggerActivityComponent.builder()
-            .activityModule(activityModule)
-            .applicationComponent(
-                appContext
-                    .applicationComponent
-            ).build()
+                .activityModule(activityModule)
+                .applicationComponent(
+                        appContext
+                                .applicationComponent
+                ).build()
     }
 
     protected fun setContentLayout(layoutID: Int, setTheme: Boolean = true) {

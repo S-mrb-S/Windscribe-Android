@@ -9,9 +9,9 @@ interface SplitTunnelingView {
     fun setRecyclerViewAdapter(mAdapter: InstalledAppsAdapter)
     fun setSplitModeTextView(mode: String, textDescription: Int)
     fun setSplitRoutingModeAdapter(
-        localizeValues: Array<String>,
-        selectedValue: String,
-        values: Array<String>
+            localizeValues: Array<String>,
+            selectedValue: String,
+            values: Array<String>
     )
 
     fun setupToggleImage(resourceId: Int)

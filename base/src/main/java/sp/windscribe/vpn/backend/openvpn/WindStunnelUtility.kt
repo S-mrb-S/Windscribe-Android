@@ -18,7 +18,7 @@ object WindStunnelUtility {
     var logger: Logger = LoggerFactory.getLogger("wind_stunnel_util")
     val isStunnelRunning: Boolean
         get() = File(appContext.filesDir.path + "/" + VpnPreferenceConstants.STUNNEL_PID)
-            .exists()
+                .exists()
 
     /**
      * Starts Stunnel binary process
@@ -28,12 +28,12 @@ object WindStunnelUtility {
         return if (!isStunnelRunning) {
             val filePath = appContext.filesDir.path + "/"
             val sTunnelLibPath = File(
-                appContext.applicationInfo.nativeLibraryDir,
-                "libstunnel_42.so"
+                    appContext.applicationInfo.nativeLibraryDir,
+                    "libstunnel_42.so"
             ).path
             try {
                 val process = Runtime.getRuntime()
-                    .exec(sTunnelLibPath + " " + filePath + VpnPreferenceConstants.STUNNEL_CONFIG_FILE)
+                        .exec(sTunnelLibPath + " " + filePath + VpnPreferenceConstants.STUNNEL_CONFIG_FILE)
                 process.waitFor()
                 // Log if there is any error opening the tunnel
                 val inReader = InputStreamReader(process.errorStream)

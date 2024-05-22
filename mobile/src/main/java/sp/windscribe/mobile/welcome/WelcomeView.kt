@@ -19,10 +19,10 @@ interface WelcomeView {
     fun showError(error: String)
     fun showFailedAlert(error: String)
     fun showNoEmailAttentionFragment(
-        username: String,
-        password: String,
-        accountClaim: Boolean,
-        pro: Boolean
+            username: String,
+            password: String,
+            accountClaim: Boolean,
+            pro: Boolean
     )
 
     fun showToast(message: String)

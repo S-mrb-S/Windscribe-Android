@@ -13,7 +13,7 @@ class ProgressDialog : FullScreenDialog() {
 
     private var binding: FragmentProgressBinding? = null
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProgressBinding.inflate(inflater, container, false)
         return binding?.root

@@ -9,15 +9,15 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class PushNotificationAction(
-    @SerializedName("pcpid")
-    @Expose
-    val pcpID: String,
+        @SerializedName("pcpid")
+        @Expose
+        val pcpID: String,
 
-    @SerializedName("promo_code")
-    @Expose
-    val promoCode: String,
+        @SerializedName("promo_code")
+        @Expose
+        val promoCode: String,
 
-    @SerializedName("type")
-    @Expose
-    val type: String
+        @SerializedName("type")
+        @Expose
+        val type: String
 ) : Serializable

@@ -24,10 +24,10 @@ Updates traffic count for VPN Service notifications.
  */
 @Singleton
 class TrafficCounter(
-    val scope: CoroutineScope,
-    val vpnConnectionStateManager: VPNConnectionStateManager,
-    val preferencesHelper: PreferencesHelper,
-    val deviceStateManager: DeviceStateManager,
+        val scope: CoroutineScope,
+        val vpnConnectionStateManager: VPNConnectionStateManager,
+        val preferencesHelper: PreferencesHelper,
+        val deviceStateManager: DeviceStateManager,
 ) {
     private val logger = LoggerFactory.getLogger("traffic_counter")
     var trafficStats = MutableSharedFlow<Traffic>()
@@ -105,22 +105,22 @@ class TrafficCounter(
     private fun buildTrafficHistory(downloadDifference: Long, uploadDifference: Long) {
         scope.launch {
             val download = WindUtilities.humanReadableByteCount(
-                downloadDifference,
-                false,
-                Windscribe.appContext.resources
+                    downloadDifference,
+                    false,
+                    Windscribe.appContext.resources
             )
             val upload = WindUtilities.humanReadableByteCount(
-                uploadDifference,
-                false,
-                Windscribe.appContext.resources
+                    uploadDifference,
+                    false,
+                    Windscribe.appContext.resources
             )
             _stats.emit(
-                Traffic(
-                    "Out: " +
-                            upload + " | " +
-                            "In: " +
-                            download
-                )
+                    Traffic(
+                            "Out: " +
+                                    upload + " | " +
+                                    "In: " +
+                                    download
+                    )
             )
         }
     }

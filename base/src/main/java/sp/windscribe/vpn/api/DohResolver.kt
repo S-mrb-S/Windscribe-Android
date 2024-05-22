@@ -19,31 +19,31 @@ class DohResolver(private val apiFactory: EchApiFactory) {
         queryMap["name"] = hostname
         queryMap["type"] = "TXT"
         return apiFactory.createApi(NetworkKeyConstants.CLOUDFLARE_DOH)
-            .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
-                if (googleAsBackupResolver) {
-                    return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
-                        .getGoogleDOHTxtRecord(queryMap)
-                } else {
-                    throw it
-                }
-            }.flatMap {
-                try {
-                    val response = it.string()
-                    return@flatMap Single.fromCallable {
-                        val answer =
-                            Gson().fromJson(response, DOHTxtRecord::class.java).answer.first()
-                        cache[hostname] = answer
-                        return@fromCallable answer
+                .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
+                    if (googleAsBackupResolver) {
+                        return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
+                                .getGoogleDOHTxtRecord(queryMap)
+                    } else {
+                        throw it
                     }
-                } catch (e: JsonSyntaxException) {
-                    throw e
+                }.flatMap {
+                    try {
+                        val response = it.string()
+                        return@flatMap Single.fromCallable {
+                            val answer =
+                                    Gson().fromJson(response, DOHTxtRecord::class.java).answer.first()
+                            cache[hostname] = answer
+                            return@fromCallable answer
+                        }
+                    } catch (e: JsonSyntaxException) {
+                        throw e
+                    }
                 }
-            }
     }
 
     suspend fun getTxtAnswer(
-        hostname: String,
-        googleAsBackupResolver: Boolean = false
+            hostname: String,
+            googleAsBackupResolver: Boolean = false
     ): TxtAnswer? {
         return try {
             getTxtAnswerAsync(hostname, googleAsBackupResolver).await()

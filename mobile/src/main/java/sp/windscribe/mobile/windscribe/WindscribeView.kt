@@ -1,6 +1,5 @@
 package sp.windscribe.mobile.windscribe
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import sp.windscribe.mobile.adapter.ConfigAdapter
@@ -62,9 +61,9 @@ interface WindscribeView {
     fun setLastConnectionState(state: ConnectionUiState)
     fun setMainConstraints(customBackground: Boolean)
     fun setNetworkLayout(
-        info: NetworkInfo?,
-        state: NetworkLayoutState?,
-        resetAdapter: Boolean
+            info: NetworkInfo?,
+            state: NetworkLayoutState?,
+            resetAdapter: Boolean
     )
 
     fun setPortAndProtocol(protocol: String, port: String)
@@ -86,9 +85,9 @@ interface WindscribeView {
     fun setupPortMapAdapter(savedPort: String, ports: List<String>)
     fun setupProtocolAdapter(savedProtocol: String, protocols: Array<String>)
     fun setupSearchLayout(
-        groups: List<ExpandableGroup<*>>,
-        serverListData: ServerListData,
-        listViewClickListener: ListViewClickListener
+            groups: List<ExpandableGroup<*>>,
+            serverListData: ServerListData,
+            listViewClickListener: ListViewClickListener
     )
 
     fun showConfigLocAdapterLoadError(errorText: String, configCount: Int)

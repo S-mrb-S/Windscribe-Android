@@ -11,7 +11,35 @@ import retrofit2.HttpException
 import retrofit2.Response
 import sp.windscribe.vpn.BuildConfig
 import sp.windscribe.vpn.Windscribe.Companion.appContext
-import sp.windscribe.vpn.api.response.*
+import sp.windscribe.vpn.api.response.AccessIpResponse
+import sp.windscribe.vpn.api.response.AddEmailResponse
+import sp.windscribe.vpn.api.response.ApiErrorResponse
+import sp.windscribe.vpn.api.response.BestLocationResponse
+import sp.windscribe.vpn.api.response.BillingPlanResponse
+import sp.windscribe.vpn.api.response.ClaimAccountResponse
+import sp.windscribe.vpn.api.response.DOHTxtRecord
+import sp.windscribe.vpn.api.response.GenericResponseClass
+import sp.windscribe.vpn.api.response.GenericSuccess
+import sp.windscribe.vpn.api.response.GetMyIpResponse
+import sp.windscribe.vpn.api.response.Latency
+import sp.windscribe.vpn.api.response.NewsFeedNotification
+import sp.windscribe.vpn.api.response.PortMapResponse
+import sp.windscribe.vpn.api.response.RegToken
+import sp.windscribe.vpn.api.response.RobertFilterResponse
+import sp.windscribe.vpn.api.response.RobertSettingsResponse
+import sp.windscribe.vpn.api.response.ServerCredentialsResponse
+import sp.windscribe.vpn.api.response.StaticIPResponse
+import sp.windscribe.vpn.api.response.TicketResponse
+import sp.windscribe.vpn.api.response.TxtAnswer
+import sp.windscribe.vpn.api.response.UserLoginResponse
+import sp.windscribe.vpn.api.response.UserRegistrationResponse
+import sp.windscribe.vpn.api.response.UserSessionResponse
+import sp.windscribe.vpn.api.response.VerifyExpressLoginResponse
+import sp.windscribe.vpn.api.response.WebSession
+import sp.windscribe.vpn.api.response.WgConnectResponse
+import sp.windscribe.vpn.api.response.WgInitResponse
+import sp.windscribe.vpn.api.response.XPressLoginCodeResponse
+import sp.windscribe.vpn.api.response.XPressLoginVerifyResponse
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.ApiConstants.APP_VERSION
 import sp.windscribe.vpn.constants.ApiConstants.PLATFORM
@@ -29,14 +57,14 @@ import javax.inject.Singleton
 
 @Singleton
 open class ApiCallManager @Inject constructor(
-    private val apiFactory: WindApiFactory,
-    private val customApiFactory: WindCustomApiFactory,
-    private val hashedDomain: String,
-    private val authorizationGenerator: AuthorizationGenerator,
-    private var accessIps: List<String>?,
-    private var primaryApiEndpoints: Map<HostType, String>,
-    private var secondaryApiEndpoints: Map<HostType, String>,
-    private val domainFailOverManager: DomainFailOverManager
+        private val apiFactory: WindApiFactory,
+        private val customApiFactory: WindCustomApiFactory,
+        private val hashedDomain: String,
+        private val authorizationGenerator: AuthorizationGenerator,
+        private var accessIps: List<String>?,
+        private var primaryApiEndpoints: Map<HostType, String>,
+        private var secondaryApiEndpoints: Map<HostType, String>,
+        private val domainFailOverManager: DomainFailOverManager
 ) : IApiCallManager {
 
     private val logger = LoggerFactory.getLogger("api_call")
@@ -48,8 +76,8 @@ open class ApiCallManager @Inject constructor(
      * @return params to attach to http call
      */
     private fun createQueryMap(
-        extraParams: Map<String, String>? = null,
-        authRequired: Boolean = true
+            extraParams: Map<String, String>? = null,
+            authRequired: Boolean = true
     ): Map<String, String> {
         val paramMap = mutableMapOf<String, String>()
         paramMap[PLATFORM] = "android"
@@ -79,12 +107,12 @@ open class ApiCallManager @Inject constructor(
     private fun getAccessIp(accessIpMap: Map<String, String>?): Single<GenericResponseClass<AccessIpResponse?, ApiErrorResponse?>> {
         val params = createQueryMap(accessIpMap, true)
         return (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_1)
-            .getAccessIps(params)).onErrorResumeNext {
-            return@onErrorResumeNext (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_2)
-                .getAccessIps(params))
-        }.flatMap {
-            responseToModel(it, AccessIpResponse::class.java)
-        }
+                .getAccessIps(params)).onErrorResumeNext {
+                    return@onErrorResumeNext (customApiFactory.createCustomCertApi(BuildConfig.API_STATIC_IP_2)
+                            .getAccessIps(params))
+                }.flatMap {
+                    responseToModel(it, AccessIpResponse::class.java)
+                }
     }
 
     /**
@@ -95,8 +123,8 @@ open class ApiCallManager @Inject constructor(
         return Single.fromCallable {
             return@fromCallable accessIps?.let {
                 listOf(
-                    customApiFactory.createCustomCertApi("https://${it[0]}"),
-                    customApiFactory.createCustomCertApi("https://${it[1]}")
+                        customApiFactory.createCustomCertApi("https://${it[0]}"),
+                        customApiFactory.createCustomCertApi("https://${it[1]}")
                 )
             } ?: run {
                 throw Exception("No Previously Saved access ip available. Now trying Api.")
@@ -107,16 +135,16 @@ open class ApiCallManager @Inject constructor(
                     return@flatMap Single.fromCallable {
                         accessIps = mutableListOf(it.hosts[0], it.hosts[1])
                         appContext.preference.setStaticAccessIp(
-                            PreferencesKeyConstants.ACCESS_API_IP_1,
-                            it.hosts[0]
+                                PreferencesKeyConstants.ACCESS_API_IP_1,
+                                it.hosts[0]
                         )
                         appContext.preference.setStaticAccessIp(
-                            PreferencesKeyConstants.ACCESS_API_IP_2,
-                            it.hosts[1]
+                                PreferencesKeyConstants.ACCESS_API_IP_2,
+                                it.hosts[1]
                         )
                         listOf(
-                            customApiFactory.createCustomCertApi("https://${it.hosts[0]}"),
-                            customApiFactory.createCustomCertApi("https://${it.hosts[1]}")
+                                customApiFactory.createCustomCertApi("https://${it.hosts[0]}"),
+                                customApiFactory.createCustomCertApi("https://${it.hosts[1]}")
                         )
                     }
                 } ?: kotlin.run {
@@ -133,8 +161,8 @@ open class ApiCallManager @Inject constructor(
      * @return Optional Generic Class with either data or ApiErrorResponse
      */
     private fun <T> responseToModel(
-        responseBody: ResponseBody,
-        modelType: Class<T>
+            responseBody: ResponseBody,
+            modelType: Class<T>
     ): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
         val responseDataString = responseBody.string()
         responseBody.close()
@@ -143,15 +171,15 @@ open class ApiCallManager @Inject constructor(
                 return@fromCallable (GenericResponseClass(responseDataString as T, null))
             } else {
                 val dataObject = JsonResponseConverter.getResponseClass(
-                    JSONObject(responseDataString),
-                    modelType
+                        JSONObject(responseDataString),
+                        modelType
                 )
                 return@fromCallable (GenericResponseClass(dataObject, null))
             }
         }.onErrorResumeNext {
             return@onErrorResumeNext Single.fromCallable {
                 val errorObject =
-                    JsonResponseConverter.getErrorClass(JSONObject(responseDataString))
+                        JsonResponseConverter.getErrorClass(JSONObject(responseDataString))
                 return@fromCallable GenericResponseClass(null, errorObject)
             }
         }
@@ -171,13 +199,13 @@ open class ApiCallManager @Inject constructor(
      * @return optional GenericResponseClass<T, ApiErrorResponse>
      */
     fun <T> call(
-        extraParams: Map<String, String>? = null,
-        authRequired: Boolean = true,
-        hostType: HostType = HostType.API,
-        modelType: Class<T>,
-        protect: Boolean = false,
-        apiCallType: ApiCallType = ApiCallType.Other,
-        service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>
+            extraParams: Map<String, String>? = null,
+            authRequired: Boolean = true,
+            hostType: HostType = HostType.API,
+            modelType: Class<T>,
+            protect: Boolean = false,
+            apiCallType: ApiCallType = ApiCallType.Other,
+            service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>
     ): Single<GenericResponseClass<T?, ApiErrorResponse?>> {
         try {
             val params = createQueryMap(extraParams, authRequired)
@@ -197,24 +225,24 @@ open class ApiCallManager @Inject constructor(
                 }
             }
             return callOrSkip(
-                apiCallType,
-                service,
-                DomainType.Primary,
-                primaryDomain!!,
-                protect,
-                params
+                    apiCallType,
+                    service,
+                    DomainType.Primary,
+                    primaryDomain!!,
+                    protect,
+                    params
             ).onErrorResumeNext {
                 if (it is HttpException && isErrorBodyValid(it)) {
                     return@onErrorResumeNext Single.fromCallable { it.response()?.errorBody() }
                 } else {
                     domainFailOverManager.setDomainBlocked(DomainType.Primary, apiCallType)
                     return@onErrorResumeNext (callOrSkip(
-                        apiCallType,
-                        service,
-                        DomainType.Secondary,
-                        secondaryDomain!!,
-                        protect,
-                        params
+                            apiCallType,
+                            service,
+                            DomainType.Secondary,
+                            secondaryDomain!!,
+                            protect,
+                            params
                     ))
                 }
             }.onErrorResumeNext {
@@ -227,12 +255,12 @@ open class ApiCallManager @Inject constructor(
                     } else {
                         getDynamicDohEndpoint(hostType).flatMap { dynamicEndpoint ->
                             callOrSkip(
-                                apiCallType,
-                                service,
-                                DomainType.DYNAMIC_DOH,
-                                dynamicEndpoint,
-                                protect,
-                                params
+                                    apiCallType,
+                                    service,
+                                    DomainType.DYNAMIC_DOH,
+                                    dynamicEndpoint,
+                                    protect,
+                                    params
                             )
                         }
                     })
@@ -247,12 +275,12 @@ open class ApiCallManager @Inject constructor(
                         throw WindScribeException("Hash domains are disabled.")
                     } else {
                         callOrSkip(
-                            apiCallType,
-                            service,
-                            DomainType.Hashed,
-                            randomHashedDomain,
-                            protect,
-                            params
+                                apiCallType,
+                                service,
+                                DomainType.Hashed,
+                                randomHashedDomain,
+                                protect,
+                                params
                         )
                     })
                 }
@@ -265,12 +293,12 @@ open class ApiCallManager @Inject constructor(
                         throw WindScribeException("Ech domain disabled.")
                     } else {
                         callOrSkip(
-                            apiCallType,
-                            service,
-                            DomainType.Ech,
-                            getEchDomain(hostType),
-                            protect,
-                            params
+                                apiCallType,
+                                service,
+                                DomainType.Ech,
+                                getEchDomain(hostType),
+                                protect,
+                                params
                         )
                     })
                 }
@@ -335,12 +363,12 @@ open class ApiCallManager @Inject constructor(
     }
 
     private fun callOrSkip(
-        apiCallType: ApiCallType,
-        service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>,
-        domainType: DomainType,
-        domain: String,
-        protect: Boolean,
-        params: Map<String, String>
+            apiCallType: ApiCallType,
+            service: (ApiService, Map<String, String>, Boolean) -> Single<ResponseBody>,
+            domainType: DomainType,
+            domain: String,
+            protect: Boolean,
+            params: Map<String, String>
     ): Single<ResponseBody> {
         return if (domainFailOverManager.isAccessible(domainType, apiCallType)) {
             service.invoke(apiFactory.createApi(domain, protect), params, false)
@@ -357,8 +385,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun addUserEmailAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = AddEmailResponse::class.java
+                extraParams,
+                modelType = AddEmailResponse::class.java
         ) { apiService, params, _ ->
             apiService.postUserEmailAddress(params)
         }
@@ -366,9 +394,9 @@ open class ApiCallManager @Inject constructor(
 
     override fun checkConnectivityAndIpAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
         return call(
-            authRequired = true,
-            hostType = HostType.CHECK_IP,
-            modelType = String::class.java
+                authRequired = true,
+                hostType = HostType.CHECK_IP,
+                modelType = String::class.java
         ) { apiService, _, directIp ->
             if (directIp) {
                 apiService.connectivityTestAndIpDirectIp()
@@ -380,8 +408,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun claimAccount(extraParams: Map<String, String>?): Single<GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = ClaimAccountResponse::class.java
+                extraParams,
+                modelType = ClaimAccountResponse::class.java
         ) { apiService, params, _ ->
             apiService.claimAccount(params)
         }
@@ -389,8 +417,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getBestLocation(extraParams: Map<String, String>?): Single<GenericResponseClass<BestLocationResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = BestLocationResponse::class.java
+                extraParams,
+                modelType = BestLocationResponse::class.java
         ) { apiService, params, _ ->
             apiService.getBestLocation(params)
         }
@@ -398,8 +426,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getBillingPlans(extraParams: Map<String, String>?): Single<GenericResponseClass<BillingPlanResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = BillingPlanResponse::class.java
+                extraParams,
+                modelType = BillingPlanResponse::class.java
         ) { apiService, params, _ ->
             apiService.getBillingPlans(params)
         }
@@ -413,8 +441,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getNotifications(extraParams: Map<String, String>?): Single<GenericResponseClass<NewsFeedNotification?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = NewsFeedNotification::class.java
+                extraParams,
+                modelType = NewsFeedNotification::class.java
         ) { apiService, params, _ ->
             apiService.getNotifications(params)
         }
@@ -440,8 +468,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getServerCredentials(extraParams: Map<String, String>?): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = ServerCredentialsResponse::class.java
+                extraParams,
+                modelType = ServerCredentialsResponse::class.java
         ) { apiService, params, _ ->
             apiService.getServerCredentials(params)
         }
@@ -449,30 +477,30 @@ open class ApiCallManager @Inject constructor(
 
     override fun getServerCredentialsForIKev2(extraParams: Map<String, String>?): Single<GenericResponseClass<ServerCredentialsResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = ServerCredentialsResponse::class.java
+                extraParams,
+                modelType = ServerCredentialsResponse::class.java
         ) { apiService, params, _ ->
             apiService.getServerCredentialsForIKev2(params)
         }
     }
 
     override fun getServerList(
-        extraParams: Map<String, String>?,
-        billingPlan: String?,
-        locHash: String?,
-        alcList: String?,
-        overriddenCountryCode: String?
+            extraParams: Map<String, String>?,
+            billingPlan: String?,
+            locHash: String?,
+            alcList: String?,
+            overriddenCountryCode: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
         return call(
-            hostType = HostType.ASSET,
-            modelType = String::class.java
+                hostType = HostType.ASSET,
+                modelType = String::class.java
         ) { apiService, _, directIp ->
             if (directIp) {
                 apiService.getServerListDirectIp(
-                    billingPlan,
-                    locHash,
-                    alcList,
-                    overriddenCountryCode
+                        billingPlan,
+                        locHash,
+                        alcList,
+                        overriddenCountryCode
                 )
             } else {
                 apiService.getServerList(billingPlan, locHash, alcList, overriddenCountryCode)
@@ -481,13 +509,13 @@ open class ApiCallManager @Inject constructor(
     }
 
     override fun getSessionGeneric(
-        extraParams: Map<String, String>?,
-        protect: Boolean
+            extraParams: Map<String, String>?,
+            protect: Boolean
     ): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = UserSessionResponse::class.java,
-            protect = protect
+                extraParams,
+                modelType = UserSessionResponse::class.java,
+                protect = protect
         ) { apiService, params, _ ->
             apiService.getSession(params)
         }
@@ -495,8 +523,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getSessionGeneric(extraParams: Map<String, String>?): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = UserSessionResponse::class.java,
+                extraParams,
+                modelType = UserSessionResponse::class.java,
         ) { apiService, params, _ ->
             apiService.getSession(params)
         }
@@ -504,8 +532,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getSessionGenericInConnectedState(extraParams: Map<String, String>?): Single<GenericResponseClass<UserSessionResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = UserSessionResponse::class.java
+                extraParams,
+                modelType = UserSessionResponse::class.java
         ) { apiService, params, _ ->
             apiService.getSession(params)
         }
@@ -513,8 +541,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getStaticIpList(extraParams: Map<String, String>?): Single<GenericResponseClass<StaticIPResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = StaticIPResponse::class.java
+                extraParams,
+                modelType = StaticIPResponse::class.java
         ) { apiService, params, _ ->
             apiService.getStaticIPList(params)
         }
@@ -522,8 +550,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun logUserIn(extraParams: Map<String, String>?): Single<GenericResponseClass<UserLoginResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = UserLoginResponse::class.java
+                extraParams,
+                modelType = UserLoginResponse::class.java
         ) { apiService, params, _ ->
             apiService.userLogin(params)
         }
@@ -537,8 +565,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun resendUserEmailAddress(extraParams: Map<String, String>?): Single<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = AddEmailResponse::class.java
+                extraParams,
+                modelType = AddEmailResponse::class.java
         ) { apiService, params, _ ->
             apiService.resendUserEmailAddress(params)
         }
@@ -552,8 +580,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun signUserIn(extraParams: Map<String, String>?): Single<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = UserRegistrationResponse::class.java
+                extraParams,
+                modelType = UserRegistrationResponse::class.java
         ) { apiService, params, _ ->
             apiService.userRegistration(params)
         }
@@ -567,8 +595,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun verifyExpressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<VerifyExpressLoginResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = VerifyExpressLoginResponse::class.java
+                extraParams,
+                modelType = VerifyExpressLoginResponse::class.java
         ) { apiService, params, _ ->
             apiService.verifyExpressLoginCode(params)
         }
@@ -576,8 +604,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun generateXPressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<XPressLoginCodeResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = XPressLoginCodeResponse::class.java
+                extraParams,
+                modelType = XPressLoginCodeResponse::class.java
         ) { apiService, params, _ ->
             apiService.generateXPressLoginCode(params)
         }
@@ -585,8 +613,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun verifyXPressLoginCode(extraParams: Map<String, String>?): Single<GenericResponseClass<XPressLoginVerifyResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = XPressLoginVerifyResponse::class.java
+                extraParams,
+                modelType = XPressLoginVerifyResponse::class.java
         ) { apiService, params, _ ->
             apiService.verifyXPressLoginCode(params)
         }
@@ -618,8 +646,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getRobertSettings(extraParams: Map<String, String>?): Single<GenericResponseClass<RobertSettingsResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = RobertSettingsResponse::class.java
+                extraParams,
+                modelType = RobertSettingsResponse::class.java
         ) { apiService, params, _ ->
             apiService.getRobertSettings(params)
         }
@@ -627,8 +655,8 @@ open class ApiCallManager @Inject constructor(
 
     override fun getRobertFilters(extraParams: Map<String, String>?): Single<GenericResponseClass<RobertFilterResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = RobertFilterResponse::class.java
+                extraParams,
+                modelType = RobertFilterResponse::class.java
         ) { apiService, params, _ ->
             apiService.getRobertFilters(params)
         }
@@ -641,50 +669,50 @@ open class ApiCallManager @Inject constructor(
     }
 
     override fun wgConnect(
-        extraParams: Map<String, String>?,
-        protect: Boolean
+            extraParams: Map<String, String>?,
+            protect: Boolean
     ): Single<GenericResponseClass<WgConnectResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = WgConnectResponse::class.java,
-            protect = protect,
-            apiCallType = ApiCallType.WgConnect
+                extraParams,
+                modelType = WgConnectResponse::class.java,
+                protect = protect,
+                apiCallType = ApiCallType.WgConnect
         ) { apiService, params, _ ->
             apiService.wgConnect(params)
         }
     }
 
     override fun wgInit(
-        extraParams: Map<String, String>?,
-        protect: Boolean
+            extraParams: Map<String, String>?,
+            protect: Boolean
     ): Single<GenericResponseClass<WgInitResponse?, ApiErrorResponse?>> {
         return call(
-            extraParams,
-            modelType = WgInitResponse::class.java,
-            protect = protect,
-            apiCallType = ApiCallType.WgConnect
+                extraParams,
+                modelType = WgInitResponse::class.java,
+                protect = protect,
+                apiCallType = ApiCallType.WgConnect
         ) { apiService, params, _ ->
             apiService.wgInit(params)
         }
     }
 
     override fun sendDecoyTraffic(
-        url: String,
-        data: String,
-        sizeToReceive: String?
+            url: String,
+            data: String,
+            sizeToReceive: String?
     ): Single<GenericResponseClass<String?, ApiErrorResponse?>> {
         try {
             return sizeToReceive?.let {
                 return apiFactory.createApi(url)
-                    .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain", sizeToReceive)
-                    .flatMap {
-                        responseToModel(it, String::class.java)
-                    }
+                        .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain", sizeToReceive)
+                        .flatMap {
+                            responseToModel(it, String::class.java)
+                        }
             }
-                ?: apiFactory.createApi(url)
-                    .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain").flatMap {
-                    responseToModel(it, String::class.java)
-                }
+                    ?: apiFactory.createApi(url)
+                            .sendDecoyTraffic(hashMapOf(Pair("data", data)), "text/plain").flatMap {
+                                responseToModel(it, String::class.java)
+                            }
         } catch (e: Exception) {
             val apiErrorResponse = ApiErrorResponse()
             apiErrorResponse.errorCode = NetworkErrorCodes.ERROR_UNABLE_TO_REACH_API
@@ -708,36 +736,36 @@ open class ApiCallManager @Inject constructor(
         queryMap["name"] = BuildConfig.DYNAMIC_DNS
         queryMap["type"] = "TXT"
         return apiFactory.createApi(NetworkKeyConstants.CLOUDFLARE_DOH)
-            .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
-            logger.info("Using google doh resolver")
-            return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
-                .getGoogleDOHTxtRecord(queryMap)
-        }.flatMap {
-            try {
-                val response = it.string()
-                return@flatMap Single.fromCallable {
-                    return@fromCallable Gson().fromJson<DOHTxtRecord?>(
-                        response,
-                        DOHTxtRecord::class.java
-                    ).answer.first<TxtAnswer>()
+                .getCloudflareTxtRecord(queryMap).onErrorResumeNext {
+                    logger.info("Using google doh resolver")
+                    return@onErrorResumeNext apiFactory.createApi(NetworkKeyConstants.GOOGLE_DOH)
+                            .getGoogleDOHTxtRecord(queryMap)
+                }.flatMap {
+                    try {
+                        val response = it.string()
+                        return@flatMap Single.fromCallable {
+                            return@fromCallable Gson().fromJson<DOHTxtRecord?>(
+                                    response,
+                                    DOHTxtRecord::class.java
+                            ).answer.first<TxtAnswer>()
+                        }
+                    } catch (e: JsonSyntaxException) {
+                        throw e
+                    }
+                }.flatMap {
+                    try {
+                        val endpoint = it.data.replace("\"", "")
+                        lastUsedDynamicEndpoint = endpoint
+                        return@flatMap Single.fromCallable { "${hostType.text}$endpoint" }
+                    } catch (e: JsonSyntaxException) {
+                        throw WindScribeException("Doh endpoint returned unknown data.")
+                    }
                 }
-            } catch (e: JsonSyntaxException) {
-                throw e
-            }
-        }.flatMap {
-            try {
-                val endpoint = it.data.replace("\"", "")
-                lastUsedDynamicEndpoint = endpoint
-                return@flatMap Single.fromCallable { "${hostType.text}$endpoint" }
-            } catch (e: JsonSyntaxException) {
-                throw WindScribeException("Doh endpoint returned unknown data.")
-            }
-        }
     }
 
     override suspend fun getLatency(
-        url: String,
-        ip: String
+            url: String,
+            ip: String
     ): Result<GenericResponseClass<Latency?, ApiErrorResponse?>> {
         return kotlin.runCatching {
             return@runCatching apiFactory.createApi("$url/", ip = ip).getLatency().map()
@@ -749,8 +777,8 @@ open class ApiCallManager @Inject constructor(
             return GenericResponseClass(it, null)
         } ?: errorBody()?.let {
             return GenericResponseClass(
-                null,
-                Gson().fromJson(it.string(), ApiErrorResponse::class.java)
+                    null,
+                    Gson().fromJson(it.string(), ApiErrorResponse::class.java)
             )
         } ?: kotlin.run {
             return GenericResponseClass(null, null)

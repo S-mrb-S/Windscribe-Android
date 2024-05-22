@@ -14,7 +14,7 @@ class BackgroundLocationPermissionDialog : FullScreenDialog() {
     private var binding: BackgroundLocationPermissionDialogBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = BackgroundLocationPermissionDialogBinding.inflate(inflater, container, false)
         return binding?.root
@@ -29,8 +29,8 @@ class BackgroundLocationPermissionDialog : FullScreenDialog() {
         super.onViewCreated(view, savedInstanceState)
         binding?.tvOk?.setOnClickListener {
             setFragmentResult(
-                PermissionManagerImpl.resultKey,
-                Bundle().apply { putBoolean(PermissionManagerImpl.okButtonKey, true) })
+                    PermissionManagerImpl.resultKey,
+                    Bundle().apply { putBoolean(PermissionManagerImpl.okButtonKey, true) })
             dismiss()
         }
         binding?.tvCancel?.setOnClickListener {

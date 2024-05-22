@@ -22,14 +22,14 @@ interface RobertAdapterListener {
 }
 
 class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterListener) :
-    RecyclerView.Adapter<RobertSettingsViewHolder>() {
+        RecyclerView.Adapter<RobertSettingsViewHolder>() {
 
     var data: List<RobertFilter> = mutableListOf()
     var settingUpdateInProgress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RobertSettingsViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.robert_setting_item_view, parent, false)
+                .inflate(R.layout.robert_setting_item_view, parent, false)
         return RobertSettingsViewHolder(view)
     }
 
@@ -44,9 +44,9 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
             }
             settingUpdateInProgress = true
             robertAdapterListener.settingChanged(
-                originalList,
-                data[holder.adapterPosition],
-                holder.adapterPosition
+                    originalList,
+                    data[holder.adapterPosition],
+                    holder.adapterPosition
             )
             notifyItemChanged(holder.adapterPosition)
         }
@@ -60,14 +60,14 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
     class RobertSettingsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var iconMap = mapOf(
-            Pair("malware", R.drawable.ic_malware),
-            Pair("ads", R.drawable.ic_ads),
-            Pair("social", R.drawable.ic_social),
-            Pair("porn", R.drawable.ic_porn),
-            Pair("gambling", R.drawable.ic_gambling),
-            Pair("fakenews", R.drawable.ic_fake_news),
-            Pair("competitors", R.drawable.ic_other_vpn),
-            Pair("cryptominers", R.drawable.ic_crypto)
+                Pair("malware", R.drawable.ic_malware),
+                Pair("ads", R.drawable.ic_ads),
+                Pair("social", R.drawable.ic_social),
+                Pair("porn", R.drawable.ic_porn),
+                Pair("gambling", R.drawable.ic_gambling),
+                Pair("fakenews", R.drawable.ic_fake_news),
+                Pair("competitors", R.drawable.ic_other_vpn),
+                Pair("cryptominers", R.drawable.ic_crypto)
         )
 
         var toggle: ImageView = itemView.findViewById(R.id.toggle)
@@ -79,21 +79,21 @@ class RobertSettingsAdapter(private val robertAdapterListener: RobertAdapterList
                 toggle.setImageResource(R.drawable.ic_toggle_button_on)
                 allow.setText(R.string.blocking)
                 allow.setTextColor(
-                    ThemeUtils.getColor(
-                        itemView.context,
-                        R.attr.wdActionColor,
-                        R.color.colorNeonGreen
-                    )
+                        ThemeUtils.getColor(
+                                itemView.context,
+                                R.attr.wdActionColor,
+                                R.color.colorNeonGreen
+                        )
                 )
             } else {
                 toggle.setImageResource(R.drawable.ic_toggle_button_off)
                 allow.setText(R.string.allowing)
                 allow.setTextColor(
-                    ThemeUtils.getColor(
-                        itemView.context,
-                        R.attr.wdSecondaryColor,
-                        R.color.colorWhite50
-                    )
+                        ThemeUtils.getColor(
+                                itemView.context,
+                                R.attr.wdSecondaryColor,
+                                R.color.colorWhite50
+                        )
                 )
             }
             iconMap[robertSetting.id]?.let {

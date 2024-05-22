@@ -26,7 +26,7 @@ import sp.windscribe.mobile.R
 import java.util.concurrent.atomic.AtomicBoolean
 
 class SignUpFragment : Fragment(), TextWatcher,
-    WelcomeActivityCallback {
+        WelcomeActivityCallback {
     @BindView(R.id.email_sub_description)
     lateinit var addEmailLabel: TextView
 
@@ -114,15 +114,15 @@ class SignUpFragment : Fragment(), TextWatcher,
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             isAccountSetUpLayout =
-                requireArguments().getString("startFragmentName", "SignUp") == "AccountSetUp"
+                    requireArguments().getString("startFragmentName", "SignUp") == "AccountSetUp"
             skipToHome = requireArguments().getBoolean("skipToHome", false)
             isUserPro = requireArguments().getBoolean("userPro", false)
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
         ButterKnife.bind(this, view)
@@ -163,12 +163,12 @@ class SignUpFragment : Fragment(), TextWatcher,
 
     private fun resetReferralUsernameView() {
         if (Patterns.EMAIL_ADDRESS.matcher(emailEditText.text)
-                .matches() && referralUsernameEditText.text.toString() != getString(R.string.please_provide_email_first)
+                        .matches() && referralUsernameEditText.text.toString() != getString(R.string.please_provide_email_first)
         ) {
             referralUsernameEditText.setTextColor(resources.getColor(R.color.colorWhite50))
             referralUsernameEditText.isEnabled = true
         } else if (Patterns.EMAIL_ADDRESS.matcher(emailEditText.text)
-                .matches() && referralUsernameEditText.text.toString() == getString(R.string.please_provide_email_first)
+                        .matches() && referralUsernameEditText.text.toString() == getString(R.string.please_provide_email_first)
         ) {
             referralUsernameEditText.setTextColor(resources.getColor(R.color.colorWhite50))
             referralUsernameEditText.setText("")
@@ -215,20 +215,20 @@ class SignUpFragment : Fragment(), TextWatcher,
     fun onSignUpButtonClick() {
         if (isAccountSetUpLayout) {
             fragmentCallBack?.onAccountClaimButtonClick(
-                usernameEditText.text.toString().trim { it <= ' ' },
-                passwordEditText.text.toString().trim { it <= ' ' },
-                emailEditText.text.toString().trim { it <= ' ' },
-                false
+                    usernameEditText.text.toString().trim { it <= ' ' },
+                    passwordEditText.text.toString().trim { it <= ' ' },
+                    emailEditText.text.toString().trim { it <= ' ' },
+                    false
             )
         } else {
             val referral = referralUsernameEditText.text.toString().trim { it <= ' ' }
             val email = emailEditText.text.toString().trim { it <= ' ' }
             fragmentCallBack?.onSignUpButtonClick(
-                usernameEditText.text.toString().trim { it <= ' ' },
-                passwordEditText.text.toString().trim { it <= ' ' },
-                email,
-                referral,
-                false
+                    usernameEditText.text.toString().trim { it <= ' ' },
+                    passwordEditText.text.toString().trim { it <= ' ' },
+                    email,
+                    referral,
+                    false
             )
         }
     }
@@ -245,17 +245,17 @@ class SignUpFragment : Fragment(), TextWatcher,
             180F
         }
         firstReferralDescriptionPrefix.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         firstReferralDescription.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         secondReferralDescriptionPrefix.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         secondReferralDescription.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         referralUsernameEditText.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         confirmEmailExplainer.visibility =
-            if (!showReferralViews) View.VISIBLE else View.GONE
+                if (!showReferralViews) View.VISIBLE else View.GONE
         showReferralViews = showReferralViews.not()
         if (showReferralViews) {
             bottomFocusView.requestFocus()

@@ -172,7 +172,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideConnectionDataUpdater(
-        preferencesHelper: PreferencesHelper, apiCallManager: IApiCallManager
+            preferencesHelper: PreferencesHelper, apiCallManager: IApiCallManager
     ): ConnectionDataRepository {
         return ConnectionDataRepository(preferencesHelper, apiCallManager)
     }
@@ -180,23 +180,23 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideLatencyRepository(
-        preferencesHelper: PreferencesHelper,
-        localDbInterface: LocalDbInterface,
-        apiCallManager: IApiCallManager,
-        vpnConnectionStateManager: Lazy<VPNConnectionStateManager>,
+            preferencesHelper: PreferencesHelper,
+            localDbInterface: LocalDbInterface,
+            apiCallManager: IApiCallManager,
+            vpnConnectionStateManager: Lazy<VPNConnectionStateManager>,
     ): LatencyRepository {
         return LatencyRepository(
-            preferencesHelper,
-            localDbInterface,
-            apiCallManager,
-            vpnConnectionStateManager
+                preferencesHelper,
+                localDbInterface,
+                apiCallManager,
+                vpnConnectionStateManager
         )
     }
 
     @Provides
     @Singleton
     fun provideFavouriteRepository(
-        scope: CoroutineScope, localDbInterface: LocalDbInterface
+            scope: CoroutineScope, localDbInterface: LocalDbInterface
     ): FavouriteRepository {
         return FavouriteRepository(scope, localDbInterface)
     }
@@ -211,14 +211,14 @@ open class BaseApplicationModule {
     @Singleton
     fun provideDatabase(): WindscribeDatabase {
         return Room.databaseBuilder(windscribeApp, WindscribeDatabase::class.java, "wind_db")
-            .fallbackToDestructiveMigration().addCallback(object : RoomDatabase.Callback() {
-                override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                    logger.debug("No migration found for old database. Reconstructing from scratch.")
-                    super.onDestructiveMigration(db)
-                }
-            }).addMigrations(Migrations.migration_26_27).addMigrations(Migrations.migration_27_28)
-            .addMigrations(Migrations.migration_29_31)
-            .addMigrations(Migrations.migration_33_34).build()
+                .fallbackToDestructiveMigration().addCallback(object : RoomDatabase.Callback() {
+                    override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                        logger.debug("No migration found for old database. Reconstructing from scratch.")
+                        super.onDestructiveMigration(db)
+                    }
+                }).addMigrations(Migrations.migration_26_27).addMigrations(Migrations.migration_27_28)
+                .addMigrations(Migrations.migration_29_31)
+                .addMigrations(Migrations.migration_33_34).build()
 
     }
 
@@ -243,51 +243,51 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideIkev2Backend(
-        coroutineScope: CoroutineScope,
-        networkInfoManager: NetworkInfoManager,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        serviceInteractor: ServiceInteractor
+            coroutineScope: CoroutineScope,
+            networkInfoManager: NetworkInfoManager,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            serviceInteractor: ServiceInteractor
     ): IKev2VpnBackend {
         return IKev2VpnBackend(
-            coroutineScope, networkInfoManager, vpnConnectionStateManager, serviceInteractor
+                coroutineScope, networkInfoManager, vpnConnectionStateManager, serviceInteractor
         )
     }
 
     @Provides
     @Singleton
     fun provideLocalDatabaseImpl(
-        pingTestDao: PingTestDao,
-        userStatusDao: UserStatusDao,
-        popupNotificationDao: PopupNotificationDao,
-        regionDao: RegionDao,
-        cityDao: CityDao,
-        cityAndRegionDao: CityAndRegionDao,
-        configFileDao: ConfigFileDao,
-        staticRegionDao: StaticRegionDao,
-        pingTimeDao: PingTimeDao,
-        favouriteDao: FavouriteDao,
-        regionAndCitiesDao: RegionAndCitiesDao,
-        networkInfoDao: NetworkInfoDao,
-        serverStatusDao: ServerStatusDao,
-        preferenceChangeObserver: PreferenceChangeObserver,
-        windNotificationDao: WindNotificationDao
+            pingTestDao: PingTestDao,
+            userStatusDao: UserStatusDao,
+            popupNotificationDao: PopupNotificationDao,
+            regionDao: RegionDao,
+            cityDao: CityDao,
+            cityAndRegionDao: CityAndRegionDao,
+            configFileDao: ConfigFileDao,
+            staticRegionDao: StaticRegionDao,
+            pingTimeDao: PingTimeDao,
+            favouriteDao: FavouriteDao,
+            regionAndCitiesDao: RegionAndCitiesDao,
+            networkInfoDao: NetworkInfoDao,
+            serverStatusDao: ServerStatusDao,
+            preferenceChangeObserver: PreferenceChangeObserver,
+            windNotificationDao: WindNotificationDao
     ): LocalDbInterface {
         return LocalDatabaseImpl(
-            pingTestDao,
-            userStatusDao,
-            popupNotificationDao,
-            regionDao,
-            cityDao,
-            cityAndRegionDao,
-            configFileDao,
-            staticRegionDao,
-            pingTimeDao,
-            favouriteDao,
-            regionAndCitiesDao,
-            networkInfoDao,
-            serverStatusDao,
-            preferenceChangeObserver,
-            windNotificationDao
+                pingTestDao,
+                userStatusDao,
+                popupNotificationDao,
+                regionDao,
+                cityDao,
+                cityAndRegionDao,
+                configFileDao,
+                staticRegionDao,
+                pingTimeDao,
+                favouriteDao,
+                regionAndCitiesDao,
+                networkInfoDao,
+                serverStatusDao,
+                preferenceChangeObserver,
+                windNotificationDao
         )
     }
 
@@ -301,7 +301,7 @@ open class BaseApplicationModule {
     @Singleton
     fun provideNotificationBuilder(@Named("ApplicationContext") appContext: Context): NotificationCompat.Builder {
         return NotificationCompat.Builder(
-            appContext, NotificationConstants.NOTIFICATION_CHANNEL_ID
+                appContext, NotificationConstants.NOTIFICATION_CHANNEL_ID
         )
     }
 
@@ -314,9 +314,9 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideNotificationUpdater(
-        preferencesHelper: PreferencesHelper,
-        apiCallManager: IApiCallManager,
-        localDbInterface: LocalDbInterface
+            preferencesHelper: PreferencesHelper,
+            apiCallManager: IApiCallManager,
+            localDbInterface: LocalDbInterface
     ): NotificationRepository {
         return NotificationRepository(preferencesHelper, apiCallManager, localDbInterface)
     }
@@ -324,18 +324,18 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideOpenVPNBackend(
-        goBackend: GoBackend,
-        coroutineScope: CoroutineScope,
-        networkInfoManager: NetworkInfoManager,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        serviceInteractor: ServiceInteractor
+            goBackend: GoBackend,
+            coroutineScope: CoroutineScope,
+            networkInfoManager: NetworkInfoManager,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            serviceInteractor: ServiceInteractor
     ): OpenVPNBackend {
         return OpenVPNBackend(
-            goBackend,
-            coroutineScope,
-            networkInfoManager,
-            vpnConnectionStateManager,
-            serviceInteractor
+                goBackend,
+                coroutineScope,
+                networkInfoManager,
+                vpnConnectionStateManager,
+                serviceInteractor
         )
     }
 
@@ -360,7 +360,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providePreferenceHelperInterface(
-        preferences: AppPreferences, securePreferences: SecurePreferences
+            preferences: AppPreferences, securePreferences: SecurePreferences
     ): PreferencesHelper {
         return AppPreferenceHelper(preferences, securePreferences)
     }
@@ -380,10 +380,10 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideSelectedLocationUpdater(
-        scope: CoroutineScope,
-        preferencesHelper: PreferencesHelper,
-        localDbInterface: LocalDbInterface,
-        userRepository: Lazy<UserRepository>
+            scope: CoroutineScope,
+            preferencesHelper: PreferencesHelper,
+            localDbInterface: LocalDbInterface,
+            userRepository: Lazy<UserRepository>
     ): LocationRepository {
         return LocationRepository(scope, preferencesHelper, localDbInterface, userRepository)
     }
@@ -391,22 +391,22 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideServerListUpdater(
-        scope: CoroutineScope,
-        apiCallManager: IApiCallManager,
-        localDbInterface: LocalDbInterface,
-        preferenceChangeObserver: PreferenceChangeObserver,
-        userRepository: UserRepository,
-        appLifeCycleObserver: AppLifeCycleObserver,
-        workManager: WindScribeWorkManager
+            scope: CoroutineScope,
+            apiCallManager: IApiCallManager,
+            localDbInterface: LocalDbInterface,
+            preferenceChangeObserver: PreferenceChangeObserver,
+            userRepository: UserRepository,
+            appLifeCycleObserver: AppLifeCycleObserver,
+            workManager: WindScribeWorkManager
     ): ServerListRepository {
         return ServerListRepository(
-            scope,
-            apiCallManager,
-            localDbInterface,
-            preferenceChangeObserver,
-            userRepository,
-            appLifeCycleObserver,
-            workManager
+                scope,
+                apiCallManager,
+                localDbInterface,
+                preferenceChangeObserver,
+                userRepository,
+                appLifeCycleObserver,
+                workManager
         )
     }
 
@@ -419,13 +419,13 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideStaticListUpdater(
-        scope: CoroutineScope,
-        preferencesHelper: PreferencesHelper,
-        apiCallManager: IApiCallManager,
-        localDbInterface: LocalDbInterface
+            scope: CoroutineScope,
+            preferencesHelper: PreferencesHelper,
+            apiCallManager: IApiCallManager,
+            localDbInterface: LocalDbInterface
     ): StaticIpRepository {
         return StaticIpRepository(
-            scope, preferencesHelper, apiCallManager, localDbInterface
+                scope, preferencesHelper, apiCallManager, localDbInterface
         )
     }
 
@@ -438,23 +438,23 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideTrafficCounter(
-        coroutineScope: CoroutineScope,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        preferencesHelper: PreferencesHelper,
-        deviceStateManager: DeviceStateManager
+            coroutineScope: CoroutineScope,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            preferencesHelper: PreferencesHelper,
+            deviceStateManager: DeviceStateManager
     ): TrafficCounter {
         return TrafficCounter(
-            coroutineScope, vpnConnectionStateManager, preferencesHelper, deviceStateManager
+                coroutineScope, vpnConnectionStateManager, preferencesHelper, deviceStateManager
         )
     }
 
     @Provides
     @Singleton
     fun provideUserRepository(
-        scope: CoroutineScope,
-        autoConnectionManager: AutoConnectionManager,
-        serviceInteractor: ServiceInteractor,
-        vpnController: WindVpnController
+            scope: CoroutineScope,
+            autoConnectionManager: AutoConnectionManager,
+            serviceInteractor: ServiceInteractor,
+            vpnController: WindVpnController
     ): UserRepository {
         return UserRepository(scope, serviceInteractor, vpnController, autoConnectionManager)
     }
@@ -462,7 +462,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideWgConfigRepository(
-        scope: CoroutineScope, serviceInteractor: ServiceInteractor
+            scope: CoroutineScope, serviceInteractor: ServiceInteractor
     ): WgConfigRepository {
         return WgConfigRepository(scope, serviceInteractor)
     }
@@ -476,9 +476,9 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideVPNProfileCreator(
-        preferencesHelper: PreferencesHelper,
-        wgConfigRepository: WgConfigRepository,
-        proxyTunnelManager: ProxyTunnelManager
+            preferencesHelper: PreferencesHelper,
+            wgConfigRepository: WgConfigRepository,
+            proxyTunnelManager: ProxyTunnelManager
     ): VPNProfileCreator {
         return VPNProfileCreator(preferencesHelper, wgConfigRepository, proxyTunnelManager)
     }
@@ -486,34 +486,34 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideVpnBackendHolder(
-        coroutineScope: CoroutineScope,
-        preferenceHelper: AppPreferenceHelper,
-        openVPNBackend: OpenVPNBackend,
-        iKev2VpnBackend: IKev2VpnBackend,
-        wireguardBackend: WireguardBackend
+            coroutineScope: CoroutineScope,
+            preferenceHelper: AppPreferenceHelper,
+            openVPNBackend: OpenVPNBackend,
+            iKev2VpnBackend: IKev2VpnBackend,
+            wireguardBackend: WireguardBackend
     ): VpnBackendHolder {
         return VpnBackendHolder(
-            coroutineScope, preferenceHelper, iKev2VpnBackend, wireguardBackend, openVPNBackend
+                coroutineScope, preferenceHelper, iKev2VpnBackend, wireguardBackend, openVPNBackend
         )
     }
 
     @Provides
     @Singleton
     fun provideWindNotificationBuilder(
-        notificationManager: NotificationManager,
-        notificationBuilder: NotificationCompat.Builder,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        scope: CoroutineScope,
-        trafficCounter: TrafficCounter,
-        interactor: ServiceInteractor
+            notificationManager: NotificationManager,
+            notificationBuilder: NotificationCompat.Builder,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            scope: CoroutineScope,
+            trafficCounter: TrafficCounter,
+            interactor: ServiceInteractor
     ): WindNotificationBuilder {
         return WindNotificationBuilder(
-            notificationManager,
-            notificationBuilder,
-            vpnConnectionStateManager,
-            trafficCounter,
-            scope,
-            interactor
+                notificationManager,
+                notificationBuilder,
+                vpnConnectionStateManager,
+                trafficCounter,
+                scope,
+                interactor
         )
     }
 
@@ -526,60 +526,60 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun provideWireguardBackend(
-        goBackend: GoBackend,
-        coroutineScope: CoroutineScope,
-        networkInfoManager: NetworkInfoManager,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        serviceInteractor: ServiceInteractor,
-        vpnProfileCreator: VPNProfileCreator,
-        userRepository: Lazy<UserRepository>,
-        deviceStateManager: DeviceStateManager,
-        preferencesHelper: PreferencesHelper
+            goBackend: GoBackend,
+            coroutineScope: CoroutineScope,
+            networkInfoManager: NetworkInfoManager,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            serviceInteractor: ServiceInteractor,
+            vpnProfileCreator: VPNProfileCreator,
+            userRepository: Lazy<UserRepository>,
+            deviceStateManager: DeviceStateManager,
+            preferencesHelper: PreferencesHelper
     ): WireguardBackend {
         return WireguardBackend(
-            goBackend,
-            coroutineScope,
-            networkInfoManager,
-            vpnConnectionStateManager,
-            serviceInteractor,
-            vpnProfileCreator,
-            userRepository,
-            deviceStateManager,
-            preferencesHelper
+                goBackend,
+                coroutineScope,
+                networkInfoManager,
+                vpnConnectionStateManager,
+                serviceInteractor,
+                vpnProfileCreator,
+                userRepository,
+                deviceStateManager,
+                preferencesHelper
         )
     }
 
     @Provides
     @Singleton
     fun providesApiCallManagerInterface(
-        windApiFactory: WindApiFactory,
-        windCustomApiFactory: WindCustomApiFactory,
-        @Named("backupEndPoint") backupEndpoint: String,
-        authorizationGenerator: AuthorizationGenerator,
-        @Named("accessIpList") accessIpList: List<String>,
-        @Named("PrimaryApiEndpointMap") primaryApiEndpointMap: Map<HostType, String>,
-        @Named("SecondaryApiEndpointMap") secondaryApiEndpointMap: Map<HostType, String>,
-        domainFailOverManager: DomainFailOverManager
+            windApiFactory: WindApiFactory,
+            windCustomApiFactory: WindCustomApiFactory,
+            @Named("backupEndPoint") backupEndpoint: String,
+            authorizationGenerator: AuthorizationGenerator,
+            @Named("accessIpList") accessIpList: List<String>,
+            @Named("PrimaryApiEndpointMap") primaryApiEndpointMap: Map<HostType, String>,
+            @Named("SecondaryApiEndpointMap") secondaryApiEndpointMap: Map<HostType, String>,
+            domainFailOverManager: DomainFailOverManager
     ): IApiCallManager {
         return ApiCallManager(
-            windApiFactory,
-            windCustomApiFactory,
-            backupEndpoint,
-            authorizationGenerator,
-            accessIpList,
-            primaryApiEndpointMap,
-            secondaryApiEndpointMap,
-            domainFailOverManager
+                windApiFactory,
+                windCustomApiFactory,
+                backupEndpoint,
+                authorizationGenerator,
+                accessIpList,
+                primaryApiEndpointMap,
+                secondaryApiEndpointMap,
+                domainFailOverManager
         )
     }
 
     @Provides
     @Singleton
     fun providesIpRepository(
-        scope: CoroutineScope,
-        preferencesHelper: PreferencesHelper,
-        apiCallManager: IApiCallManager,
-        vpnConnectionStateManager: VPNConnectionStateManager
+            scope: CoroutineScope,
+            preferencesHelper: PreferencesHelper,
+            apiCallManager: IApiCallManager,
+            vpnConnectionStateManager: VPNConnectionStateManager
     ): IpRepository {
         return IpRepository(scope, preferencesHelper, apiCallManager, vpnConnectionStateManager)
     }
@@ -587,9 +587,9 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesAppLifeCycleObserver(
-        workManager: WindScribeWorkManager,
-        networkInfoManager: NetworkInfoManager,
-        domainFailOverManager: DomainFailOverManager
+            workManager: WindScribeWorkManager,
+            networkInfoManager: NetworkInfoManager,
+            domainFailOverManager: DomainFailOverManager
     ): AppLifeCycleObserver {
         return AppLifeCycleObserver(workManager, networkInfoManager, domainFailOverManager)
     }
@@ -615,41 +615,41 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesMockLocationController(
-        coroutineScope: CoroutineScope,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        preferencesHelper: PreferencesHelper
+            coroutineScope: CoroutineScope,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            preferencesHelper: PreferencesHelper
     ): MockLocationManager {
         return MockLocationManager(
-            windscribeApp, coroutineScope, vpnConnectionStateManager, preferencesHelper
+                windscribeApp, coroutineScope, vpnConnectionStateManager, preferencesHelper
         )
     }
 
     @Provides
     @Singleton
     fun providesAutoConnectionManager(
-        vpnConnectionStateManager: Lazy<VPNConnectionStateManager>,
-        vpnController: Lazy<WindVpnController>,
-        networkInfoManager: NetworkInfoManager,
-        interactor: ServiceInteractor,
-        scope: CoroutineScope,
-        connectionDataRepository: ConnectionDataRepository
+            vpnConnectionStateManager: Lazy<VPNConnectionStateManager>,
+            vpnController: Lazy<WindVpnController>,
+            networkInfoManager: NetworkInfoManager,
+            interactor: ServiceInteractor,
+            scope: CoroutineScope,
+            connectionDataRepository: ConnectionDataRepository
     ): AutoConnectionManager {
         return AutoConnectionManager(
-            scope,
-            vpnConnectionStateManager,
-            vpnController,
-            networkInfoManager,
-            interactor,
-            connectionDataRepository
+                scope,
+                vpnConnectionStateManager,
+                vpnController,
+                networkInfoManager,
+                interactor,
+                connectionDataRepository
         )
     }
 
     @Provides
     @Singleton
     fun providesNetworkInfoManager(
-        preferencesHelper: PreferencesHelper,
-        localDbInterface: LocalDbInterface,
-        deviceStateManager: DeviceStateManager
+            preferencesHelper: PreferencesHelper,
+            localDbInterface: LocalDbInterface,
+            deviceStateManager: DeviceStateManager
     ): NetworkInfoManager {
         return NetworkInfoManager(preferencesHelper, localDbInterface, deviceStateManager)
     }
@@ -657,7 +657,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesDomainFailOverManager(
-        preferencesHelper: PreferencesHelper
+            preferencesHelper: PreferencesHelper
     ): DomainFailOverManager {
         return DomainFailOverManager(preferencesHelper)
     }
@@ -668,8 +668,8 @@ open class BaseApplicationModule {
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
         val builder = OkHttpClient.Builder()
         builder.connectTimeout(
-            NetworkKeyConstants.NETWORK_REQUEST_CONNECTION_TIMEOUT,
-            TimeUnit.SECONDS
+                NetworkKeyConstants.NETWORK_REQUEST_CONNECTION_TIMEOUT,
+                TimeUnit.SECONDS
         )
         builder.readTimeout(5, TimeUnit.SECONDS)
         builder.writeTimeout(5, TimeUnit.SECONDS)
@@ -681,13 +681,13 @@ open class BaseApplicationModule {
     }
 
     private var httpLoggingInterceptor =
-        HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-            override fun log(message: String) {
-                if (BuildConfig.DEV) {
-                    logger.debug(message)
+            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    if (BuildConfig.DEV) {
+                        logger.debug(message)
+                    }
                 }
-            }
-        })
+            })
 
 
     @Provides
@@ -710,22 +710,22 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesVPNConnectionStateManager(
-        scope: CoroutineScope,
-        autoConnectionManager: AutoConnectionManager,
-        preferencesHelper: PreferencesHelper,
-        userRepository: Lazy<UserRepository>
+            scope: CoroutineScope,
+            autoConnectionManager: AutoConnectionManager,
+            preferencesHelper: PreferencesHelper,
+            userRepository: Lazy<UserRepository>
     ): VPNConnectionStateManager {
         return VPNConnectionStateManager(
-            scope, autoConnectionManager, preferencesHelper, userRepository
+                scope, autoConnectionManager, preferencesHelper, userRepository
         )
     }
 
     @Provides
     @Singleton
     fun providesVPNServiceInteractor(
-        mPrefHelper: PreferencesHelper,
-        apiCallManager: IApiCallManager,
-        localDbInterface: LocalDbInterface
+            mPrefHelper: PreferencesHelper,
+            apiCallManager: IApiCallManager,
+            localDbInterface: LocalDbInterface
     ): ServiceInteractor {
         return ServiceInteractorImpl(mPrefHelper, apiCallManager, localDbInterface)
     }
@@ -733,7 +733,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesCustomDnsResolver(
-        mainScope: CoroutineScope, preferencesHelper: PreferencesHelper
+            mainScope: CoroutineScope, preferencesHelper: PreferencesHelper
     ): WindscribeDnsResolver {
         return WindscribeDnsResolver(mainScope, preferencesHelper)
     }
@@ -741,32 +741,32 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesWindApiFactory(
-        retrofitBuilder: Retrofit.Builder,
-        httpBuilder: OkHttpClient.Builder,
-        protectedApiFactory: ProtectedApiFactory,
-        dnsResolver: WindscribeDnsResolver
+            retrofitBuilder: Retrofit.Builder,
+            httpBuilder: OkHttpClient.Builder,
+            protectedApiFactory: ProtectedApiFactory,
+            dnsResolver: WindscribeDnsResolver
     ): WindApiFactory {
         return WindApiFactory(
-            retrofitBuilder, httpBuilder, dnsResolver, protectedApiFactory,
+                retrofitBuilder, httpBuilder, dnsResolver, protectedApiFactory,
         )
     }
 
     @Provides
     @Singleton
     fun providesEchFactory(
-        retrofitBuilder: Retrofit.Builder,
-        httpBuilder: OkHttpClient.Builder,
-        protectedApiFactory: ProtectedApiFactory
+            retrofitBuilder: Retrofit.Builder,
+            httpBuilder: OkHttpClient.Builder,
+            protectedApiFactory: ProtectedApiFactory
     ): EchApiFactory {
         return EchApiFactory(
-            retrofitBuilder, httpBuilder, protectedApiFactory
+                retrofitBuilder, httpBuilder, protectedApiFactory
         )
     }
 
     @Provides
     @Singleton
     fun providesProtectedFactory(
-        retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient.Builder
+            retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient.Builder
     ): ProtectedApiFactory {
         return ProtectedApiFactory(retrofitBuilder, okHttpClient)
     }
@@ -774,7 +774,7 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesWindCustomApiFactory(
-        retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient.Builder
+            retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient.Builder
     ): WindCustomApiFactory {
         return WindCustomApiFactory(retrofitBuilder, okHttpClient)
     }
@@ -782,32 +782,32 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesWindScribeWorkManager(
-        scope: CoroutineScope,
-        vpnConnectionStateManager: VPNConnectionStateManager,
-        preferencesHelper: PreferencesHelper
+            scope: CoroutineScope,
+            vpnConnectionStateManager: VPNConnectionStateManager,
+            preferencesHelper: PreferencesHelper
     ): WindScribeWorkManager {
         return WindScribeWorkManager(
-            windscribeApp, scope, vpnConnectionStateManager, preferencesHelper
+                windscribeApp, scope, vpnConnectionStateManager, preferencesHelper
         )
     }
 
     @Provides
     @Singleton
     fun providesDecoyTrafficController(
-        scope: CoroutineScope,
-        apiCallManager: IApiCallManager,
-        preferencesHelper: PreferencesHelper,
-        vpnConnectionStateManager: VPNConnectionStateManager
+            scope: CoroutineScope,
+            apiCallManager: IApiCallManager,
+            preferencesHelper: PreferencesHelper,
+            vpnConnectionStateManager: VPNConnectionStateManager
     ): DecoyTrafficController {
         return DecoyTrafficController(
-            scope, apiCallManager, preferencesHelper, vpnConnectionStateManager
+                scope, apiCallManager, preferencesHelper, vpnConnectionStateManager
         )
     }
 
     @Provides
     @Singleton
     fun providesWsTunnelManager(
-        scope: CoroutineScope, openVPNBackend: OpenVPNBackend
+            scope: CoroutineScope, openVPNBackend: OpenVPNBackend
     ): ProxyTunnelManager {
         return ProxyTunnelManager(scope, openVPNBackend)
     }
@@ -815,20 +815,20 @@ open class BaseApplicationModule {
     @Provides
     @Singleton
     fun providesShortcutStateManager(
-        scope: CoroutineScope,
-        userRepository: Lazy<UserRepository>,
-        networkInfoManager: NetworkInfoManager,
-        autoConnectionManager: AutoConnectionManager,
-        interactor: ServiceInteractor,
-        vpnController: WindVpnController
+            scope: CoroutineScope,
+            userRepository: Lazy<UserRepository>,
+            networkInfoManager: NetworkInfoManager,
+            autoConnectionManager: AutoConnectionManager,
+            interactor: ServiceInteractor,
+            vpnController: WindVpnController
     ): ShortcutStateManager {
         return ShortcutStateManager(
-            scope,
-            userRepository,
-            autoConnectionManager,
-            networkInfoManager,
-            interactor,
-            vpnController
+                scope,
+                userRepository,
+                autoConnectionManager,
+                networkInfoManager,
+                interactor,
+                vpnController
         )
     }
 

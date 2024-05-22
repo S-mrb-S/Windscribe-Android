@@ -38,12 +38,12 @@ object Util {
     fun getLastSelectedLocation(context: Context): LastSelectedLocation? {
         try {
             ObjectInputStream(context.openFileInput(LAST_SELECTED_LOCATION))
-                .use {
-                    val obj = it.readObject()
-                    if (obj is LastSelectedLocation) {
-                        return obj
+                    .use {
+                        val obj = it.readObject()
+                        if (obj is LastSelectedLocation) {
+                            return obj
+                        }
                     }
-                }
         } catch (ignored: Exception) {
             return null
         }
@@ -83,10 +83,10 @@ object Util {
 
     fun saveSelectedLocation(selectedLocation: LastSelectedLocation) {
         val vpnFile = ObjectOutputStream(
-            Windscribe.appContext.openFileOutput(
-                LAST_SELECTED_LOCATION,
-                Activity.MODE_PRIVATE
-            )
+                Windscribe.appContext.openFileOutput(
+                        LAST_SELECTED_LOCATION,
+                        Activity.MODE_PRIVATE
+                )
         )
         vpnFile.writeObject(selectedLocation)
         vpnFile.flush()
@@ -95,10 +95,10 @@ object Util {
 
     fun saveProfile(profile: Any): String {
         val vpnFile = ObjectOutputStream(
-            Windscribe.appContext.openFileOutput(
-                VPN_PROFILE_NAME,
-                Activity.MODE_PRIVATE
-            )
+                Windscribe.appContext.openFileOutput(
+                        VPN_PROFILE_NAME,
+                        Activity.MODE_PRIVATE
+                )
         )
         vpnFile.writeObject(profile)
         vpnFile.flush()
@@ -130,9 +130,9 @@ object Util {
 
     fun getProtocolInformationFromOpenVPNConfig(content: String): ProtocolInformation {
         val protocolInformation = buildProtocolInformation(
-            null,
-            PreferencesKeyConstants.PROTO_UDP,
-            "443"
+                null,
+                PreferencesKeyConstants.PROTO_UDP,
+                "443"
         )
         val serverConfigLines = content.split(System.getProperty("line.separator")).toTypedArray()
         for (serverConfigLine in serverConfigLines) {
@@ -155,7 +155,7 @@ object Util {
 
     fun getProtocolInformationFromWireguardConfig(content: String?): ProtocolInformation {
         val protocolInformation =
-            buildProtocolInformation(null, PROTO_WIRE_GUARD, "")
+                buildProtocolInformation(null, PROTO_WIRE_GUARD, "")
         val reader: Reader = StringReader(content)
         val bufferedReader = BufferedReader(reader)
         try {
@@ -189,40 +189,40 @@ object Util {
 
     fun getAppSupportedProtocolList(): ThreadSafeList<ProtocolInformation> {
         val protocol1 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_IKev2,
-            PreferencesKeyConstants.DEFAULT_IKEV2_PORT,
-            appContext.getString(R.string.iKEV2_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_IKev2,
+                PreferencesKeyConstants.DEFAULT_IKEV2_PORT,
+                appContext.getString(R.string.iKEV2_description),
+                ProtocolConnectionStatus.Disconnected
         )
         val protocol2 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_UDP,
-            PreferencesKeyConstants.DEFAULT_UDP_LEGACY_PORT,
-            appContext.getString(R.string.Udp_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_UDP,
+                PreferencesKeyConstants.DEFAULT_UDP_LEGACY_PORT,
+                appContext.getString(R.string.Udp_description),
+                ProtocolConnectionStatus.Disconnected
         )
         val protocol3 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_TCP,
-            PreferencesKeyConstants.DEFAULT_TCP_LEGACY_PORT,
-            appContext.getString(R.string.Tcp_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_TCP,
+                PreferencesKeyConstants.DEFAULT_TCP_LEGACY_PORT,
+                appContext.getString(R.string.Tcp_description),
+                ProtocolConnectionStatus.Disconnected
         )
         val protocol4 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_STEALTH,
-            PreferencesKeyConstants.DEFAULT_STEALTH_LEGACY_PORT,
-            appContext.getString(R.string.Stealth_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_STEALTH,
+                PreferencesKeyConstants.DEFAULT_STEALTH_LEGACY_PORT,
+                appContext.getString(R.string.Stealth_description),
+                ProtocolConnectionStatus.Disconnected
         )
         val protocol5 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_WIRE_GUARD,
-            PreferencesKeyConstants.DEFAULT_WIRE_GUARD_PORT,
-            appContext.getString(R.string.Wireguard_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_WIRE_GUARD,
+                PreferencesKeyConstants.DEFAULT_WIRE_GUARD_PORT,
+                appContext.getString(R.string.Wireguard_description),
+                ProtocolConnectionStatus.Disconnected
         )
         val protocol6 = ProtocolInformation(
-            PreferencesKeyConstants.PROTO_WS_TUNNEL,
-            PreferencesKeyConstants.DEFAULT_WS_TUNNEL_LEGACY_PORT,
-            appContext.getString(R.string.WSTunnel_description),
-            ProtocolConnectionStatus.Disconnected
+                PreferencesKeyConstants.PROTO_WS_TUNNEL,
+                PreferencesKeyConstants.DEFAULT_WS_TUNNEL_LEGACY_PORT,
+                appContext.getString(R.string.WSTunnel_description),
+                ProtocolConnectionStatus.Disconnected
         )
         return ThreadSafeList<ProtocolInformation>().apply {
             add(protocol1)
@@ -235,9 +235,9 @@ object Util {
     }
 
     fun buildProtocolInformation(
-        protocolInformationList: List<ProtocolInformation>?,
-        protocol: String,
-        port: String
+            protocolInformationList: List<ProtocolInformation>?,
+            protocol: String,
+            port: String
     ): ProtocolInformation {
         val list = protocolInformationList ?: getAppSupportedProtocolList()
         return list.firstOrNull { it.protocol == protocol }?.apply {

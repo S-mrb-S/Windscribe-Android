@@ -75,8 +75,8 @@ class CharonVpnServiceWrapper : CharonVpnService() {
         return when (intent.action) {
             DISCONNECT_ACTION -> {
                 startForeground(
-                    NotificationConstants.SERVICE_NOTIFICATION_ID,
-                    windNotificationBuilder.buildNotification(Connecting)
+                        NotificationConstants.SERVICE_NOTIFICATION_ID,
+                        windNotificationBuilder.buildNotification(Connecting)
                 )
                 stopForeground(false)
                 setNextProfile(null)
@@ -85,8 +85,8 @@ class CharonVpnServiceWrapper : CharonVpnService() {
 
             else -> {
                 startForeground(
-                    NotificationConstants.SERVICE_NOTIFICATION_ID,
-                    windNotificationBuilder.buildNotification(Connecting)
+                        NotificationConstants.SERVICE_NOTIFICATION_ID,
+                        windNotificationBuilder.buildNotification(Connecting)
                 )
                 Util.getProfile<VpnProfile>()?.let {
                     setNextProfile(it)

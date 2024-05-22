@@ -14,7 +14,7 @@ import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.backend.utils.ProtocolConfig
 
 class ProtocolAdapter(
-    private val listener: ProtocolClickListener
+        private val listener: ProtocolClickListener
 ) : RecyclerView.Adapter<ProtocolViewHolder>() {
     var protocolConfigs: List<ProtocolConfig> = emptyList()
         @SuppressLint("NotifyDataSetChanged")
@@ -29,8 +29,8 @@ class ProtocolAdapter(
             mProtocolTextView.text = protocolConfig.heading
             if (adapterPosition == 0) {
                 mProtocolTextView.background = ResourcesCompat.getDrawable(
-                    itemView.context.resources,
-                    R.drawable.capsule_background_small, appContext.theme
+                        itemView.context.resources,
+                        R.drawable.capsule_background_small, appContext.theme
                 )
             } else {
                 mProtocolTextView.background = null
@@ -47,9 +47,9 @@ class ProtocolAdapter(
         holder.bind(protocolConfig)
         holder.itemView.setOnClickListener {
             holder.mProtocolTextView.background = ResourcesCompat.getDrawable(
-                holder.itemView.context.resources,
-                R.drawable.capsule_background_small,
-                appContext.theme
+                    holder.itemView.context.resources,
+                    R.drawable.capsule_background_small,
+                    appContext.theme
             )
             listener.onProtocolSelected(protocolConfig)
         }
@@ -57,7 +57,7 @@ class ProtocolAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProtocolViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.protocol_layout, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.protocol_layout, parent, false)
         return ProtocolViewHolder(view)
     }
 }

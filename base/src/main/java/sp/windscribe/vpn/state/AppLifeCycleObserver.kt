@@ -28,11 +28,11 @@ Tracks App life cycle
  * */
 @Singleton
 class AppLifeCycleObserver @Inject constructor(
-    private val workManager: WindScribeWorkManager,
-    private val networkInfoManager: NetworkInfoManager,
-    private val domainFailOverManager: DomainFailOverManager
+        private val workManager: WindScribeWorkManager,
+        private val networkInfoManager: NetworkInfoManager,
+        private val domainFailOverManager: DomainFailOverManager
 ) :
-    LifecycleObserver {
+        LifecycleObserver {
 
     private val logger = LoggerFactory.getLogger("app")
     private val startingFresh = AtomicBoolean(false)

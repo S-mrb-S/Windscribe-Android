@@ -9,10 +9,11 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Pair
 import android.view.View
-import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.CharStreams
+import de.blinkt.openvpn.OpenVpnApi
+import de.blinkt.openvpn.core.OpenVPNThread
 import dev.dev7.lib.v2ray.V2rayController
 import dev.dev7.lib.v2ray.utils.V2rayConstants
 import inet.ipaddr.AddressStringException
@@ -31,8 +32,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
-import de.blinkt.openvpn.OpenVpnApi
-import de.blinkt.openvpn.core.OpenVPNThread
 import sp.openconnect.core.OpenConnectManagementThread
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.adapter.ConfigAdapter
@@ -50,7 +49,6 @@ import sp.windscribe.mobile.connectionui.DisconnectedState
 import sp.windscribe.mobile.connectionui.FailedProtocol
 import sp.windscribe.mobile.connectionui.UnsecuredProtocol
 import sp.windscribe.mobile.listeners.ProtocolClickListener
-import sp.windscribe.mobile.mrb.util.fetchOvpnConfig
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
 import sp.windscribe.mobile.windscribe.WindscribeActivity.NetworkLayoutState

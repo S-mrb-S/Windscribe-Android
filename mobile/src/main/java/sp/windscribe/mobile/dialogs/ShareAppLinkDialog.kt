@@ -27,7 +27,7 @@ class ShareAppLinkDialog : FullScreenDialog() {
     private var binding: FragmentShareAppLinkBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentShareAppLinkBinding.inflate(inflater, container, false)
         return binding?.root
@@ -41,7 +41,7 @@ class ShareAppLinkDialog : FullScreenDialog() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         DaggerDialogComponent.builder().applicationComponent(appContext.applicationComponent)
-            .dialogModule(DialogModule(this)).build().inject(this)
+                .dialogModule(DialogModule(this)).build().inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,11 +54,11 @@ class ShareAppLinkDialog : FullScreenDialog() {
             userRepository.user.value?.let {
                 val launchActivity = activity as AppCompatActivity
                 val launchUrl =
-                    "https://play.google.com/store/apps/details?id=${launchActivity.packageName}"
+                        "https://play.google.com/store/apps/details?id=${launchActivity.packageName}"
                 ShareCompat.IntentBuilder(launchActivity).setType("text/plain")
-                    .setChooserTitle(getString(R.string.share_app))
-                    .setText(getString(R.string.share_app_description, it.userName, launchUrl))
-                    .startChooser()
+                        .setChooserTitle(getString(R.string.share_app))
+                        .setText(getString(R.string.share_app_description, it.userName, launchUrl))
+                        .startChooser()
             }
             dismiss()
         }

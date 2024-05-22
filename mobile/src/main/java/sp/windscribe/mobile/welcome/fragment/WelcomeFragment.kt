@@ -63,7 +63,7 @@ class WelcomeFragment : Fragment(), OnPageChangeListener {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_welcome, container, false)
         ButterKnife.bind(this, view)
@@ -99,7 +99,7 @@ class WelcomeFragment : Fragment(), OnPageChangeListener {
     override fun onPageSelected(position: Int) {}
     private fun setPagerAdapter() {
         pagerAdapter = object :
-            FragmentPagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+                FragmentPagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             override fun getCount(): Int {
                 return 4
             }
@@ -154,7 +154,7 @@ class WelcomeFragment : Fragment(), OnPageChangeListener {
                         if (mViewPager.isFakeDragging && (pagerAdapter?.count ?: 0) > 0) {
                             if (slideLeft) {
                                 mViewPager.fakeDragBy(
-                                    -valueAnimator1.animatedFraction * mViewPager.width / 2
+                                        -valueAnimator1.animatedFraction * mViewPager.width / 2
                                 )
                             }
                         }

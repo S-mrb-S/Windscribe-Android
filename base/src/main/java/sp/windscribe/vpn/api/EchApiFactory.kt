@@ -18,9 +18,9 @@ import javax.net.ssl.X509TrustManager
 
 @Singleton
 class EchApiFactory @Inject constructor(
-    retrofitBuilder: Retrofit.Builder,
-    okHttpClient: Builder,
-    private val protectedApiFactory: ProtectedApiFactory
+        retrofitBuilder: Retrofit.Builder,
+        okHttpClient: Builder,
+        private val protectedApiFactory: ProtectedApiFactory
 ) {
 
     private val mRetrofit: Retrofit
@@ -36,19 +36,19 @@ class EchApiFactory @Inject constructor(
     init {
         setupEchSSLFactory(okHttpClient)
         mRetrofit = retrofitBuilder.baseUrl(NetworkKeyConstants.API_ENDPOINT)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient.build()).build()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient.build()).build()
     }
 
     private fun setupEchSSLFactory(okHttpClient: Builder) {
         val trustManagerFactory: TrustManagerFactory = TrustManagerFactory.getInstance(
-            TrustManagerFactory.getDefaultAlgorithm()
+                TrustManagerFactory.getDefaultAlgorithm()
         )
         trustManagerFactory.init(null as KeyStore?)
         val trustManagers: Array<TrustManager> = trustManagerFactory.trustManagers
         if (trustManagers.size != 1 || trustManagers[0] !is X509TrustManager) {
             throw IllegalStateException(
-                "Unexpected default trust managers:" + trustManagers.contentToString()
+                    "Unexpected default trust managers:" + trustManagers.contentToString()
             )
         }
         val trustManager: X509TrustManager = trustManagers[0] as X509TrustManager

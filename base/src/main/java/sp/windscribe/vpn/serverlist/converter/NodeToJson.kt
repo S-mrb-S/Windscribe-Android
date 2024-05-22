@@ -17,9 +17,9 @@ object NodeToJson {
     fun jsonToNodes(json: String?): List<Node>? {
         return if (json != null) {
             Gson().fromJson(
-                json,
-                object :
-                    TypeToken<ArrayList<Node>>() {}.type
+                    json,
+                    object :
+                            TypeToken<ArrayList<Node>>() {}.type
             )
         } else null
     }

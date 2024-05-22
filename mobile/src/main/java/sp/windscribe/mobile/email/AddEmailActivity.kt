@@ -60,19 +60,19 @@ class AddEmailActivity : BaseActivity(), AddEmailView {
                 if (s.hashCode() == emailEditView.text.hashCode()) {
                     emailDescription.text = getString(R.string.email_description)
                     emailDescription.setTextColor(
-                        getColor(
-                            this@AddEmailActivity,
-                            R.attr.wdSecondaryColor,
-                            R.color.colorWhite50
-                        )
+                            getColor(
+                                    this@AddEmailActivity,
+                                    R.attr.wdSecondaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                     emailErrorView.visibility = View.GONE
                     emailEditView.setTextColor(
-                        getColor(
-                            this@AddEmailActivity,
-                            R.attr.wdPrimaryColor,
-                            R.color.colorWhite50
-                        )
+                            getColor(
+                                    this@AddEmailActivity,
+                                    R.attr.wdPrimaryColor,
+                                    R.color.colorWhite50
+                            )
                     )
                 }
             }
@@ -84,10 +84,10 @@ class AddEmailActivity : BaseActivity(), AddEmailView {
                 nextButton.isPressed = false
             } else {
                 nextButton.isEnabled =
-                    s.hashCode() == emailEditView.text.hashCode() && Patterns.EMAIL_ADDRESS.matcher(
-                        s
-                    )
-                        .matches()
+                        s.hashCode() == emailEditView.text.hashCode() && Patterns.EMAIL_ADDRESS.matcher(
+                                s
+                        )
+                                .matches()
             }
         }
     }
@@ -132,8 +132,8 @@ class AddEmailActivity : BaseActivity(), AddEmailView {
     override fun hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(
-            window.decorView.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
+                window.decorView.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
         )
     }
 

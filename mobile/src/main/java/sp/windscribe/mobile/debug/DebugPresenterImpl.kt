@@ -4,7 +4,7 @@ import sp.windscribe.mobile.adapter.LogViewAdapter
 import sp.windscribe.vpn.ActivityInteractor
 
 class DebugPresenterImpl(val view: DebugView, val activityInteractor: ActivityInteractor) :
-    DebugPresenter {
+        DebugPresenter {
 
     override suspend fun init() {
         view.showProgress(true)

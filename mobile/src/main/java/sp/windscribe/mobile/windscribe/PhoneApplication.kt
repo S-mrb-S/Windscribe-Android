@@ -1,7 +1,6 @@
 package sp.windscribe.mobile.windscribe
 
 import android.content.Intent
-import android.os.Handler
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
@@ -55,41 +54,41 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
     }
 
     override fun launchFragment(
-        protocolInformationList: List<ProtocolInformation>,
-        fragmentType: FragmentType,
-        autoConnectionModeCallback: AutoConnectionModeCallback,
-        protocolInformation: ProtocolInformation?
+            protocolInformationList: List<ProtocolInformation>,
+            fragmentType: FragmentType,
+            autoConnectionModeCallback: AutoConnectionModeCallback,
+            protocolInformation: ProtocolInformation?
     ): Boolean {
         return if (activeActivity == null) {
             false
         } else {
             val viewGroup: ViewGroup =
-                activeActivity?.findViewById(android.R.id.content) as ViewGroup
+                    activeActivity?.findViewById(android.R.id.content) as ViewGroup
             if (viewGroup.children.count() > 0 && viewGroup.children.first().id != -1) {
                 val fragment = when (fragmentType) {
                     FragmentType.ConnectionFailure -> ConnectionFailureFragment.newInstance(
-                        protocolInformationList, autoConnectionModeCallback
+                            protocolInformationList, autoConnectionModeCallback
                     )
 
                     FragmentType.ConnectionChange -> ConnectionChangeFragment.newInstance(
-                        protocolInformationList, autoConnectionModeCallback
+                            protocolInformationList, autoConnectionModeCallback
                     )
 
                     FragmentType.SetupAsPreferredProtocol -> SetupPreferredProtocolFragment.newInstance(
-                        protocolInformation, autoConnectionModeCallback
+                            protocolInformation, autoConnectionModeCallback
                     )
 
                     FragmentType.DebugLogSent -> DebugLogSentFragment.newInstance(
-                        autoConnectionModeCallback
+                            autoConnectionModeCallback
                     )
 
                     FragmentType.AllProtocolFailed -> AllProtocolFailedFragment.newInstance(
-                        autoConnectionModeCallback
+                            autoConnectionModeCallback
                     )
                 }
                 activeActivity?.supportFragmentManager?.beginTransaction()
-                    ?.setTransition(TRANSIT_FRAGMENT_FADE)
-                    ?.add(viewGroup.children.first().id, fragment, "")?.commit()
+                        ?.setTransition(TRANSIT_FRAGMENT_FADE)
+                        ?.add(viewGroup.children.first().id, fragment, "")?.commit()
             }
             true
         }

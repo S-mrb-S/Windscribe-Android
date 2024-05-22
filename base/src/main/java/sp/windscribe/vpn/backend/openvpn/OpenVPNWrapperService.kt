@@ -6,13 +6,11 @@ package sp.windscribe.vpn.backend.openvpn
 
 import android.content.Intent
 import android.net.VpnService
-import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.VpnStatus.StateListener
 import org.slf4j.LoggerFactory
 import sp.windscribe.vpn.ServiceInteractor
 import sp.windscribe.vpn.Windscribe
-import sp.windscribe.vpn.backend.Util
 import sp.windscribe.vpn.backend.VPNState.Status.Connecting
 import sp.windscribe.vpn.backend.utils.WindNotificationBuilder
 import sp.windscribe.vpn.backend.utils.WindVpnController
@@ -57,8 +55,8 @@ class OpenVPNWrapperService : OpenVPNService(), StateListener {
             return START_NOT_STICKY
         }
         startForeground(
-            NotificationConstants.SERVICE_NOTIFICATION_ID,
-            windNotificationBuilder.buildNotification(Connecting)
+                NotificationConstants.SERVICE_NOTIFICATION_ID,
+                windNotificationBuilder.buildNotification(Connecting)
         )
         return super.onStartCommand(intent, flags, startId)
     }

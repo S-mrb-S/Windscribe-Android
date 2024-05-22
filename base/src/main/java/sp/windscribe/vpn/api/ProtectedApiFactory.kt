@@ -8,24 +8,24 @@ import java.net.Proxy
 import javax.inject.Inject
 
 class ProtectedApiFactory @Inject constructor(
-    var retrofitBuilder: Retrofit.Builder,
-    okHttpClientBuilder: OkHttpClient.Builder
+        var retrofitBuilder: Retrofit.Builder,
+        okHttpClientBuilder: OkHttpClient.Builder
 ) {
     private var protectedHttpClient: OkHttpClient? = null
 
     init {
         protectedHttpClient =
-            okHttpClientBuilder.proxy(Proxy.NO_PROXY).socketFactory(VPNBypassSocketFactory())
-                .build()
+                okHttpClientBuilder.proxy(Proxy.NO_PROXY).socketFactory(VPNBypassSocketFactory())
+                        .build()
     }
 
     fun createApi(url: String): ApiService {
         protectedHttpClient?.connectionPool?.evictAll()
         protectedHttpClient?.socketFactory?.createSocket()
         return retrofitBuilder
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(protectedHttpClient!!).baseUrl(url)
-            .build().create(ApiService::class.java)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(protectedHttpClient!!).baseUrl(url)
+                .build().create(ApiService::class.java)
     }
 }

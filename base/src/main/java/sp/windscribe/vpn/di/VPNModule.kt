@@ -21,28 +21,28 @@ class VPNModule {
     @Provides
     @Singleton
     fun provideWindVpnController(
-        coroutineScope: CoroutineScope,
-        serviceInteractor: ServiceInteractor,
-        vpnProfileCreator: VPNProfileCreator,
-        autoConnectionManager: AutoConnectionManager,
-        VPNConnectionStateManager: VPNConnectionStateManager,
-        vpnBackendHolder: VpnBackendHolder,
-        locationRepository: LocationRepository,
-        wgConfigRepository: WgConfigRepository,
-        userRepository: Lazy<UserRepository>,
-        emergencyConnectRepository: EmergencyConnectRepository
+            coroutineScope: CoroutineScope,
+            serviceInteractor: ServiceInteractor,
+            vpnProfileCreator: VPNProfileCreator,
+            autoConnectionManager: AutoConnectionManager,
+            VPNConnectionStateManager: VPNConnectionStateManager,
+            vpnBackendHolder: VpnBackendHolder,
+            locationRepository: LocationRepository,
+            wgConfigRepository: WgConfigRepository,
+            userRepository: Lazy<UserRepository>,
+            emergencyConnectRepository: EmergencyConnectRepository
     ): WindVpnController {
         return WindVpnController(
-            coroutineScope,
-            serviceInteractor,
-            vpnProfileCreator,
-            VPNConnectionStateManager,
-            vpnBackendHolder,
-            locationRepository,
-            wgConfigRepository,
-            userRepository,
-            autoConnectionManager,
-            emergencyConnectRepository
+                coroutineScope,
+                serviceInteractor,
+                vpnProfileCreator,
+                VPNConnectionStateManager,
+                vpnBackendHolder,
+                locationRepository,
+                wgConfigRepository,
+                userRepository,
+                autoConnectionManager,
+                emergencyConnectRepository
         )
     }
 }

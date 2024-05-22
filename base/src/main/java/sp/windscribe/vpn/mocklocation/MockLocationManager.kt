@@ -21,10 +21,10 @@ import javax.inject.Singleton
 
 @Singleton
 class MockLocationManager(
-    val context: Context,
-    val scope: CoroutineScope,
-    val vpnConnectionStateManager: VPNConnectionStateManager,
-    val preferencesHelper: PreferencesHelper
+        val context: Context,
+        val scope: CoroutineScope,
+        val vpnConnectionStateManager: VPNConnectionStateManager,
+        val preferencesHelper: PreferencesHelper
 ) {
 
     private val logger = LoggerFactory.getLogger("mock_location")
@@ -91,8 +91,8 @@ class MockLocationManager(
         fun isAppSelectedInMockLocationList(applicationContext: Context): Boolean {
             return try {
                 MockLocationProvider(
-                    LocationManager.NETWORK_PROVIDER,
-                    applicationContext
+                        LocationManager.NETWORK_PROVIDER,
+                        applicationContext
                 )
                 MockLocationProvider(LocationManager.GPS_PROVIDER, applicationContext)
                 true
@@ -104,8 +104,8 @@ class MockLocationManager(
         @JvmStatic
         fun isDevModeOn(applicationContext: Context): Boolean {
             return Global.getInt(
-                applicationContext.contentResolver,
-                Global.DEVELOPMENT_SETTINGS_ENABLED, 0
+                    applicationContext.contentResolver,
+                    Global.DEVELOPMENT_SETTINGS_ENABLED, 0
             ) != 0
         }
     }

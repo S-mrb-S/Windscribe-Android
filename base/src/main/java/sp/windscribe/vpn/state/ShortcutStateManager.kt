@@ -11,12 +11,12 @@ import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.repository.UserRepository
 
 class ShortcutStateManager(
-    private var scope: CoroutineScope,
-    private var userRepository: Lazy<UserRepository>,
-    private var autoConnectionManager: AutoConnectionManager,
-    private var networkInfoManager: NetworkInfoManager,
-    private val interactor: ServiceInteractor,
-    private val windVpnController: WindVpnController
+        private var scope: CoroutineScope,
+        private var userRepository: Lazy<UserRepository>,
+        private var autoConnectionManager: AutoConnectionManager,
+        private var networkInfoManager: NetworkInfoManager,
+        private val interactor: ServiceInteractor,
+        private val windVpnController: WindVpnController
 ) {
     private var logger = LoggerFactory.getLogger("shortcut_manager")
     private var initilized = false

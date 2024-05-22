@@ -179,7 +179,7 @@ class SplitTunnelingActivity : BaseActivity(), SplitTunnelingView {
     }
 
     override fun setSplitRoutingModeAdapter(
-        localizeValues: Array<String>, selectedValue: String, values: Array<String>
+            localizeValues: Array<String>, selectedValue: String, values: Array<String>
     ) {
         val splitRoutingModeView = modeToggleView.childView as SplitRoutingModeView
         splitRoutingModeView.setAdapter(selectedValue, values, localizeValues)
@@ -244,9 +244,9 @@ class SplitTunnelingActivity : BaseActivity(), SplitTunnelingView {
         mSplitViewLog.info("Setting up layout to max..$minimize")
         if (minimize) {
             constraintSetTunnel.setMargin(
-                R.id.cl_app_list, ConstraintSet.TOP, resources.getDimension(
+                    R.id.cl_app_list, ConstraintSet.TOP, resources.getDimension(
                     R.dimen.reg_16dp
-                ).toInt()
+            ).toInt()
             )
             constraintSetTunnel.setVisibility(R.id.cl_top_bar, ConstraintSet.GONE)
             constraintSetTunnel.setVisibility(R.id.cl_switch, ConstraintSet.GONE)
@@ -314,7 +314,7 @@ class SplitTunnelingActivity : BaseActivity(), SplitTunnelingView {
 
         // Search text
         val searchText =
-            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+                searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
         searchText.setTextColor(getColor(this, R.attr.wdSecondaryColor, R.color.colorWhite))
         searchText.setHintTextColor(getColor(this, R.attr.wdSecondaryColor, R.color.colorWhite))
         searchText.setTextSize(Dimension.SP, 14f)
@@ -329,11 +329,11 @@ class SplitTunnelingActivity : BaseActivity(), SplitTunnelingView {
         }
         // Search icon
         val searchIcon =
-            searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
+                searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
         searchIcon.setPadding(0, 0, 0, 0)
         searchIcon.scaleType = ImageView.ScaleType.FIT_START
         searchIcon.imageTintList =
-            ColorStateList.valueOf(getColor(this, R.attr.searchTextColor, R.color.colorWhite))
+                ColorStateList.valueOf(getColor(this, R.attr.searchTextColor, R.color.colorWhite))
     }
 
     companion object {

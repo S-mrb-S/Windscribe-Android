@@ -48,7 +48,7 @@ object UiUtil {
     fun isBackgroundLocationPermissionGranted(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             (ContextCompat
-                .checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    .checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                     == PackageManager.PERMISSION_GRANTED)
         } else {
             true
@@ -59,8 +59,8 @@ object UiUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             showAlertDialog(context.getString(R.string.app_requires_background_location_permission)) {
                 context.requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                    REQUEST_BACKGROUND_PERMISSION
+                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                        REQUEST_BACKGROUND_PERMISSION
                 )
             }
         }
@@ -68,18 +68,18 @@ object UiUtil {
 
     fun locationPermissionAvailable(): Boolean {
         return (ContextCompat
-            .checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                .checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
                 ) && isBackgroundLocationPermissionGranted(appContext)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun setupOnTouchListener(
-        container: ConstraintLayout? = null,
-        imageViewContainer: ImageView? = null,
-        textViewContainer: TextView? = null,
-        iconView: ImageView? = null,
-        textView: TextView
+            container: ConstraintLayout? = null,
+            imageViewContainer: ImageView? = null,
+            textViewContainer: TextView? = null,
+            iconView: ImageView? = null,
+            textView: TextView
     ) {
         container?.setOnTouchListener { v: View, event: MotionEvent ->
             handleTouchEvent(v.context, event.action, iconView, textView)
@@ -96,15 +96,15 @@ object UiUtil {
     }
 
     private fun handleTouchEvent(
-        context: Context,
-        event: Int,
-        iconView: ImageView? = null,
-        textView: TextView
+            context: Context,
+            event: Int,
+            iconView: ImageView? = null,
+            textView: TextView
     ) {
         val defaultColor =
-            ThemeUtils.getColor(context, R.attr.wdSecondaryColor, R.color.colorWhite50)
+                ThemeUtils.getColor(context, R.attr.wdSecondaryColor, R.color.colorWhite50)
         val selectedColor =
-            ThemeUtils.getColor(context, R.attr.wdPrimaryColor, R.color.colorWhite50)
+                ThemeUtils.getColor(context, R.attr.wdPrimaryColor, R.color.colorWhite50)
         val selectedTheme = ContextThemeWrapper(context, R.style.RightIconFullOpacity).theme
         val defaultTheme = ContextThemeWrapper(context, R.style.ForwardArrowIcon).theme
         if (event == MotionEvent.ACTION_DOWN) {

@@ -9,7 +9,7 @@ import android.widget.TextView
 import sp.windscribe.mobile.R
 
 class SplitRoutingModeView(private val childView: View) : BaseView(childView),
-    AdapterView.OnItemSelectedListener {
+        AdapterView.OnItemSelectedListener {
     private var spinner: Spinner? = null
     private var current: TextView? = null
 
@@ -24,7 +24,7 @@ class SplitRoutingModeView(private val childView: View) : BaseView(childView),
         spinner = view.findViewById(R.id.spinner)
         current = view.findViewById(R.id.current)
         view.findViewById<ImageView>(R.id.clickable_area)
-            .setOnClickListener { spinner?.performClick() }
+                .setOnClickListener { spinner?.performClick() }
         spinner?.onItemSelectedListener = this
     }
 
@@ -41,7 +41,7 @@ class SplitRoutingModeView(private val childView: View) : BaseView(childView),
     fun setAdapter(selectedValues: String, values: Array<String>, localizeValues: Array<String>) {
         this.values = values
         val modesAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            childView.context, R.layout.drop_down_layout, R.id.tv_drop_down, localizeValues
+                childView.context, R.layout.drop_down_layout, R.id.tv_drop_down, localizeValues
         )
         spinner?.adapter = modesAdapter
         spinner?.isSelected = false

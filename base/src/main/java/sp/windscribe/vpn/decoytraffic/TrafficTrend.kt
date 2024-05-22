@@ -41,8 +41,8 @@ class TrafficTrend {
             } else {
                 currentUploadTrend = UploadTrend.MinMax
                 Random.nextInt(
-                    lowerLimitMultiplier.coerceAtMost(upperLimitMultiplier),
-                    lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
+                        lowerLimitMultiplier.coerceAtMost(upperLimitMultiplier),
+                        lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
                 )
             }
         } else {
@@ -50,9 +50,9 @@ class TrafficTrend {
                 UploadTrend.Min -> lowerLimitMultiplier
                 UploadTrend.Max -> upperLimitMultiplier
                 UploadTrend.MinMax -> Random.nextInt(
-                    lowerLimitMultiplier.coerceAtMost(
-                        upperLimitMultiplier
-                    ), lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
+                        lowerLimitMultiplier.coerceAtMost(
+                                upperLimitMultiplier
+                        ), lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
                 )
             }
         }
@@ -75,8 +75,8 @@ class TrafficTrend {
             } else {
                 currentDownloadTrend = DownloadTrend.MinMax
                 Random.nextInt(
-                    lowerLimitMultiplier.coerceAtMost(upperLimitMultiplier),
-                    lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
+                        lowerLimitMultiplier.coerceAtMost(upperLimitMultiplier),
+                        lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
                 )
             }
         } else {
@@ -84,9 +84,9 @@ class TrafficTrend {
                 DownloadTrend.Min -> lowerLimitMultiplier
                 DownloadTrend.Max -> upperLimitMultiplier
                 DownloadTrend.MinMax -> Random.nextInt(
-                    lowerLimitMultiplier.coerceAtMost(
-                        upperLimitMultiplier
-                    ), lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
+                        lowerLimitMultiplier.coerceAtMost(
+                                upperLimitMultiplier
+                        ), lowerLimitMultiplier.coerceAtLeast(upperLimitMultiplier)
                 )
             }
         }

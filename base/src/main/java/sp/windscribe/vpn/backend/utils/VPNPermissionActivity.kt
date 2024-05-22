@@ -51,7 +51,7 @@ class VPNPermissionActivity : Activity() {
         setContentView(layout.activity_launch)
         Windscribe.appContext.activityComponent.inject(this)
         protocolInformation =
-            intent.getSerializableExtra("protocolInformation") as ProtocolInformation
+                intent.getSerializableExtra("protocolInformation") as ProtocolInformation
         connectionId = intent.getSerializableExtra("connectionId") as UUID
         askForPermission()
     }
@@ -68,7 +68,7 @@ class VPNPermissionActivity : Activity() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         logger.debug("requesting notification permission.")
                         requestPermissions(
-                            arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION
+                                arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION
                         )
                     } else {
                         vpnBackendHolder.connect(protocolInformation, connectionId)
@@ -87,7 +87,7 @@ class VPNPermissionActivity : Activity() {
 
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+            requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == NOTIFICATION) {

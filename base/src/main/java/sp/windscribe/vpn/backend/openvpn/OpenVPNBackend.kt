@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import com.wireguard.android.backend.GoBackend
 import de.blinkt.openvpn.core.ConnectionStatus
-import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -25,13 +24,13 @@ import javax.inject.Singleton
 
 @Singleton
 class OpenVPNBackend(
-    var backend: GoBackend,
-    var scope: CoroutineScope,
-    var networkInfoManager: NetworkInfoManager,
-    vpnStateManager: VPNConnectionStateManager,
-    var serviceInteractor: ServiceInteractor,
+        var backend: GoBackend,
+        var scope: CoroutineScope,
+        var networkInfoManager: NetworkInfoManager,
+        vpnStateManager: VPNConnectionStateManager,
+        var serviceInteractor: ServiceInteractor,
 ) : VpnBackend(scope, vpnStateManager, serviceInteractor, networkInfoManager),
-    VpnStatus.StateListener, VpnStatus.ByteCountListener {
+        VpnStatus.StateListener, VpnStatus.ByteCountListener {
 
     override var active = false
     private var stickyDisconnectEvent = false
@@ -92,11 +91,11 @@ class OpenVPNBackend(
     }
 
     override fun updateState(
-        openVpnState: String?,
-        logmessage: String?,
-        localizedResId: Int,
-        level: ConnectionStatus?,
-        Intent: Intent?
+            openVpnState: String?,
+            logmessage: String?,
+            localizedResId: Int,
+            level: ConnectionStatus?,
+            Intent: Intent?
     ) {
         vpnLogger.debug("$openVpnState $localizedResId $level")
         level?.let {
@@ -132,20 +131,20 @@ class OpenVPNBackend(
                     serviceInteractor.preferenceHelper.isReconnecting = false
                     scope.launch {
                         disconnect(
-                            VPNState.Error(
-                                error = VPNState.ErrorType.AuthenticationError,
-                                message = "Authentication failed."
-                            )
+                                VPNState.Error(
+                                        error = VPNState.ErrorType.AuthenticationError,
+                                        message = "Authentication failed."
+                                )
                         )
                     }
                 }
 
                 ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT -> {
                     updateState(
-                        VPNState(
-                            VPNState.Status.RequiresUserInput,
-                            VPNState.Error(VPNState.ErrorType.GenericError)
-                        )
+                            VPNState(
+                                    VPNState.Status.RequiresUserInput,
+                                    VPNState.Error(VPNState.ErrorType.GenericError)
+                            )
                     )
                 }
 

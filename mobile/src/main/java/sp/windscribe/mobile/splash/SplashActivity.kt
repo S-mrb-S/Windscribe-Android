@@ -18,7 +18,6 @@ import sp.windscribe.mobile.mrb.util.getAllServers
 import sp.windscribe.mobile.mrb.util.saveDataAndFinish
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
-import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.qq.MmkvManager
 
 @SuppressLint("CustomSplashScreen")
@@ -49,7 +48,7 @@ class SplashActivity : AppCompatActivity() {
 
         GlobalScope.launch {
             getAllServers(
-                keyStr!!,
+                    keyStr!!,
                     {
                         launch {
                             setDataAndLoad(it)
@@ -64,21 +63,21 @@ class SplashActivity : AppCompatActivity() {
 
     private suspend fun setDataAndLoad(data: GetServersQuery.Data?) = coroutineScope {
         saveDataAndFinish(data,
-            {
-                navigateToHome()
-            },
-            {
-                failGetServers()
-            }
+                {
+                    navigateToHome()
+                },
+                {
+                    failGetServers()
+                }
         )
     }
 
     private fun failGetServers() {
         runOnUiThread {
             Toast.makeText(
-                this@SplashActivity,
-                "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید",
-                Toast.LENGTH_LONG
+                    this@SplashActivity,
+                    "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید",
+                    Toast.LENGTH_LONG
             ).show()
             navigateToLogin()
         }

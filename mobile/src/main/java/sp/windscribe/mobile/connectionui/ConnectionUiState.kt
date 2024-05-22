@@ -12,9 +12,9 @@ import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 import sp.windscribe.vpn.commonutils.FlagIconResource
 
 open class ConnectionUiState internal constructor(
-    private val savedLocation: LastSelectedLocation?,
-    var connectionOptions: ConnectionOptions,
-    private val context: Context
+        private val savedLocation: LastSelectedLocation?,
+        var connectionOptions: ConnectionOptions,
+        private val context: Context
 ) {
     private val flagIcons: Map<String, Int> = FlagIconResource.flagIcons
     open val badgeViewAlpha: Float
@@ -49,8 +49,8 @@ open class ConnectionUiState internal constructor(
 
     val flag: Int
         get() = if (savedLocation != null && flagIcons.containsKey(
-                savedLocation.countryCode
-            )
+                        savedLocation.countryCode
+                )
         ) {
             flagIcons[savedLocation.countryCode]!!
         } else R.drawable.dummy_flag

@@ -13,10 +13,10 @@ import javax.inject.Singleton
 
 @Singleton
 class WindApiFactory @Inject constructor(
-    retrofitBuilder: Retrofit.Builder,
-    private val okHttpClient: Builder,
-    private val dnsResolver: WindscribeDnsResolver,
-    private val protectedApiFactory: ProtectedApiFactory
+        retrofitBuilder: Retrofit.Builder,
+        private val okHttpClient: Builder,
+        private val dnsResolver: WindscribeDnsResolver,
+        private val protectedApiFactory: ProtectedApiFactory
 ) {
 
     private val mRetrofit: Retrofit
@@ -31,8 +31,8 @@ class WindApiFactory @Inject constructor(
             if (host != null) {
                 dnsResolver.addToCache(host, ip)
                 return mRetrofit.newBuilder().baseUrl(url)
-                    .client(okHttpClient.dns(dnsResolver).build())
-                    .build().create(ApiService::class.java)
+                        .client(okHttpClient.dns(dnsResolver).build())
+                        .build().create(ApiService::class.java)
             }
         }
         return mRetrofit.newBuilder().baseUrl(url).build().create(ApiService::class.java)
@@ -40,7 +40,7 @@ class WindApiFactory @Inject constructor(
 
     init {
         mRetrofit = retrofitBuilder.baseUrl(NetworkKeyConstants.API_ENDPOINT)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient.build()).build()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient.build()).build()
     }
 }

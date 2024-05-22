@@ -20,9 +20,9 @@ import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 
 class EmergencyConnectViewModal(
-    private val scope: CoroutineScope,
-    private val windVpnController: WindVpnController,
-    private val vpnConnectionStateManager: VPNConnectionStateManager
+        private val scope: CoroutineScope,
+        private val windVpnController: WindVpnController,
+        private val vpnConnectionStateManager: VPNConnectionStateManager
 ) : ViewModel() {
     private val logger = LoggerFactory.getLogger("e_connect_v")
     private var _uiState = MutableStateFlow(EmergencyConnectUIState.Disconnected)
@@ -84,15 +84,15 @@ class EmergencyConnectViewModal(
 
     companion object {
         fun provideFactory(
-            scope: CoroutineScope,
-            windVpnController: WindVpnController,
-            vpnConnectionStateManager: VPNConnectionStateManager
+                scope: CoroutineScope,
+                windVpnController: WindVpnController,
+                vpnConnectionStateManager: VPNConnectionStateManager
         ) = object : ViewModelProvider.NewInstanceFactory() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(EmergencyConnectViewModal::class.java)) {
                     return EmergencyConnectViewModal(
-                        scope, windVpnController, vpnConnectionStateManager
+                            scope, windVpnController, vpnConnectionStateManager
                     ) as T
                 }
                 return super.create(modelClass)

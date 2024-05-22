@@ -14,10 +14,10 @@ import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 
 class IpRepository(
-    private val scope: CoroutineScope,
-    private val preferenceHelper: PreferencesHelper,
-    private val apiCallManagerV2: IApiCallManager,
-    private val vpnConnectionStateManager: VPNConnectionStateManager
+        private val scope: CoroutineScope,
+        private val preferenceHelper: PreferencesHelper,
+        private val apiCallManagerV2: IApiCallManager,
+        private val vpnConnectionStateManager: VPNConnectionStateManager
 ) {
     private val logger = LoggerFactory.getLogger("ip_repository")
     private val _state = MutableSharedFlow<RepositoryState<String>>()
@@ -47,7 +47,7 @@ class IpRepository(
                         is CallResult.Success -> {
                             val ipAddress = getModifiedIpAddress(result.data.trim())
                             preferenceHelper.saveResponseStringData(
-                                PreferencesKeyConstants.USER_IP, ipAddress
+                                    PreferencesKeyConstants.USER_IP, ipAddress
                             )
                             _state.emit(RepositoryState.Success(ipAddress))
                         }

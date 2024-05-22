@@ -13,14 +13,14 @@ interface AccountStatusDialogCallback {
 }
 
 data class AccountStatusDialogData(
-    val title: String,
-    val icon: Int,
-    val description: String,
-    val showSkipButton: Boolean,
-    val skipText: String,
-    val showUpgradeButton: Boolean,
-    val upgradeText: String,
-    val bannedLayout: Boolean = false
+        val title: String,
+        val icon: Int,
+        val description: String,
+        val showSkipButton: Boolean,
+        val skipText: String,
+        val showUpgradeButton: Boolean,
+        val upgradeText: String,
+        val bannedLayout: Boolean = false
 ) : java.io.Serializable
 
 class AccountStatusDialog : FullScreenDialog() {
@@ -33,7 +33,7 @@ class AccountStatusDialog : FullScreenDialog() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = UserAccountStatusLayoutBinding.inflate(inflater, container, false)
         return binding?.root
@@ -42,7 +42,7 @@ class AccountStatusDialog : FullScreenDialog() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val accountStatusDialogData =
-            arguments?.getSerializable(accountStatusDialogDataKey) as? AccountStatusDialogData
+                arguments?.getSerializable(accountStatusDialogDataKey) as? AccountStatusDialogData
         accountStatusDialogData?.let {
             binding?.userAccountStatusIcon?.setImageResource(accountStatusDialogData.icon)
             binding?.userAccountStatusTitle?.text = accountStatusDialogData.title
@@ -50,9 +50,9 @@ class AccountStatusDialog : FullScreenDialog() {
             binding?.userAccountStatusPrimaryButton?.text = accountStatusDialogData.upgradeText
             binding?.userAccountStatusSecondaryButton?.text = accountStatusDialogData.skipText
             binding?.userAccountStatusSecondaryButton?.visibility =
-                if (accountStatusDialogData.showSkipButton) View.VISIBLE else View.GONE
+                    if (accountStatusDialogData.showSkipButton) View.VISIBLE else View.GONE
             binding?.userAccountStatusPrimaryButton?.visibility =
-                if (accountStatusDialogData.showUpgradeButton) View.VISIBLE else View.GONE
+                    if (accountStatusDialogData.showUpgradeButton) View.VISIBLE else View.GONE
             binding?.userAccountStatusSecondaryButton?.setOnClickListener {
                 dismiss()
             }
@@ -69,7 +69,7 @@ class AccountStatusDialog : FullScreenDialog() {
 
     override fun dismiss() {
         val accountStatusDialogData =
-            arguments?.getSerializable(accountStatusDialogDataKey) as? AccountStatusDialogData
+                arguments?.getSerializable(accountStatusDialogDataKey) as? AccountStatusDialogData
         accountStatusDialogData?.let {
             if (accountStatusDialogData.bannedLayout) {
                 activity?.finish()

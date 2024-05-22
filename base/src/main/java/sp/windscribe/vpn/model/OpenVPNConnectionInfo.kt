@@ -5,15 +5,15 @@ import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 
 data class OpenVPNConnectionInfo(
-    val serverConfig: String,
-    val ip: String,
-    val port: String,
-    val protocol: String,
-    val username: String,
-    val password: String
+        val serverConfig: String,
+        val ip: String,
+        val port: String,
+        val protocol: String,
+        val username: String,
+        val password: String
 ) {
     val base64EncodedServerConfig =
-        String(sp.windscribe.vpn.encoding.encoders.Base64.encode(serverConfig.toByteArray()))
+            String(sp.windscribe.vpn.encoding.encoders.Base64.encode(serverConfig.toByteArray()))
 
     fun getProtocolInformation(): ProtocolInformation {
         var protocol = PreferencesKeyConstants.PROTO_TCP
@@ -21,7 +21,7 @@ data class OpenVPNConnectionInfo(
             protocol = PreferencesKeyConstants.PROTO_UDP
         }
         return ProtocolInformation(
-            protocol, port, "", type = ProtocolConnectionStatus.NextUp
+                protocol, port, "", type = ProtocolConnectionStatus.NextUp
         )
     }
 

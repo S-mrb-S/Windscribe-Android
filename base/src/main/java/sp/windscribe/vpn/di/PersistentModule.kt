@@ -12,7 +12,7 @@ class PersistentModule {
     @Provides
     @Singleton
     fun providesPreferenceHelper(
-        mPreference: AppPreferences, securePreferences: SecurePreferences
+            mPreference: AppPreferences, securePreferences: SecurePreferences
     ): AppPreferenceHelper {
         return AppPreferenceHelper(mPreference, securePreferences)
     }

@@ -11,8 +11,8 @@ import java.net.InetAddress
 import java.net.UnknownHostException
 
 class WindscribeDnsResolver(
-    private val mainScope: CoroutineScope,
-    private val preferenceHelper: PreferencesHelper
+        private val mainScope: CoroutineScope,
+        private val preferenceHelper: PreferencesHelper
 ) : Dns {
     var memoryCache = mutableMapOf<String, String>()
 

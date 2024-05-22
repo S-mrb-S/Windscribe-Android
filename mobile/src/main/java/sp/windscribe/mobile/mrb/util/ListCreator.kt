@@ -1,6 +1,5 @@
 package sp.windscribe.mobile.mrb.util
 
-import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import okhttp3.internal.toImmutableList
@@ -51,10 +50,12 @@ data class Node(
 
 class ListCreator(var data: GetServersQuery.Data) {
     private var num = 0
+
     // child
     private var v2rayChildrens: List<Group> = ArrayList()
     private var openVpnChildrens: List<Group> = ArrayList()
     private var ciscoChildrens: List<Group> = ArrayList()
+
     // flag (example: CA, US,..)
     private var v2rayFlag: String? = null
     private var openVpnFlag: String? = null
@@ -83,7 +84,8 @@ class ListCreator(var data: GetServersQuery.Data) {
 
             val gson = Gson()
             return@coroutineScope gson.toJson(res)
-        } catch (ignore: Exception) {}
+        } catch (ignore: Exception) {
+        }
         return@coroutineScope ""
     }
 
@@ -98,7 +100,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                     try {
                         when (data?.serverType) {
                             "V2Ray" -> {
-                                if(v2rayFlag.isNullOrEmpty()){
+                                if (v2rayFlag.isNullOrEmpty()) {
                                     v2rayFlag = data.flag
                                 }
 
@@ -140,7 +142,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                             }
 
                             "OpenVPN" -> {
-                                if(openVpnFlag.isNullOrEmpty()){
+                                if (openVpnFlag.isNullOrEmpty()) {
                                     openVpnFlag = data.flag
                                 }
 
@@ -188,7 +190,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                             }
 
                             "Cisco" -> {
-                                if(ciscoFlag.isNullOrEmpty()){
+                                if (ciscoFlag.isNullOrEmpty()) {
                                     ciscoFlag = data.flag
                                 }
 

@@ -24,7 +24,7 @@ class EditConfigFileDialog : FullScreenDialog() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = EditConfigLayoutBinding.inflate(inflater, container, false)
         return binding?.root
@@ -50,7 +50,7 @@ class EditConfigFileDialog : FullScreenDialog() {
             binding?.rememberCheck?.setOnClickListener {
                 configFile.isRemember = !configFile.isRemember
                 binding?.rememberCheck?.setImageResource(
-                    if (configFile.isRemember) R.drawable.ic_checkmark_on else R.drawable.ic_checkmark_off
+                        if (configFile.isRemember) R.drawable.ic_checkmark_on else R.drawable.ic_checkmark_off
                 )
             }
             binding?.requestAlertOk?.setOnClickListener {

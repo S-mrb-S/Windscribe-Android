@@ -19,8 +19,8 @@ import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import javax.inject.Inject
 
 class HelpPresenterImpl @Inject constructor(
-    private val helpView: HelpView,
-    private val interactor: ActivityInteractor
+        private val helpView: HelpView,
+        private val interactor: ActivityInteractor
 ) : HelpPresenter {
     private val logger = LoggerFactory.getLogger("help_p")
     override fun init() {
@@ -53,39 +53,39 @@ class HelpPresenterImpl @Inject constructor(
         logger.info("Preparing debug file...")
         val logMap: MutableMap<String, String> = HashMap()
         logMap[UserStatusConstants.CURRENT_USER_NAME] = interactor.getAppPreferenceInterface()
-            .userName
+                .userName
         interactor.getCompositeDisposable().add(
-            Single.fromCallable { interactor.getEncodedLog() }
-                .flatMap { encodedLog: String ->
-                    logger.info("Reading log file successful, submitting app log...")
-                    //Add log file and user name
-                    logMap[NetworkKeyConstants.POST_LOG_FILE_KEY] = encodedLog
-                    interactor.getApiCallManager()
-                        .postDebugLog(logMap)
-                }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(
-                    object :
-                        DisposableSingleObserver<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>() {
-                        override fun onError(e: Throwable) {
-                            helpView.showProgress(inProgress = false, success = false)
-                            if (e is Exception) {
-                                logger.debug(
-                                    "Error Submitting Log: "
-                                            + instance.rxErrorToString(e)
-                                )
-                            }
-                        }
+                Single.fromCallable { interactor.getEncodedLog() }
+                        .flatMap { encodedLog: String ->
+                            logger.info("Reading log file successful, submitting app log...")
+                            //Add log file and user name
+                            logMap[NetworkKeyConstants.POST_LOG_FILE_KEY] = encodedLog
+                            interactor.getApiCallManager()
+                                    .postDebugLog(logMap)
+                        }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(
+                                object :
+                                        DisposableSingleObserver<GenericResponseClass<GenericSuccess?, ApiErrorResponse?>>() {
+                                    override fun onError(e: Throwable) {
+                                        helpView.showProgress(inProgress = false, success = false)
+                                        if (e is Exception) {
+                                            logger.debug(
+                                                    "Error Submitting Log: "
+                                                            + instance.rxErrorToString(e)
+                                            )
+                                        }
+                                    }
 
-                        override fun onSuccess(
-                            appLogSubmissionResponse: GenericResponseClass<GenericSuccess?, ApiErrorResponse?>
-                        ) {
-                            helpView.showProgress(
-                                false,
-                                appLogSubmissionResponse.dataClass != null && appLogSubmissionResponse.dataClass?.isSuccessful == true
-                            )
-                        }
-                    })
+                                    override fun onSuccess(
+                                            appLogSubmissionResponse: GenericResponseClass<GenericSuccess?, ApiErrorResponse?>
+                                    ) {
+                                        helpView.showProgress(
+                                                false,
+                                                appLogSubmissionResponse.dataClass != null && appLogSubmissionResponse.dataClass?.isSuccessful == true
+                                        )
+                                    }
+                                })
         )
     }
 

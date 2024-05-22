@@ -23,7 +23,7 @@ class UnknownErrorDialog : FullScreenDialog() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = UnknownErrorAlertBinding.inflate(inflater, container, false)
         return binding?.root

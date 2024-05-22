@@ -27,14 +27,14 @@ class SecurePreferences(app: Windscribe) {
     init {
         try {
             val masterKey = MasterKey.Builder(app.applicationContext)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
             sharedPreferences = EncryptedSharedPreferences.create(
-                app.applicationContext,
-                secureSharedPrefsFile,
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    app.applicationContext,
+                    secureSharedPrefsFile,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
         } catch (e: Exception) {
             logger.debug("Failed to create EncryptedSharedPreferences ${e.localizedMessage}")

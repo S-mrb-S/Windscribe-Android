@@ -14,8 +14,8 @@ import sp.windscribe.vpn.repository.CallResult
 import javax.inject.Inject
 
 class ConfirmEmailPresenterImp @Inject constructor(
-    private var confirmEmailView: ConfirmEmailView,
-    private var interactor: ActivityInteractor
+        private var confirmEmailView: ConfirmEmailView,
+        private var interactor: ActivityInteractor
 ) : ConfirmEmailPresenter {
     private val mPresenterLog = LoggerFactory.getLogger("[confirm-email-i]")
     override fun onDestroy() {
@@ -31,7 +31,7 @@ class ConfirmEmailPresenterImp @Inject constructor(
             val proUser = (interactor.getAppPreferenceInterface().userStatus
                     == UserStatusConstants.USER_STATUS_PREMIUM)
             val reasonForConfirmEmail = interactor
-                .getResourceString(if (proUser) R.string.pro_reason_to_confirm else R.string.free_reason_to_confirm)
+                    .getResourceString(if (proUser) R.string.pro_reason_to_confirm else R.string.free_reason_to_confirm)
             confirmEmailView.setReasonToConfirmEmail(reasonForConfirmEmail)
         }
     }
@@ -39,32 +39,32 @@ class ConfirmEmailPresenterImp @Inject constructor(
     override fun resendVerificationEmail() {
         confirmEmailView.showEmailConfirmProgress(true)
         interactor.getCompositeDisposable().add(
-            interactor.getApiCallManager().resendUserEmailAddress(null).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(object :
-                    DisposableSingleObserver<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>>() {
-                    override fun onError(e: Throwable) {
-                        confirmEmailView.showToast(interactor.getResourceString(R.string.error_sending_email))
-                        confirmEmailView.showEmailConfirmProgress(false)
-                    }
-
-                    override fun onSuccess(
-                        postEmailResponseClass: GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>
-                    ) {
-                        confirmEmailView.showEmailConfirmProgress(false)
-                        when (val result = postEmailResponseClass.callResult<AddEmailResponse>()) {
-                            is CallResult.Error -> {
-                                confirmEmailView.showToast(result.errorMessage)
-                                mPresenterLog.debug("Server returned error. $result")
+                interactor.getApiCallManager().resendUserEmailAddress(null).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribeWith(object :
+                                DisposableSingleObserver<GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>>() {
+                            override fun onError(e: Throwable) {
+                                confirmEmailView.showToast(interactor.getResourceString(R.string.error_sending_email))
+                                confirmEmailView.showEmailConfirmProgress(false)
                             }
 
-                            is CallResult.Success -> {
-                                confirmEmailView.showToast(interactor.getResourceString(R.string.email_confirmation_sent_successfully))
-                                mPresenterLog.info("Email confirmation sent successfully...")
-                                confirmEmailView.finishActivity()
+                            override fun onSuccess(
+                                    postEmailResponseClass: GenericResponseClass<AddEmailResponse?, ApiErrorResponse?>
+                            ) {
+                                confirmEmailView.showEmailConfirmProgress(false)
+                                when (val result = postEmailResponseClass.callResult<AddEmailResponse>()) {
+                                    is CallResult.Error -> {
+                                        confirmEmailView.showToast(result.errorMessage)
+                                        mPresenterLog.debug("Server returned error. $result")
+                                    }
+
+                                    is CallResult.Success -> {
+                                        confirmEmailView.showToast(interactor.getResourceString(R.string.email_confirmation_sent_successfully))
+                                        mPresenterLog.info("Email confirmation sent successfully...")
+                                        confirmEmailView.finishActivity()
+                                    }
+                                }
                             }
-                        }
-                    }
-                })
+                        })
         )
     }
 }
