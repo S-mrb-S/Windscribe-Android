@@ -1,4 +1,4 @@
-package sp.windscribe.mobile.mrb.util
+package sp.windscribe.mobile.mrb.util.list
 
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
@@ -237,7 +237,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                 gHead.toImmutableList()
             }
 
-            else -> { // cisco (3)
+            else -> { // cisco (2)
                 var numChild = 1
                 var numGroup = 1
 

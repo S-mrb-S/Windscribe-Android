@@ -1,4 +1,4 @@
-package sp.windscribe.mobile.mrb.util
+package sp.windscribe.mobile.mrb.util.list
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
