@@ -5,7 +5,6 @@ import com.apollographql.apollo3.api.Error
 import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.vpn.qq.Data
-import sp.windscribe.vpn.qq.MmkvManager
 
 class GetLoginWithKeyQuery {
 
@@ -25,23 +24,19 @@ class GetLoginWithKeyQuery {
                     .execute()
 
             fun success() {
-                MmkvManager.getLoginStorage().encode("key_login", key)
                 callback.onSuccess(response.data)
             }
 
-            try {
-                val name = response.data?.service?.name
-                if (!response.hasErrors()) {
-                    success()
+            val name = response.data?.service?.name
+            if (!response.hasErrors()) {
+                success()
+            } else {
+                // skip response error
+                if (name == null) {
+                    callback.onFailure(response.errors)
                 } else {
-                    if (name == null) {
-                        callback.onFailure(response.errors)
-                    } else {
-                        success()
-                    }
+                    success()
                 }
-            } catch (e: Exception) {
-                callback.onFailure(response.errors)
             }
 
         } catch (e: Exception) {
