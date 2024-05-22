@@ -1,10 +1,8 @@
 package sp.windscribe.mobile.welcome
 
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import android.view.View
-import com.apollographql.apollo3.api.Error
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.SingleSource
@@ -18,12 +16,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.mrb.api.GetLoginWithKeyQuery
-import sp.windscribe.mobile.mrb.util.getAllServers
-import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.mobile.mrb.util.api.getAllServers
+import sp.windscribe.mobile.mrb.util.api.saveDataAndFinish
+import sp.windscribe.mobile.mrb.util.api.updateService
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
 import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
@@ -40,7 +37,7 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.UserStatusConstants.USER_STATUS_PREMIUM
 import sp.windscribe.vpn.errormodel.SessionErrorHandler
 import sp.windscribe.vpn.errormodel.WindError
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.qq.Data
 import sp.windscribe.vpn.repository.CallResult
 import java.io.File
 import java.io.IOException
@@ -187,7 +184,7 @@ class WelcomePresenterImpl @Inject constructor(
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun setup() {
-        val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
+        val keyStr = Data.serviceStorage.decodeString("key_login", null)
 
         GlobalScope.launch {
             getAllServers(
@@ -223,7 +220,7 @@ class WelcomePresenterImpl @Inject constructor(
                 interactor.getWorkManager().updateNodeLatencies()
                 welcomeView.gotoHomeActivity(true)
             } finally {
-                MmkvManager.getLoginStorage().encode("is_login", true)
+                Data.serviceStorage.encode("is_login", true)
             }
         } catch (e: Exception) {
             onLoginFailedWithNoError()
@@ -237,41 +234,17 @@ class WelcomePresenterImpl @Inject constructor(
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
             GlobalScope.launch {
-                try {
-                    GetLoginWithKeyQuery().performWork(username,
-                            object : GetLoginWithKeyQuery.GetLoginCallback {
-
-                                override fun onSuccess(data: GetLoginQuery.Data?) {
-                                    MmkvManager.getLoginStorage()
-                                            .putString("user_name", data?.service?.name)
-                                    MmkvManager.getLoginStorage().putString(
-                                            "reset_data",
-                                            data?.service?.days.toString()
-                                    )
-                                    MmkvManager.getLoginStorage().putString(
-                                            "username_ovpn",
-                                            data?.service?.username.toString()
-                                    )
-                                    MmkvManager.getLoginStorage().putString(
-                                            "password_ovpn",
-                                            data?.service?.password.toString()
-                                    )
-
-                                    setup() // get servers
-                                }
-
-                                override fun onFailure(errors: List<Error>?) {
-                                    Log.d("Failure", errors.toString())
-                                    onLoginResponseError(400, "Wrong key")
-                                }
-
-                            })
-
-                } catch (e: Exception) {
-                    Log.d("An error", e.toString())
-                } finally {
-                    welcomeView.prepareUiForApiCallFinished()
-                }
+                updateService(username,
+                        {
+                            try {
+                                setup() // get servers
+                            } finally {
+                                welcomeView.prepareUiForApiCallFinished()
+                            }
+                        },
+                        {
+                            onLoginResponseError(400, "Wrong key")
+                        })
             }
         }
     }
