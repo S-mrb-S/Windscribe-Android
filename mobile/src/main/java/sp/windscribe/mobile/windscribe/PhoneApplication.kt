@@ -1,6 +1,7 @@
 package sp.windscribe.mobile.windscribe
 
 import android.content.Intent
+import android.os.Handler
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
@@ -21,6 +22,7 @@ import sp.windscribe.vpn.autoconnection.AutoConnectionModeCallback
 import sp.windscribe.vpn.autoconnection.FragmentType
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
+import sp.windscribe.vpn.qq.Data
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
     override fun onCreate() {
@@ -28,6 +30,7 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
         super.onCreate()
         MMKV.initialize(this@PhoneApplication)
         setTheme()
+        Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
         App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
     }
 

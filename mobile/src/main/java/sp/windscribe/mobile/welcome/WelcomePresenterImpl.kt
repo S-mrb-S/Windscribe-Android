@@ -15,6 +15,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetLoginQuery
@@ -186,17 +187,27 @@ class WelcomePresenterImpl @Inject constructor(
         GlobalScope.launch {
             getAllServers(
                 keyStr!!,
-                ::setDataAndLoad
-            ) {
-                onLoginFailedWithNoError()
-            }
+                    {
+                        launch {
+                            setDataAndLoad(it)
+                        }
+                    },
+                    {
+                        onLoginFailedWithNoError()
+                    }
+            )
         }
     }
 
-    private fun setDataAndLoad(data: GetServersQuery.Data?) {
-        saveDataAndFinish(data, ::navigateToHome) {
-            onLoginFailedWithNoError()
-        }
+    private suspend fun setDataAndLoad(data: GetServersQuery.Data?) = coroutineScope {
+        saveDataAndFinish(data,
+                {
+                    navigateToHome()
+                },
+                {
+                    onLoginFailedWithNoError()
+                }
+        )
     }
 
     private fun navigateToHome() {

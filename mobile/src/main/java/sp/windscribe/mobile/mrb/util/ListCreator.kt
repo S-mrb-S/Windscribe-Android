@@ -2,8 +2,10 @@ package sp.windscribe.mobile.mrb.util
 
 import android.util.Log
 import com.google.gson.Gson
+import kotlinx.coroutines.coroutineScope
 import okhttp3.internal.toImmutableList
 import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.vpn.qq.Data
 
 
 data class Server(
@@ -58,19 +60,31 @@ class ListCreator(var data: GetServersQuery.Data) {
     private var openVpnFlag: String? = null
     private var ciscoFlag: String? = null
 
-    fun createAndGet(): String {
+    suspend fun createAndGet(): String = coroutineScope {
         try {
             initAllChildrens()
-            val res = listOf(
-                    createV2ray(),
-                    createOpenVpn(),
-                    createCisco()
-            )
+            val res: List<Server> = when (Data.defaultItemDialog) {
+                0 -> { // v2ray
+                    listOf(createV2ray())
+                }
+
+                1 -> { // openvpn
+                    listOf(createOpenVpn())
+                }
+
+                2 -> { // cisco
+                    listOf(createCisco())
+                }
+
+                else -> {
+                    listOf()
+                }
+            }
 
             val gson = Gson()
-            return gson.toJson(res)
+            return@coroutineScope gson.toJson(res)
         } catch (ignore: Exception) {}
-        return ""
+        return@coroutineScope ""
     }
 
     private fun initAllChildrens() {

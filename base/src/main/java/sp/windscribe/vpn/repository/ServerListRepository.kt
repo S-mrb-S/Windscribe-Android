@@ -64,11 +64,12 @@ class ServerListRepository @Inject constructor(
 
     fun update(): Completable {
         logger.debug("Starting server list update")
-        val str = sp.windscribe.vpn.qq.Data.dataString
-        assert(str != null)
-
+        var str = sp.windscribe.vpn.qq.Data.dataString
+        if (str.isNullOrEmpty()) {
+            str = "{}"
+        }
         val list: List<Region> = Gson().fromJson<List<Region>>(
-            str!!.trimIndent(),
+            str.trimIndent(),
             object : TypeToken<ArrayList<Region?>?>() {}.type
         )
 

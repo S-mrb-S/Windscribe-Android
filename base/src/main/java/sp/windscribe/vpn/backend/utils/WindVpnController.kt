@@ -374,9 +374,9 @@ open class WindVpnController @Inject constructor(
             vpnConnectionStateManager.setState(VPNState(Disconnected, error = error), true)
             delay(100)
             logger.debug("Force disconnected")
-            try{
-                de.blinkt.openvpn.core.OpenVPNThread.stop()
-            }catch (ignore: Exception){}
+//            try{
+//                de.blinkt.openvpn.core.OpenVPNThread.stop()
+//            }catch (ignore: Exception){}
         }
         checkForReconnect()
     }

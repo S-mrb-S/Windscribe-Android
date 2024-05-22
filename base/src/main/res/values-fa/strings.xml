@@ -8,6 +8,7 @@
   <string name="potential_data_use">استفاده از داده های تخمینی</string>
   <string name="username_empty">نام کاربری خالی!</string>
   <string name="state_reconnecting">در حال اتصال مجدد</string>
+  <string name="new_protocol">نوع پروتکل را انتخاب کنید</string>
   <string name="optional">(اختیاری)</string>
   <string name="apps_to_exclude">برنامه های کاربردی برای حذف</string>
   <string name="auto_connect_on_boot_description">هنگامی که دستگاه شروع به کار می کند، به طور خودکار به اخرین مکان متصل متصل می شود.</string>

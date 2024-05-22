@@ -8,6 +8,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="new_protocol">Select new protocol</string>
     <string name="login_with_username">No special characters or emails allowed in the username field.</string>
     <string name="weak_password">Your Password must contain at least one uppercase and lowercase.</string>
     <string name="small_password">Your password must be at least 8 characters.</string>

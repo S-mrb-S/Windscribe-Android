@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
@@ -49,17 +50,27 @@ class SplashActivity : AppCompatActivity() {
         GlobalScope.launch {
             getAllServers(
                 keyStr!!,
-                ::setDataAndLoad
-            ) {
-                failGetServers()
-            }
+                    {
+                        launch {
+                            setDataAndLoad(it)
+                        }
+                    },
+                    {
+                        failGetServers()
+                    }
+            )
         }
     }
 
-    private fun setDataAndLoad(data: GetServersQuery.Data?) {
-        saveDataAndFinish(data, ::navigateToHome) {
-            failGetServers()
-        }
+    private suspend fun setDataAndLoad(data: GetServersQuery.Data?) = coroutineScope {
+        saveDataAndFinish(data,
+            {
+                navigateToHome()
+            },
+            {
+                failGetServers()
+            }
+        )
     }
 
     private fun failGetServers() {

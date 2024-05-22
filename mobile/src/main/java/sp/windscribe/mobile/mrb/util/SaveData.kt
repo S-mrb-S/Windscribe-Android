@@ -13,8 +13,6 @@ suspend fun getAllServers(
     saveTo: (GetServersQuery.Data?) -> Unit,
     failTo: () -> Unit
 ) = coroutineScope {
-
-    launch {
         try {
             GetServersWithKeyQuery().performWork(
                 key,
@@ -35,30 +33,33 @@ suspend fun getAllServers(
         } catch (e: Exception) {
             failTo()
         }
-    }
 
 }
 
-fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Unit, failTo: () -> Unit) {
-    try {
+suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Unit, failTo: () -> Unit) = coroutineScope {
         try {
-            if (data == null) {
-                Data.dataString = ""
-                return
+            try {
+                if (data == null) { // data must be not null
+                    Data.dataString = ""
+                    failTo()
+                    return@coroutineScope
+                }
+                if(StaticData.data == null){
+                    StaticData.data = data // cache for next time
+                }
+
+                Data.dataString = ListCreator(data).createAndGet() // create and save
+            } finally {
+                navigateTo()
             }
-            val res = ListCreator(data).createAndGet()
-            Data.dataString = res
-        } finally {
-            navigateTo()
+        } catch (e: Exception) {
+            failTo()
         }
-    } catch (e: Exception) {
-        failTo()
-    }
 }
 
-fun longLog(str: String) {
-    if (str.length > 4000) {
-        Log.d("servers mrb", str.substring(0, 4000))
-        longLog(str.substring(4000))
-    } else Log.d("", str)
-}
+//fun longLog(str: String) {
+//    if (str.length > 4000) {
+//        Log.d("servers mrb", str.substring(0, 4000))
+//        longLog(str.substring(4000))
+//    } else Log.d("", str)
+//}
