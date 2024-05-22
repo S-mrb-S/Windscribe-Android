@@ -62,124 +62,6 @@ class ListCreator(var data: GetServersQuery.Data) {
         return@coroutineScope ""
     }
 
-//    private fun initAllChildrens() {
-//        val chilOpenVPN = openVpnChildrens.toMutableList()
-//        val chilCisco = ciscoChildrens.toMutableList()
-//
-//        if (data.servers != null) {
-//            try {
-//                for (data in data.servers!!) {
-//                    try {
-//                        when (data?.serverType) {
-//                            "V2Ray" -> {
-//                                if (v2rayFlag.isNullOrEmpty()) {
-//                                    v2rayFlag = data.flag
-//                                }
-//
-//
-//                            }
-//
-//                            "OpenVPN" -> {
-//                                if (openVpnFlag.isNullOrEmpty()) {
-//                                    openVpnFlag = data.flag
-//                                }
-//
-//                                val configContent = fetchOvpnConfig(data.url.toString())
-//
-//                                configContent?.let {
-//                                    chilOpenVPN.add(
-//                                            Group(
-//                                                    numChild,
-//                                                    data.name.toString(),
-//                                                    "openvpn",
-//                                                    0,
-//                                                    "44.46,-63.61",
-//                                                    "America/Halifax",
-//                                                    "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-//                                                    "yhz-386-wg.whiskergalaxy.com",
-//                                                    it, // content file
-//                                                    "23.191.80.2",
-//                                                    "https://ca-021.whiskergalaxy.com:6363/latency",
-//                                                    "1000",
-//                                                    listOf(
-//                                                            Node(
-//                                                                    "172.98.68.238",
-//                                                                    "172.98.68.239",
-//                                                                    "172.98.68.240",
-//                                                                    "ca-055.whiskergalaxy.com",
-//                                                                    1,
-//                                                                    2
-//                                                            ),
-//                                                            Node(
-//                                                                    "172.98.68.227",
-//                                                                    "172.98.68.228",
-//                                                                    "172.98.68.229",
-//                                                                    "ca-054.whiskergalaxy.com",
-//                                                                    1,
-//                                                                    2
-//                                                            )
-//                                                    ),
-//                                                    0
-//                                            )
-//                                    )
-//                                } ?: run {
-//                                    // no content file
-//                                }
-//                            }
-//
-//                            "Cisco" -> {
-//                                if (ciscoFlag.isNullOrEmpty()) {
-//                                    ciscoFlag = data.flag
-//                                }
-//
-//                                chilCisco.add(
-//                                        Group(
-//                                                numChild,
-//                                                data.name.toString(),
-//                                                "cisco",
-//                                                0,
-//                                                "44.46,-63.61",
-//                                                "America/Halifax",
-//                                                "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-//                                                "yhz-386-wg.whiskergalaxy.com",
-//                                                data.url.toString(), // cisco server
-//                                                "23.191.80.2",
-//                                                "https://ca-021.whiskergalaxy.com:6363/latency",
-//                                                "1000",
-//                                                listOf(
-//                                                        Node(
-//                                                                "172.98.68.238",
-//                                                                "172.98.68.239",
-//                                                                "172.98.68.240",
-//                                                                "ca-055.whiskergalaxy.com",
-//                                                                1,
-//                                                                2
-//                                                        ),
-//                                                        Node(
-//                                                                "172.98.68.227",
-//                                                                "172.98.68.228",
-//                                                                "172.98.68.229",
-//                                                                "ca-054.whiskergalaxy.com",
-//                                                                1,
-//                                                                2
-//                                                        )
-//                                                ),
-//                                                0
-//                                        )
-//                                )
-//                            }
-//                        }
-//                    } finally {
-//                        ++numChild
-//                    }
-//                }
-//            } finally {
-//                openVpnChildrens = chilOpenVPN.toImmutableList()
-//                ciscoChildrens = chilCisco.toImmutableList()
-//            }
-//        }
-//    }
-
     // better
     private fun crGCList(): List<Server> {
         return when (Data.defaultItemDialog) {
@@ -355,7 +237,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                 gHead.toImmutableList()
             }
 
-            3 -> { // cisco
+            else -> { // cisco (3)
                 var numChild = 1
                 var numGroup = 1
 
@@ -436,10 +318,6 @@ class ListCreator(var data: GetServersQuery.Data) {
 
                 // return
                 gHead.toImmutableList()
-            }
-
-            else -> {
-                listOf()
             }
         }
     }
