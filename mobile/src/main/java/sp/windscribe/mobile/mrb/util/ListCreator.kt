@@ -50,22 +50,10 @@ data class Node(
 )
 
 class ListCreator(var data: GetServersQuery.Data) {
-    private var num = 0
-
-    // child
-    private var v2rayChildrens: List<Group> = ArrayList()
-    private var openVpnChildrens: List<Group> = ArrayList()
-    private var ciscoChildrens: List<Group> = ArrayList()
-
-    // flag (example: CA, US,..)
-    private var v2rayFlag: String? = null
-    private var openVpnFlag: String? = null
-    private var ciscoFlag: String? = null
 
     suspend fun createAndGet(): String = coroutineScope {
         try {
-            initAllChildrens()
-            val res: List<Server> = listOf(createServerGroup())
+            val res: List<Server> = crGCList()
 
             val gson = Gson()
             return@coroutineScope gson.toJson(res)
@@ -74,213 +62,212 @@ class ListCreator(var data: GetServersQuery.Data) {
         return@coroutineScope ""
     }
 
-    private fun initAllChildrens() {
-        val chilV2ray = v2rayChildrens.toMutableList()
-        val chilOpenVPN = openVpnChildrens.toMutableList()
-        val chilCisco = ciscoChildrens.toMutableList()
+//    private fun initAllChildrens() {
+//        val chilOpenVPN = openVpnChildrens.toMutableList()
+//        val chilCisco = ciscoChildrens.toMutableList()
+//
+//        if (data.servers != null) {
+//            try {
+//                for (data in data.servers!!) {
+//                    try {
+//                        when (data?.serverType) {
+//                            "V2Ray" -> {
+//                                if (v2rayFlag.isNullOrEmpty()) {
+//                                    v2rayFlag = data.flag
+//                                }
+//
+//
+//                            }
+//
+//                            "OpenVPN" -> {
+//                                if (openVpnFlag.isNullOrEmpty()) {
+//                                    openVpnFlag = data.flag
+//                                }
+//
+//                                val configContent = fetchOvpnConfig(data.url.toString())
+//
+//                                configContent?.let {
+//                                    chilOpenVPN.add(
+//                                            Group(
+//                                                    numChild,
+//                                                    data.name.toString(),
+//                                                    "openvpn",
+//                                                    0,
+//                                                    "44.46,-63.61",
+//                                                    "America/Halifax",
+//                                                    "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+//                                                    "yhz-386-wg.whiskergalaxy.com",
+//                                                    it, // content file
+//                                                    "23.191.80.2",
+//                                                    "https://ca-021.whiskergalaxy.com:6363/latency",
+//                                                    "1000",
+//                                                    listOf(
+//                                                            Node(
+//                                                                    "172.98.68.238",
+//                                                                    "172.98.68.239",
+//                                                                    "172.98.68.240",
+//                                                                    "ca-055.whiskergalaxy.com",
+//                                                                    1,
+//                                                                    2
+//                                                            ),
+//                                                            Node(
+//                                                                    "172.98.68.227",
+//                                                                    "172.98.68.228",
+//                                                                    "172.98.68.229",
+//                                                                    "ca-054.whiskergalaxy.com",
+//                                                                    1,
+//                                                                    2
+//                                                            )
+//                                                    ),
+//                                                    0
+//                                            )
+//                                    )
+//                                } ?: run {
+//                                    // no content file
+//                                }
+//                            }
+//
+//                            "Cisco" -> {
+//                                if (ciscoFlag.isNullOrEmpty()) {
+//                                    ciscoFlag = data.flag
+//                                }
+//
+//                                chilCisco.add(
+//                                        Group(
+//                                                numChild,
+//                                                data.name.toString(),
+//                                                "cisco",
+//                                                0,
+//                                                "44.46,-63.61",
+//                                                "America/Halifax",
+//                                                "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+//                                                "yhz-386-wg.whiskergalaxy.com",
+//                                                data.url.toString(), // cisco server
+//                                                "23.191.80.2",
+//                                                "https://ca-021.whiskergalaxy.com:6363/latency",
+//                                                "1000",
+//                                                listOf(
+//                                                        Node(
+//                                                                "172.98.68.238",
+//                                                                "172.98.68.239",
+//                                                                "172.98.68.240",
+//                                                                "ca-055.whiskergalaxy.com",
+//                                                                1,
+//                                                                2
+//                                                        ),
+//                                                        Node(
+//                                                                "172.98.68.227",
+//                                                                "172.98.68.228",
+//                                                                "172.98.68.229",
+//                                                                "ca-054.whiskergalaxy.com",
+//                                                                1,
+//                                                                2
+//                                                        )
+//                                                ),
+//                                                0
+//                                        )
+//                                )
+//                            }
+//                        }
+//                    } finally {
+//                        ++numChild
+//                    }
+//                }
+//            } finally {
+//                openVpnChildrens = chilOpenVPN.toImmutableList()
+//                ciscoChildrens = chilCisco.toImmutableList()
+//            }
+//        }
+//    }
 
-        if (data.servers != null) {
-            try {
-                for (data in data.servers!!) {
-                    try {
-                        when (data?.serverType) {
-                            "V2Ray" -> {
-                                if (v2rayFlag.isNullOrEmpty()) {
-                                    v2rayFlag = data.flag
-                                }
-
-                                chilV2ray.add(
-                                        Group(
-                                                num,
-                                                data.name.toString(),
-                                                "v2ray",
-                                                0,
-                                                "44.46,-63.61",
-                                                "America/Halifax",
-                                                "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-                                                "yhz-386-wg.whiskergalaxy.com",
-                                                data.url,
-                                                "23.191.80.2",
-                                                "https://ca-021.whiskergalaxy.com:6363/latency",
-                                                "1000",
-                                                listOf(
-                                                        Node(
-                                                                "172.98.68.238",
-                                                                "172.98.68.239",
-                                                                "172.98.68.240",
-                                                                "ca-055.whiskergalaxy.com",
-                                                                1,
-                                                                2
-                                                        ),
-                                                        Node(
-                                                                "172.98.68.227",
-                                                                "172.98.68.228",
-                                                                "172.98.68.229",
-                                                                "ca-054.whiskergalaxy.com",
-                                                                1,
-                                                                2
-                                                        )
-                                                ),
-                                                0
-                                        )
-                                )
-                            }
-
-                            "OpenVPN" -> {
-                                if (openVpnFlag.isNullOrEmpty()) {
-                                    openVpnFlag = data.flag
-                                }
-
-                                val configContent = fetchOvpnConfig(data.url.toString())
-
-                                configContent?.let {
-                                    chilOpenVPN.add(
-                                            Group(
-                                                    num,
-                                                    data.name.toString(),
-                                                    "openvpn",
-                                                    0,
-                                                    "44.46,-63.61",
-                                                    "America/Halifax",
-                                                    "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-                                                    "yhz-386-wg.whiskergalaxy.com",
-                                                    it, // content file
-                                                    "23.191.80.2",
-                                                    "https://ca-021.whiskergalaxy.com:6363/latency",
-                                                    "1000",
-                                                    listOf(
-                                                            Node(
-                                                                    "172.98.68.238",
-                                                                    "172.98.68.239",
-                                                                    "172.98.68.240",
-                                                                    "ca-055.whiskergalaxy.com",
-                                                                    1,
-                                                                    2
-                                                            ),
-                                                            Node(
-                                                                    "172.98.68.227",
-                                                                    "172.98.68.228",
-                                                                    "172.98.68.229",
-                                                                    "ca-054.whiskergalaxy.com",
-                                                                    1,
-                                                                    2
-                                                            )
-                                                    ),
-                                                    0
-                                            )
-                                    )
-                                } ?: run {
-                                    // no content file
-                                }
-                            }
-
-                            "Cisco" -> {
-                                if (ciscoFlag.isNullOrEmpty()) {
-                                    ciscoFlag = data.flag
-                                }
-
-                                chilCisco.add(
-                                        Group(
-                                                num,
-                                                data.name.toString(),
-                                                "cisco",
-                                                0,
-                                                "44.46,-63.61",
-                                                "America/Halifax",
-                                                "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
-                                                "yhz-386-wg.whiskergalaxy.com",
-                                                data.url.toString(), // cisco server
-                                                "23.191.80.2",
-                                                "https://ca-021.whiskergalaxy.com:6363/latency",
-                                                "1000",
-                                                listOf(
-                                                        Node(
-                                                                "172.98.68.238",
-                                                                "172.98.68.239",
-                                                                "172.98.68.240",
-                                                                "ca-055.whiskergalaxy.com",
-                                                                1,
-                                                                2
-                                                        ),
-                                                        Node(
-                                                                "172.98.68.227",
-                                                                "172.98.68.228",
-                                                                "172.98.68.229",
-                                                                "ca-054.whiskergalaxy.com",
-                                                                1,
-                                                                2
-                                                        )
-                                                ),
-                                                0
-                                        )
-                                )
-
-                                ++num
-                            }
-                        }
-                    } finally {
-                        ++num
-                    }
-                }
-            } finally {
-                v2rayChildrens = chilV2ray.toImmutableList()
-                openVpnChildrens = chilOpenVPN.toImmutableList()
-                ciscoChildrens = chilCisco.toImmutableList()
-            }
-        }
-    }
-
-    private fun createServerGroup(): Server {
+    // better
+    private fun crGCList(): List<Server> {
         return when (Data.defaultItemDialog) {
             0 -> { // v2ray
-                Server(
-                        Data.defaultItemDialog + 1,
-                        "V2ray",
-                        v2rayFlag.toString(),
-                        1,
-                        0,
-                        v2rayFlag.toString(),
-                        1,
-                        "America/Toronto",
-                        "-5,EST",
-                        "normal",
-                        "ca.windscribe.com",
-                        v2rayChildrens
-                )
+                var numChild = 1
+                var numGroup = 1
+
+                // Group servers by flag
+                val groupedServers = data.servers
+                        ?.filter { it?.serverType == "V2Ray" } // Filter servers with serverType V2
+                        ?.groupBy { it?.flag }
+
+                val gV2ray = mutableListOf<Server>()
+
+                // Iterate over grouped servers
+                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                    try {
+                        // Create a list to hold grouped servers
+                        val chilV2ray = mutableListOf<Group>()
+                        val currentData = servers.filterNotNull()
+                        val currentFlag = servers.firstOrNull()?.flag.toString()
+
+                        for (server in currentData) {
+                            chilV2ray.add(
+                                    Group(
+                                            numChild,
+                                            server.name.toString(),
+                                            "vpn",
+                                            0,
+                                            "44.46,-63.61",
+                                            "America/Halifax",
+                                            "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+                                            "yhz-386-wg.whiskergalaxy.com",
+                                            server.url.toString(),
+                                            "23.191.80.2",
+                                            "https://ca-021.whiskergalaxy.com:6363/latency",
+                                            "1000",
+                                            listOf(
+                                                    Node(
+                                                            "172.98.68.238",
+                                                            "172.98.68.239",
+                                                            "172.98.68.240",
+                                                            "ca-055.whiskergalaxy.com",
+                                                            1,
+                                                            2
+                                                    ),
+                                                    Node(
+                                                            "172.98.68.227",
+                                                            "172.98.68.228",
+                                                            "172.98.68.229",
+                                                            "ca-054.whiskergalaxy.com",
+                                                            1,
+                                                            2
+                                                    )
+                                            ),
+                                            0
+                                    )
+                            )
+                            ++numChild
+                        }
+
+                        gV2ray.add(
+                                Server(
+                                        numGroup,
+                                        currentFlag,
+                                        currentFlag,
+                                        1,
+                                        0,
+                                        currentFlag,
+                                        1,
+                                        "America/Toronto",
+                                        "-5,EST",
+                                        "normal",
+                                        "ca.windscribe.com",
+                                        chilV2ray.toImmutableList()
+                                )
+                        )
+                    } finally {
+                        ++numGroup
+                    }
+                }
+
+                // return
+                gV2ray.toImmutableList()
             }
 
-            1 -> { // openvpn
-                Server(
-                        Data.defaultItemDialog + 1,
-                        "OpenVpn",
-                        openVpnFlag.toString(),
-                        1,
-                        0,
-                        openVpnFlag.toString(),
-                        1,
-                        "America/Toronto",
-                        "-5,EST",
-                        "normal",
-                        "ca.windscribe.com",
-                        openVpnChildrens
-                )
-            }
-
-            else -> { // cisco (2)
-                Server(
-                        Data.defaultItemDialog + 1,
-                        "Cisco",
-                        ciscoFlag.toString(),
-                        1,
-                        0,
-                        ciscoFlag.toString(),
-                        1,
-                        "America/Toronto",
-                        "-5,EST",
-                        "normal",
-                        "ca.windscribe.com",
-                        ciscoChildrens
-                )
+            else -> {
+                listOf()
             }
         }
     }
