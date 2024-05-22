@@ -65,6 +65,7 @@ import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAS
 import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.openconnect.core.OpenConnectManagementThread
@@ -2249,10 +2250,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                         if (StaticData.data != null) {
                             GlobalScope.launch {
                                 try {
-                                    saveDataAndFinish(StaticData.data, {}, {})
+                                    saveDataAndFinish(StaticData.data, {}, {}) // set new protocol
                                 } finally {
-                                    activityScope { presenter.observeAllLocations() }
-                                    activityScope { this@WindscribeActivity.onReloadClick() }
+                                    activityScope { presenter.observeAllLocations() } // read new data
+                                    activityScope { this@WindscribeActivity.onReloadClick() } // set new data
+                                    delay(200)
+                                    onRefreshPingsForAllServers() // refresh list
                                 }
                             }
 
