@@ -4,14 +4,14 @@ import com.tencent.mmkv.MMKV;
 
 public class MmkvManager {
 
-    private static MMKV loginStorage;
+    private static MMKV serviceStorage;
     private static MMKV serverStorage;
 
-    public static synchronized MMKV getLoginStorage() {
-        if (loginStorage == null) {
-            loginStorage = MMKV.mmkvWithID("login_storage", MMKV.MULTI_PROCESS_MODE);
+    public static synchronized MMKV getServiceStorage() {
+        if (serviceStorage == null) {
+            serviceStorage = MMKV.mmkvWithID("service_storage", MMKV.MULTI_PROCESS_MODE);
         }
-        return loginStorage;
+        return serviceStorage;
     }
 
     public static synchronized MMKV getSettingsStorage() {

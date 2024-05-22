@@ -1,5 +1,7 @@
 package sp.windscribe.vpn.qq
 
+import com.tencent.mmkv.MMKV
+
 object Data {
     const val Api = "http://sub.iprostable.enterprises/graphql"
 
@@ -7,7 +9,8 @@ object Data {
 
     val item_options = arrayOf("V2ray", "OpenVpn", "Cisco")
 
-    var settingsStorage = MmkvManager.getSettingsStorage()
+    val settingsStorage: MMKV = MmkvManager.getSettingsStorage()
+    val serviceStorage: MMKV = MmkvManager.getServiceStorage()
 
     var dataString: String? = "" // finally servers
 }// HI
