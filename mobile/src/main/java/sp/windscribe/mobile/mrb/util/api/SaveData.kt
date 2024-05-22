@@ -1,9 +1,11 @@
-package sp.windscribe.mobile.mrb.util
+package sp.windscribe.mobile.mrb.util.api
 
 import com.apollographql.apollo3.api.Error
 import kotlinx.coroutines.coroutineScope
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.mrb.api.GetServersWithKeyQuery
+import sp.windscribe.mobile.mrb.util.StaticData
+import sp.windscribe.mobile.mrb.util.list.ListCreator
 import sp.windscribe.vpn.qq.Data
 
 suspend fun getAllServers(
@@ -16,11 +18,7 @@ suspend fun getAllServers(
                 key,
                 object : GetServersWithKeyQuery.GetServersCallback {
                     override fun onSuccess(data: GetServersQuery.Data?) {
-                        try {
-                            saveTo(data)
-                        } catch (e: Exception) {
-                            failTo()
-                        }
+                        saveTo(data)
                     }
 
                     override fun onFailure(errors: List<Error>?) {
