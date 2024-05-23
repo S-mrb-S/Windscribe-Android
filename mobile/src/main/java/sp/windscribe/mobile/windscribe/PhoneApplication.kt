@@ -27,21 +27,34 @@ import sp.windscribe.vpn.sp.Static
 
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
+//    private lateinit var myBackgroundCoroutine: ServiceBackgroundCoroutine
 
     override fun onCreate() {
         applicationInterface = this
         super.onCreate()
 
-        MMKV.initialize(this@PhoneApplication)
-        Static.setGlobalData(this@PhoneApplication)
+        try{
+            MMKV.initialize(this@PhoneApplication)
+            Static.setGlobalData(this@PhoneApplication)
 
-        //بازیابی
-        Data.static.getmViewModel().retrieveDataLeft()
-        Data.static.getmViewModel().retrieveDataDailyLeft()
+            //بازیابی
+            Data.static.getmViewModel().retrieveDataLeft()
+            Data.static.getmViewModel().retrieveDataDailyLeft()
 
-        setTheme()
-        Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
-        App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
+            setTheme()
+            Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
+            App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
+
+//            myBackgroundCoroutine = ServiceBackgroundCoroutine()
+//            myBackgroundCoroutine.start()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onTerminate() {
+//        myBackgroundCoroutine.stop()
+        super.onTerminate()
     }
 
     override val homeIntent: Intent
