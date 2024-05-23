@@ -106,6 +106,7 @@ import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.sp.util.list.mgToGb
+import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.vpn.backend.utils.WindVpnController
@@ -720,10 +721,24 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             presenter.checkForWgIpChange()
             presenter.checkPendingAccountUpgrades()
 
-            showToast("SALAAM")
-            // نمایش سرور ها در اینجا
-            fixResume = true
-            onReloadClick()
+            try{
+                startBackgroundService(Data.serviceStorage.decodeString("key_login", "").toString(),
+                        {
+                            // نمایش سرور ها در اینجا
+                            fixResume = true
+                            if (StaticData.data != null) {
+                                onReloadClick()
+                            }else{
+                                showToast("Server doesnt loaded")
+                            }
+                        },
+                        {
+                            showToast("Server doesnt loaded")
+                        })
+            }catch (e: Exception){
+                showToast("Err when start service")
+                logger.info("Err onResume: " + e.toString())
+            }
         }
     }
 
