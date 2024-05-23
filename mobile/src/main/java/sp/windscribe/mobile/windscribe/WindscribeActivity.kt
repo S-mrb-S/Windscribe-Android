@@ -105,6 +105,7 @@ import sp.windscribe.mobile.mainmenu.MainMenuActivity
 import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
+import sp.windscribe.mobile.sp.util.list.mgToGb
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.vpn.backend.utils.WindVpnController
@@ -127,6 +128,7 @@ import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.DeviceStateManager.DeviceStateListener
 import sp.windscribe.vpn.state.PreferenceChangeObserver
+import java.text.DecimalFormat
 import java.util.Objects
 import javax.inject.Inject
 import javax.inject.Named
@@ -1639,7 +1641,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun setupLayoutForFreeUser(dataLeft: String, upgradeLabel: String, color: Int) {
         for (fragment in serverListFragments) {
-            fragment.showUpgradeLayout(color, upgradeLabel, dataLeft)
+            Data.static.getmViewModel().dataDailyLeft.observe(this@WindscribeActivity) { ddl ->
+                fragment.showUpgradeLayout(color, upgradeLabel, mgToGb(ddl))
+            }
         }
         serverListFragments[3].hideUpgradeLayout()
         serverListFragments[4].hideUpgradeLayout()

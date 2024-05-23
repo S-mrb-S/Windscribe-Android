@@ -8,6 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
+import sp.windscribe.mobile.sp.util.list.mgToGb
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.response.ApiErrorResponse
@@ -16,6 +17,8 @@ import sp.windscribe.vpn.api.response.UserSessionResponse
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.model.User
+import sp.windscribe.vpn.sp.Data
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 class MainMenuPresenterImpl @Inject constructor(
@@ -151,9 +154,20 @@ class MainMenuPresenterImpl @Inject constructor(
 
     override fun observeUserChange(mainMenuActivity: MainMenuActivity) {
         mainMenuView.setActivityTitle(interactor.getResourceString(R.string.preferences))
-        interactor.getUserRepository().user.observe(mainMenuActivity) { user ->
-            setLayoutFromUserSession(user)
+
+        Data.static.getmViewModel().dataDailyLeft.observe(mainMenuActivity) { ddl ->
+            mainMenuView.setupLayoutForFreeUser(
+                    mgToGb(ddl),
+                    interactor.getResourceString(R.string.get_more_data),
+                    getDataRemainingColor(ddl.toFloat(), Data.serviceStorage.getInt(
+                            "dailyQuota_service", // مقدار حجم کل محدودیت روزانه به مگ
+                            0
+                    ).toLong())
+            )
         }
+//        interactor.getUserRepository().user.observe(mainMenuActivity) { user ->
+//            setLayoutFromUserSession(user)
+//        }
     }
 
     override fun setTheme(context: Context) {
