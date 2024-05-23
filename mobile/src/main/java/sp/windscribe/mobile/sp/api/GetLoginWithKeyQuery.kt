@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.Error
 import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetLoginQuery
 import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.Static
 
 // service
 class GetLoginWithKeyQuery {
@@ -18,7 +19,7 @@ class GetLoginWithKeyQuery {
         try {
             val apolloClient = ApolloClient.Builder()
                     .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Data.Api)
+                    .httpServerUrl(Static.getGlobalData().myApi)
                     .build()
 
             val response = apolloClient.query(GetLoginQuery(key = key))
