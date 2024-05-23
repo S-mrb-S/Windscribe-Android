@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import sp.windscribe.vpn.model.MainViewModel;
 
-// br MRB
+// by MRB
 public class Global extends GlobalHelper {
     public Global(Application context) {
         setMainApplication(context);
@@ -20,6 +20,10 @@ public class Global extends GlobalHelper {
                     new ViewModelProvider.AndroidViewModelFactory((Application) getMainApplication().getApplicationContext()).create(MainViewModel.class);
         }
         return this.mViewModel;
+    }
+
+    public String getMyApi() {
+        return this.getApi();
     }
 
     @NonNull
