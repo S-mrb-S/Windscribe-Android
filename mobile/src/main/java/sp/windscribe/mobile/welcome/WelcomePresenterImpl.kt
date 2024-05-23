@@ -11,18 +11,9 @@ import io.reactivex.functions.Function
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
-import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.sp.util.api.getAllServers
-import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
-import sp.windscribe.mobile.sp.util.api.updateService
+import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
 import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
@@ -39,8 +30,8 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.UserStatusConstants.USER_STATUS_PREMIUM
 import sp.windscribe.vpn.errormodel.SessionErrorHandler
 import sp.windscribe.vpn.errormodel.WindError
-import sp.windscribe.vpn.sp.Data
 import sp.windscribe.vpn.repository.CallResult
+import sp.windscribe.vpn.sp.Data
 import java.io.File
 import java.io.IOException
 import java.util.UUID
@@ -204,37 +195,12 @@ class WelcomePresenterImpl @Inject constructor(
         if (validateLoginInputs(username, password, "", true)) {
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
-            CoroutineScope(Dispatchers.Default).launch {
-                try {
-                    updateService(username,
-                            {
-                                launch {
-                                    getAllServers(username,
-                                            {
-                                                launch {
-                                                    saveDataAndFinish(it,
-                                                            {
-                                                                navigateToHome()
-                                                            },
-                                                            {
-                                                                onLoginFailedWithNoError()
-                                                            }
-                                                    )
-                                                }
-                                            },
-                                            {
-                                                onLoginFailedWithNoError()
-                                            }
-                                    )
-                                }
-                            },
-                            {
-                                onLoginResponseError(400, "Wrong key")
-                            })
-                } catch (e: Exception) {
-                    onLoginResponseError(500, "Error")
-                }
-            }.start()
+            startBackgroundService(username,
+                    { navigateToHome() },
+                    { if(it){
+                        onLoginResponseError(400, "Wrong key") } else {
+                        onLoginFailedWithNoError() }
+                    })
         }
     }
 
