@@ -721,11 +721,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             presenter.checkForWgIpChange()
             presenter.checkPendingAccountUpgrades()
 
+            fixResume = true
             try{
                 startBackgroundService(Data.serviceStorage.decodeString("key_login", "").toString(),
                         {
                             // نمایش سرور ها در اینجا
-                            fixResume = true
                             if (StaticData.data != null) {
                                 onReloadClick()
                             }else{
