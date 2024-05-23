@@ -23,8 +23,8 @@ public class MainViewModel extends ViewModel {
         return dataLeft.getValue();
     }
 
-    public void saveDataLeft(@NonNull Integer bool) {
-        dataLeft.setValue(bool);
+    public void saveDataLeft(@NonNull Integer integer) {
+        dataLeft.setValue(integer);
     }
 
     // data daily left (dailyQuotaLeft) حجم باقی مانده از کل در مصرف روزانه
@@ -43,7 +43,7 @@ public class MainViewModel extends ViewModel {
         return dataDailyLeft.getValue();
     }
 
-    public void saveDataDailyLeft(@NonNull Integer bool) {
-        dataDailyLeft.setValue(bool);
+    public void saveDataDailyLeft(@NonNull Integer integer) {
+        dataDailyLeft.setValue(integer);
     }
 }
