@@ -399,6 +399,7 @@ last chosen location.</string>
     <string name="lazy_login_description">Login into Windscribe\'s TV apps with a short code.</string>
     <string name="get_10gb_data">Get 10GB/ Month of data and gain the ability to reset your password.</string>
     <string name="data_left_in_your_plan">Data Left</string>
+    <string name="data_left_in_your_plan_daily">Data Left (Daily)</string>
     <string name="referral_username">Referring Username</string>
     <string name="first_reason_to_use_referral">You will both get an additional 1GB per month when you sign up.</string>
     <string name="second_reason_to_use_referral">Upgrade and you will both get Pro.</string>
@@ -485,4 +486,5 @@ last chosen location.</string>
     <string name="save">Save</string>
     <string name="clear">Clear</string>
     <string name="enter_1_key_value_per_line">Enter 1 key=value per line.</string>
+    <string name="enable">Enable</string>
 </resources>

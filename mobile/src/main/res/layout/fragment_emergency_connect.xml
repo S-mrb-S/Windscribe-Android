@@ -90,7 +90,7 @@
         style="@style/NextToPremiumButton"
         android:layout_marginBottom="@dimen/margin_24"
         android:enabled="true"
-        android:text="@string/connect"
+        android:text="@string/enable"
         app:layout_constraintBottom_toTopOf="@id/cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

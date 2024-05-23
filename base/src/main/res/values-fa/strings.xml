@@ -407,6 +407,7 @@
   <string name="connecting_to">در حال اتصال به ٪s</string>
   <string name="text_two_fa">2FA نیاز به ادامه دارد. از یک برنامه احراز هویت برای تولید کد استفاده کنید.</string>
   <string name="data_left_in_your_plan">چپ داده</string>
+  <string name="data_left_in_your_plan_daily">چپ داده (روزانه)</string>
   <string name="login">ورود</string>
   <string name="enter_password">لطفا رمز عبور خود را وارد کنید!</string>
   <string name="other_networks">سایر شبکه ها</string>
@@ -460,4 +461,5 @@
   <string name="connect">اتصال</string>
   <string name="emergency_connect_description">نمی توانید به Windscribe دسترسی داشته باشد؟ برای رفع انسداد شبکه محدود کننده خود به سرورهای ما متصل شوید.</string>
   <string name="other">دیگر</string>
+    <string name="enable">فعالسازی</string>
 </resources>

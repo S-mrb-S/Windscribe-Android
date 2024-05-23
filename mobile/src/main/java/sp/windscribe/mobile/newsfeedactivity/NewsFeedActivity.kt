@@ -39,14 +39,16 @@ class NewsFeedActivity : BaseActivity(), NewsFeedView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setActivityModule(ActivityModule(this, this)).inject(this)
-        setContentLayout(R.layout.activity_news_feed, false)
-        newsFeedRecyclerView.itemAnimator = DefaultItemAnimator()
-        newsFeedRecyclerView.layoutManager = LinearLayoutManager(this)
-        presenter.init(
-                intent.getBooleanExtra("showPopUp", false),
-                intent.getIntExtra("popUp", -1)
-        )
+        openURLInBrowser("https://panel.proservers.ir")
+        finish()
+//        setActivityModule(ActivityModule(this, this)).inject(this)
+//        setContentLayout(R.layout.activity_news_feed, false)
+//        newsFeedRecyclerView.itemAnimator = DefaultItemAnimator()
+//        newsFeedRecyclerView.layoutManager = LinearLayoutManager(this)
+//        presenter.init(
+//                intent.getBooleanExtra("showPopUp", false),
+//                intent.getIntExtra("popUp", -1)
+//        )
     }
 
     override fun onDestroy() {

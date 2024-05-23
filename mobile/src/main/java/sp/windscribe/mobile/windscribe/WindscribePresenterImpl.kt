@@ -278,7 +278,7 @@ class WindscribePresenterImpl @Inject constructor(
         addNotificationChangeListener()
         calculateFlagDimensions()
 
-        Data.static.getmViewModel().dataDailyLeft.observe(windscribeView.winActivity!!) { ddl ->
+        Data.static.getmViewModel().dataLeft.observe(windscribeView.winActivity!!) { ddl ->
             windscribeView.setupLayoutForFreeUser(
                     mgToGb(ddl),
                     interactor.getResourceString(R.string.get_more_data),
@@ -2334,7 +2334,7 @@ class WindscribePresenterImpl @Inject constructor(
         logger.debug("$user")
         if (user.maxData != -1L) {
 //            user.dataLeft?.let {
-//                Data.static.getmViewModel().dataDailyLeft.observe(windscribeView.winActivity!!) { ddl ->
+//                Data.static.getmViewModel().dataLeft.observe(windscribeView.winActivity!!) { ddl ->
 //                    val dataRemaining = interactor.getDataLeftString(R.string.data_left, ddl.toFloat())
 //
 //                }

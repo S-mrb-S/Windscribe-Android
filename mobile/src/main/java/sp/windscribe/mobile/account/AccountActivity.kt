@@ -149,14 +149,22 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
                 ?.let { this.setUsername(it) }
 
         //
-        Data.serviceStorage.getString("reset_data", "none")
-                ?.let { tvResetDate.text = it }
+        val dateStr = Data.serviceStorage.getString("time_left_service", "none").toString()
+//        if(dateStr == "~"){
+        setResetDate(interactor.getResourceString(R.string.reset_date), dateStr)
+//        }else{
+//
+//        }
 //        tvResetDateLabel.text = resetDateLabel
 //        tvResetDate.text = resetDate
 
         // LiveData
-        Data.static.getmViewModel().dataDailyLeft.observe(this@AccountActivity) { ddl ->
-            setDataLeft(mgToGb(ddl))
+        Data.static.getmViewModel().dataLeft.observe(this@AccountActivity) { ddl ->
+            setDataLeft(mgToGb(ddl),
+                    Data.serviceStorage.getBoolean(
+                            "dailyQuotaLimited_service",
+                            false
+                    ))
         }
     }
 
@@ -325,6 +333,12 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
         tvPlanData.text = planName
     }
 
+    fun setDataLeft(dataLeft: String, daily: Boolean) {
+        setDataLeft(dataLeft)
+        if(daily){
+            dataLeftLabel.text = interactor.getResourceString(R.string.data_left_in_your_plan_daily)
+        }
+    }
     override fun setDataLeft(dataLeft: String) {
         if (dataLeft.isEmpty()) {
             dataLeftDivider.visibility = View.GONE

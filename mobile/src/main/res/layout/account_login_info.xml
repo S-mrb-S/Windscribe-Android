@@ -23,6 +23,7 @@
         <TextView
             android:id="@+id/tv_username_label"
             style="@style/ExpandableChildLabelText"
+            android:text="@string/plan"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,7 +58,7 @@
         <TextView
             android:id="@+id/tv_email_label"
             style="@style/ExpandableChildLabelText"
-            android:text="Key"
+            android:text="@string/software_licenses"
             app:layout_goneMarginStart="@dimen/reg_16dp"
             android:layout_marginStart="4dp"
             android:layout_width="wrap_content"

@@ -23,12 +23,17 @@ suspend fun updateService(
                         try {
                             Data.static.MainApplicationExecuter({
                                 // run ViewModel on application thread
-                                Log.d("MRBB", data?.service?.quotaLeft.toString()) // 50843
-                                Log.d("MRBB", data?.service?.dailyQuotaLeft.toString()) // 50843
-                                Data.static.getmViewModel().saveDataLeft(data?.service?.quotaLeft
-                                        ?: 0)
-                                Data.static.getmViewModel().saveDataDailyLeft(data?.service?.dailyQuotaLeft
-                                        ?: 0)
+                                if(data?.service?.type?.quotaLimited == true){
+                                    if(data.service.type.dailyQuotaLimited){
+                                        Data.static.getmViewModel().saveDataLeft(data.service.dailyQuotaLeft
+                                                ?: 0)
+                                    }else{
+                                        Data.static.getmViewModel().saveDataLeft(data.service.quotaLeft
+                                                ?: 0)
+                                    }
+                                }else{
+                                    Data.static.getmViewModel().saveDataLeft(99999) // ~
+                                }
                                 Data.static.showToast("runtime no e")
                             }, Data.static.mainApplication)
                         } catch (e: Exception) {
@@ -38,12 +43,18 @@ suspend fun updateService(
                             return
                         }
                         Data.serviceStorage
-                                .putString("user_name", data?.service?.name)
+                                .putString("user_name", data?.service?.name) // plan
 
                         Data.serviceStorage
                                 .encode("key_login", licenceKey) // save key for get runtime data service
                         try {
 //                            thread {
+                            if(data?.service?.type?.timeLimited == true){
+                                Data.serviceStorage.putString("time_left_service", (data.service.daysLeft
+                                        ?: 0).toString())
+                            }else{
+                                Data.serviceStorage.putString("time_left_service", "~")
+                            }
                             /*
                                 "timeLimited": false,
                                 "quotaLimited": true,

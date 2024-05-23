@@ -42,10 +42,6 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
                     "quotaLeft_service",
                     0
             ))
-            Data.static.getmViewModel().retrieveDataDailyLeft(Data.serviceStorage.getInt(
-                    "dailyQuotaLeft_service",
-                    0
-            ))
 
             setTheme()
             Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)

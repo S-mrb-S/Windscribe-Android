@@ -155,7 +155,7 @@ class MainMenuPresenterImpl @Inject constructor(
     override fun observeUserChange(mainMenuActivity: MainMenuActivity) {
         mainMenuView.setActivityTitle(interactor.getResourceString(R.string.preferences))
 
-        Data.static.getmViewModel().dataDailyLeft.observe(mainMenuActivity) { ddl ->
+        Data.static.getmViewModel().dataLeft.observe(mainMenuActivity) { ddl ->
             mainMenuView.setupLayoutForFreeUser(
                     mgToGb(ddl),
                     interactor.getResourceString(R.string.get_more_data),
