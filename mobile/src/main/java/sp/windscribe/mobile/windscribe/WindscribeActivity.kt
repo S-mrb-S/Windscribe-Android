@@ -729,11 +729,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                             if (StaticData.data != null) {
                                 onReloadClick()
                             }else{
-                                showToast("Server doesnt loaded")
+                                showToast("Servers doesn't loaded")
                             }
                         },
                         {
-                            showToast("Server doesnt loaded")
+                            showToast("Servers doesn't loaded")
                         })
             }catch (e: Exception){
                 showToast("Err when start service")
@@ -2246,17 +2246,17 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
             presenter.onProtocolChangeClick()
         } else {
-            val builder = AlertDialog.Builder(this@WindscribeActivity)
-            builder.setTitle(getString(R.string.new_protocol))
-            builder.setSingleChoiceItems(
-                    Data.item_options,
-                    Data.defaultItemDialog
-            ) { dialog, which ->
-                try {
-                    if (which != Data.defaultItemDialog) {
-                        Data.settingsStorage.putInt("default_connection_type", which)
-                        Data.defaultItemDialog = which // 0 --> V2ray, 1 --> OpenVpn, 2 --> cisco
-                        if (StaticData.data != null) {
+            if (StaticData.data != null) {
+                val builder = AlertDialog.Builder(this@WindscribeActivity)
+                builder.setTitle(getString(R.string.new_protocol))
+                builder.setSingleChoiceItems(
+                        Data.item_options,
+                        Data.defaultItemDialog
+                ) { dialog, which ->
+                    try {
+                        if (which != Data.defaultItemDialog) {
+                            Data.settingsStorage.putInt("default_connection_type", which)
+                            Data.defaultItemDialog = which // 0 --> V2ray, 1 --> OpenVpn, 2 --> cisco
                             GlobalScope.launch {
                                 try {
                                     this@WindscribeActivity.exitSearchLayout()
@@ -2276,17 +2276,16 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //                                    }
                                 }
                             }
-
-                        } else {
-                            showToast("NULLABLE")
                         }
+                    } finally {
+                        Handler().postDelayed(dialog::dismiss, 100)
                     }
-                } finally {
-                    Handler().postDelayed(dialog::dismiss, 100)
                 }
+                val dialog = builder.create()
+                dialog.show()
+            } else {
+                showToast("Servers doesn't loaded")
             }
-            val dialog = builder.create()
-            dialog.show()
         }
     }
 
