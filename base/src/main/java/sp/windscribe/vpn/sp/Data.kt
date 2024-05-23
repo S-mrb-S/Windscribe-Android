@@ -9,6 +9,7 @@ object Data {
 
     val settingsStorage: MMKV = MmkvManager.getSettingsStorage()
     val serviceStorage: MMKV = MmkvManager.getServiceStorage()
+    val static = Static.getGlobalData()
 
     var dataString: String? = "" // finally servers
 }// HI

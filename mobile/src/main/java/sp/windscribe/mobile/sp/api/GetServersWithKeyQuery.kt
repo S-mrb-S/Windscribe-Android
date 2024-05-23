@@ -18,7 +18,7 @@ class GetServersWithKeyQuery {
         try {
             val apolloClient = ApolloClient.Builder()
                     .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Static.getGlobalData().myApi)
+                    .httpServerUrl(Data.static.myApi)
                     .build()
 
             val response = apolloClient.query(GetServersQuery(key = key))

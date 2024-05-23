@@ -19,7 +19,7 @@ class GetLoginWithKeyQuery {
         try {
             val apolloClient = ApolloClient.Builder()
                     .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Static.getGlobalData().myApi)
+                    .httpServerUrl(Data.static.myApi)
                     .build()
 
             val response = apolloClient.query(GetLoginQuery(key = key))
