@@ -35,6 +35,7 @@ import sp.windscribe.mobile.dialogs.SuccessDialog
 import sp.windscribe.mobile.email.AddEmailActivity
 import sp.windscribe.mobile.fragments.GhostMostAccountFragment
 import sp.windscribe.mobile.listeners.AccountFragmentCallback
+import sp.windscribe.mobile.sp.util.list.mgToGb
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
@@ -155,12 +156,7 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
 
         // LiveData
         Data.static.getmViewModel().dataDailyLeft.observe(this@AccountActivity) { ddl ->
-                if (ddl > 0) {
-                    val formattedData = DecimalFormat("##.00").format(ddl)
-                    this.setDataLeft("$formattedData GB")
-                } else {
-                    this.setDataLeft("0.00 GB")
-                }
+            setDataLeft(mgToGb(ddl))
         }
     }
 
