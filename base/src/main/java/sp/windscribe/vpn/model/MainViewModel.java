@@ -14,9 +14,9 @@ public class MainViewModel extends ViewModel {
         return dataLeft;
     }
 
-    public void retrieveDataLeft() {
+    public void retrieveDataLeft(int def) {
         if (getIsDataLeft() == null)
-            dataLeft.setValue(0);
+            dataLeft.setValue(def);
     }
 
     public Integer getIsDataLeft() {
@@ -34,9 +34,9 @@ public class MainViewModel extends ViewModel {
         return dataDailyLeft;
     }
 
-    public void retrieveDataDailyLeft() {
+    public void retrieveDataDailyLeft(int def) {
         if (getIsDataDailyLeft() == null)
-            dataDailyLeft.setValue(0);
+            dataDailyLeft.setValue(def);
     }
 
     public Integer getIsDataDailyLeft() {

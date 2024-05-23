@@ -38,8 +38,14 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
             Static.setGlobalData(this@PhoneApplication)
 
             //بازیابی
-            Data.static.getmViewModel().retrieveDataLeft()
-            Data.static.getmViewModel().retrieveDataDailyLeft()
+            Data.static.getmViewModel().retrieveDataLeft(Data.serviceStorage.getInt(
+                    "quotaLeft_service",
+                    0
+            ))
+            Data.static.getmViewModel().retrieveDataDailyLeft(Data.serviceStorage.getInt(
+                    "dailyQuotaLeft_service",
+                    0
+            ))
 
             setTheme()
             Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
