@@ -1,9 +1,14 @@
 package sp.windscribe.vpn.sp;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.Objects;
 
 import sp.windscribe.vpn.model.MainViewModel;
 
@@ -34,5 +39,12 @@ public class Global extends GlobalHelper {
 
     public void setMainApplication(@NonNull Application mainApplication) {
         this.mainApplication = mainApplication;
+    }
+
+    @WorkerThread
+    public void showToast(String txt){
+        ContextCompat.getMainExecutor(getMainApplication()).execute(()  -> {
+            Toast.makeText(mainApplication, txt, Toast.LENGTH_SHORT).show();
+        });
     }
 }
