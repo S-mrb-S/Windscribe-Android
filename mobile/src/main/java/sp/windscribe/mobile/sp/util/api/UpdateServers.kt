@@ -1,12 +1,9 @@
-package sp.windscribe.mobile.mrb.util.api
+package sp.windscribe.mobile.sp.util.api
 
 import com.apollographql.apollo3.api.Error
 import kotlinx.coroutines.coroutineScope
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.mobile.mrb.api.GetServersWithKeyQuery
-import sp.windscribe.mobile.mrb.util.StaticData
-import sp.windscribe.mobile.mrb.util.list.ListCreator
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.mobile.sp.api.GetServersWithKeyQuery
 
 suspend fun getAllServers(
         key: String,

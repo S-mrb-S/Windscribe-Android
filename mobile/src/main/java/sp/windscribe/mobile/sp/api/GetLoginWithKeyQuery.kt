@@ -1,10 +1,10 @@
-package sp.windscribe.mobile.mrb.api
+package sp.windscribe.mobile.sp.api
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Error
 import com.apollographql.apollo3.api.http.HttpMethod
 import sp.windscribe.mobile.GetLoginQuery
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.sp.Data
 
 // service
 class GetLoginWithKeyQuery {

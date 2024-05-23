@@ -26,7 +26,8 @@ import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -40,7 +41,7 @@ abstract class BaseActivity : CiscoMainActivity() {
 
     // cisco
     override fun CurrentUserName(): String {
-        var ul = MmkvManager.getLoginStorage().getString(
+        var ul = Data.serviceStorage.getString(
                 "username_ovpn",
                 ""
         )
@@ -49,7 +50,7 @@ abstract class BaseActivity : CiscoMainActivity() {
     }
 
     override fun CurrentPassWord(): String {
-        var ul = MmkvManager.getLoginStorage().getString(
+        var ul = Data.serviceStorage.getString(
                 "password_ovpn",
                 ""
         )

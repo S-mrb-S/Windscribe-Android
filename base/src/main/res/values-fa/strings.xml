@@ -110,7 +110,7 @@
   <string name="lan_by_pass">اجازه دادن به ترافیک LAN</string>
   <string name="language_description">محلی سازی Windscribe به زبان های پشتیبانی شده.</string>
   <string name="location_permission_for_ssid">مجوز مکان مورد نیاز برای تنظیم پروتکل های ترجیحی و اتصال خودکار.</string>
-  <string name="reset_date">تاریخ بازنشانی</string>
+  <string name="reset_date">زمان باقی مانده</string>
   <string name="may_be_later">شاید بعدا</string>
   <string name="show_system_apps">نمایش برنامه های سیستم</string>
   <string name="free_reason_to_add_email">لطفا ایمیل خود را برای دریافت 10 گیگابایت در ماه اضافه کنید</string>

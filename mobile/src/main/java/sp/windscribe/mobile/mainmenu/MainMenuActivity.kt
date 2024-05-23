@@ -33,7 +33,8 @@ import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.alert.showAlertDialog
 import sp.windscribe.vpn.backend.utils.WindVpnController
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import javax.inject.Inject
 
@@ -155,7 +156,7 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
         logoutView.onClick {
             performHapticFeedback(it)
             // presenter.onSignOutClicked()
-            MmkvManager.getLoginStorage().encode("is_login", false)
+            Data.serviceStorage.encode("is_login", false)
 
             logger.info("Navigating to login activity...")
             val loginIntent = Intent(this, WelcomeActivity::class.java)

@@ -41,7 +41,8 @@ import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 import java.util.Objects
 import javax.inject.Inject
 
@@ -138,16 +139,16 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
 
     private fun setUpUserInfo() {
         // key name
-        tvAccountEmail.text = MmkvManager.getLoginStorage().decodeString("key_login", "none")
+        tvAccountEmail.text = Data.serviceStorage.decodeString("key_login", "none")
         tvAccountEmail.setTextColor(interactor.getThemeColor(R.attr.wdSecondaryColor))
         tvAccountEmailLabel.setTextColor(interactor.getThemeColor(R.attr.wdActionColor))
 
         // user name
-        MmkvManager.getLoginStorage().getString("user_name", "none")
+        Data.serviceStorage.getString("user_name", "none")
                 ?.let { this.setUsername(it) }
 
         //
-        MmkvManager.getLoginStorage().getString("reset_data", "none")
+        Data.serviceStorage.getString("reset_data", "none")
                 ?.let { tvResetDate.text = it }
 //        tvResetDateLabel.text = resetDateLabel
 //        tvResetDate.text = resetDate

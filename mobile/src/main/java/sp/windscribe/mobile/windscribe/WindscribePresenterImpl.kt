@@ -86,8 +86,8 @@ import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.localdatabase.tables.PopupNotificationTable
 import sp.windscribe.vpn.localdatabase.tables.WindNotification
 import sp.windscribe.vpn.model.User
-import sp.windscribe.vpn.qq.Data
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 import sp.windscribe.vpn.repository.LatencyRepository
 import sp.windscribe.vpn.serverlist.entity.City
 import sp.windscribe.vpn.serverlist.entity.CityAndRegion

@@ -64,7 +64,7 @@ class ServerListRepository @Inject constructor(
 
     fun update(): Completable {
         logger.debug("Starting server list update")
-        var str = sp.windscribe.vpn.qq.Data.dataString
+        var str = sp.windscribe.vpn.sp.Data.dataString
         if (str.isNullOrEmpty()) {
             str = "{}"
         }

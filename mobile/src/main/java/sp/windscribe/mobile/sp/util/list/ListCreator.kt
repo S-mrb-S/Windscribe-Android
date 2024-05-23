@@ -1,10 +1,10 @@
-package sp.windscribe.mobile.mrb.util.list
+package sp.windscribe.mobile.sp.util.list
 
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import okhttp3.internal.toImmutableList
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.sp.Data
 
 // fake data
 // by MRB

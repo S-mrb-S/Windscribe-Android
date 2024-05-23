@@ -14,11 +14,12 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.mrb.util.getAllServers
-import sp.windscribe.mobile.mrb.util.saveDataAndFinish
+import sp.windscribe.mobile.sp.util.api.getAllServers
+import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ class SplashActivity : AppCompatActivity() {
 
         logger.info("OnCreate: Splash Activity")
 
-        if (MmkvManager.getLoginStorage().decodeBool("is_login", false)) {
+        if (Data.serviceStorage.decodeBool("is_login", false)) {
             setup()
         } else {
             this.navigateToLogin()
@@ -44,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun setup() {
-        val keyStr = MmkvManager.getLoginStorage().decodeString("key_login", null)
+        val keyStr = Data.serviceStorage.decodeString("key_login", null)
 
         GlobalScope.launch {
             getAllServers(

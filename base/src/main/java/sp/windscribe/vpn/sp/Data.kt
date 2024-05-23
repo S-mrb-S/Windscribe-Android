@@ -1,4 +1,4 @@
-package sp.windscribe.vpn.qq
+package sp.windscribe.vpn.sp
 
 import com.tencent.mmkv.MMKV
 

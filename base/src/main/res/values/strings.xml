@@ -102,7 +102,7 @@
     <string name="plan_pro">Pro</string>
     <string name="a_la_carte_unlimited_plan">Unlimited</string>
     <string name="expiry_date">Expiry  Date</string>
-    <string name="reset_date">Reset  Date</string>
+    <string name="reset_date">Time  Left</string>
     <string name="gb_per_month">&#160;GB/Month</string>
     <string name="my_account">Account</string>
     <string name="cancel">Cancel</string>

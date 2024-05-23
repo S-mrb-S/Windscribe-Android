@@ -24,8 +24,9 @@ import sp.windscribe.vpn.constants.UserStatusConstants
 import sp.windscribe.vpn.errormodel.WindError.Companion.instance
 import sp.windscribe.vpn.model.User
 import sp.windscribe.vpn.model.User.EmailStatus
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.MmkvManager
 import sp.windscribe.vpn.repository.CallResult
+import sp.windscribe.vpn.sp.Data
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -231,7 +232,7 @@ class AccountPresenterImpl @Inject constructor(
             )
         }
         Toast.makeText(appContext, "set ac", Toast.LENGTH_SHORT).show()
-        MmkvManager.getLoginStorage().getString("user_name", "none")
+        Data.serviceStorage.getString("user_name", "none")
                 ?.let { accountView.setUsername(it) }
 
         when (user.emailStatus) {

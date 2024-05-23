@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.mrb.util.api.getAllServers
-import sp.windscribe.mobile.mrb.util.api.saveDataAndFinish
-import sp.windscribe.mobile.mrb.util.api.updateService
+import sp.windscribe.mobile.sp.util.api.getAllServers
+import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
+import sp.windscribe.mobile.sp.util.api.updateService
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
 import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
@@ -37,7 +37,7 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.UserStatusConstants.USER_STATUS_PREMIUM
 import sp.windscribe.vpn.errormodel.SessionErrorHandler
 import sp.windscribe.vpn.errormodel.WindError
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.sp.Data
 import sp.windscribe.vpn.repository.CallResult
 import java.io.File
 import java.io.IOException

@@ -102,8 +102,8 @@ import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.fragments.SearchFragment
 import sp.windscribe.mobile.fragments.ServerListFragment
 import sp.windscribe.mobile.mainmenu.MainMenuActivity
-import sp.windscribe.mobile.mrb.util.StaticData
-import sp.windscribe.mobile.mrb.util.api.saveDataAndFinish
+import sp.windscribe.mobile.sp.util.StaticData
+import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
@@ -118,8 +118,8 @@ import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.constants.RateDialogConstants
 import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
-import sp.windscribe.vpn.qq.Data
-import sp.windscribe.vpn.qq.MmkvManager
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.MmkvManager
 import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.serverlist.entity.ServerListData

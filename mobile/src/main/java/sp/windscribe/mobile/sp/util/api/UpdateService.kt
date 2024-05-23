@@ -1,10 +1,10 @@
-package sp.windscribe.mobile.mrb.util.api
+package sp.windscribe.mobile.sp.util.api
 
 import com.apollographql.apollo3.api.Error
 import kotlinx.coroutines.coroutineScope
 import sp.windscribe.mobile.GetLoginQuery
-import sp.windscribe.mobile.mrb.api.GetLoginWithKeyQuery
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.mobile.sp.api.GetLoginWithKeyQuery
+import sp.windscribe.vpn.sp.Data
 
 suspend fun updateService(
         licenceKey: String,

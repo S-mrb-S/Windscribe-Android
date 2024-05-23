@@ -1,4 +1,4 @@
-package sp.windscribe.mobile.mrb.util
+package sp.windscribe.mobile.sp.util
 
 import sp.windscribe.mobile.GetServersQuery
 

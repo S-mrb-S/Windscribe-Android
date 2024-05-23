@@ -1,10 +1,10 @@
-package sp.windscribe.mobile.mrb.util.api
+package sp.windscribe.mobile.sp.util.api
 
 import kotlinx.coroutines.coroutineScope
 import sp.windscribe.mobile.GetServersQuery
-import sp.windscribe.mobile.mrb.util.StaticData
-import sp.windscribe.mobile.mrb.util.list.ListCreator
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.mobile.sp.util.StaticData
+import sp.windscribe.mobile.sp.util.list.ListCreator
+import sp.windscribe.vpn.sp.Data
 
 suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Unit, failTo: () -> Unit) = coroutineScope {
     try {
