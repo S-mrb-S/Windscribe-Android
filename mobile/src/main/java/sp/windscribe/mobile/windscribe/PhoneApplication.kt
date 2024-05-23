@@ -21,13 +21,25 @@ import sp.windscribe.vpn.autoconnection.AutoConnectionModeCallback
 import sp.windscribe.vpn.autoconnection.FragmentType
 import sp.windscribe.vpn.autoconnection.ProtocolInformation
 import sp.windscribe.vpn.constants.PreferencesKeyConstants
-import sp.windscribe.vpn.qq.Data
+import sp.windscribe.vpn.sp.Data
+import sp.windscribe.vpn.sp.Global
+import sp.windscribe.vpn.sp.Static
+
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
+    private lateinit var data: Global
+
     override fun onCreate() {
         applicationInterface = this
         super.onCreate()
+
         MMKV.initialize(this@PhoneApplication)
+        Static.setGlobalData(this@PhoneApplication)
+        data = Static.getGlobalData()
+
+        //بازیابی
+        data.getmViewModel().retrieveDataLeft()
+
         setTheme()
         Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
         App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
