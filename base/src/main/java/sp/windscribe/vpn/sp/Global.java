@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Objects;
 
+import kotlin.Unit;
 import sp.windscribe.vpn.model.MainViewModel;
 
 // by MRB
@@ -41,10 +42,7 @@ public class Global extends GlobalHelper {
         this.mainApplication = mainApplication;
     }
 
-    @WorkerThread
     public void showToast(String txt){
-        ContextCompat.getMainExecutor(getMainApplication()).execute(()  -> {
-            Toast.makeText(mainApplication, txt, Toast.LENGTH_SHORT).show();
-        });
+        MainApplicationExecuter(() -> Toast.makeText(mainApplication, txt, Toast.LENGTH_SHORT).show(), getMainApplication());
     }
 }
