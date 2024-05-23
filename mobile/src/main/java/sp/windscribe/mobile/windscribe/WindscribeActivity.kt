@@ -593,7 +593,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun CiscoUpdateUI(serviceState: OpenVpnService?) {
         val newState = serviceState!!.connectionState
         try {
-            serviceState.startActiveDialog(this@WindscribeActivity) // no effect but require
+            serviceState.startActiveDialog(Data.static.mainApplication) // no effect but require
 
             if (winCiscoState != newState) { // connected --> spam
                 when (newState) {

@@ -1212,7 +1212,7 @@ class WindscribePresenterImpl @Inject constructor(
             selectedLocation?.let {
                 windscribeView.clearConnectingAnimation() //
                 if (it.nickName == "v2ray") {
-                    V2rayController.stopV2ray(windscribeView.winContext)
+                    V2rayController.stopV2ray(Data.static.mainApplication) // TODO()
 //                    return
                 }
                 windscribeView.setupLayoutDisconnected(
@@ -1727,7 +1727,7 @@ class WindscribePresenterImpl @Inject constructor(
     override fun stopAll() {
         try {
             if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-                V2rayController.stopV2ray(windscribeView.winContext)
+                V2rayController.stopV2ray(Data.static.mainApplication)
             }
             if (windscribeView.winOpenVpnState != "DISCONNECTED") {
                 stopVpn()
@@ -1787,7 +1787,7 @@ class WindscribePresenterImpl @Inject constructor(
                                                     if (V2rayController.getConnectionState() == V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
                                                         V2rayController.startV2ray(windscribeView.winActivity, "Test Server", cityAndRegion.city.ovpnX509, null)
                                                     } else {
-                                                        V2rayController.stopV2ray(windscribeView.winContext)
+                                                        V2rayController.stopV2ray(Data.static.mainApplication)
                                                     }
                                                 }
                                             }
