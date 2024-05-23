@@ -11,7 +11,9 @@ import io.reactivex.functions.Function
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -182,36 +184,6 @@ class WelcomePresenterImpl @Inject constructor(
         )
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun setup() {
-        val keyStr = Data.serviceStorage.decodeString("key_login", null)
-
-        GlobalScope.launch {
-            getAllServers(
-                    keyStr!!,
-                    {
-                        launch {
-                            setDataAndLoad(it)
-                        }
-                    },
-                    {
-                        onLoginFailedWithNoError()
-                    }
-            )
-        }
-    }
-
-    private suspend fun setDataAndLoad(data: GetServersQuery.Data?) = coroutineScope {
-        saveDataAndFinish(data,
-                {
-                    navigateToHome()
-                },
-                {
-                    onLoginFailedWithNoError()
-                }
-        )
-    }
-
     private fun navigateToHome() {
         try {
             try {
@@ -227,25 +199,42 @@ class WelcomePresenterImpl @Inject constructor(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun startLoginProcess(username: String, password: String, twoFa: String) {
         welcomeView.hideSoftKeyboard()
         if (validateLoginInputs(username, password, "", true)) {
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
-            GlobalScope.launch {
-                updateService(username,
-                        {
-                            try {
-                                setup() // get servers
-                            } finally {
-                                welcomeView.prepareUiForApiCallFinished()
-                            }
-                        },
-                        {
-                            onLoginResponseError(400, "Wrong key")
-                        })
-            }
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    updateService(username,
+                            {
+                                launch {
+                                    getAllServers(username,
+                                            {
+                                                launch {
+                                                    saveDataAndFinish(it,
+                                                            {
+                                                                navigateToHome()
+                                                            },
+                                                            {
+                                                                onLoginFailedWithNoError()
+                                                            }
+                                                    )
+                                                }
+                                            },
+                                            {
+                                                onLoginFailedWithNoError()
+                                            }
+                                    )
+                                }
+                            },
+                            {
+                                onLoginResponseError(400, "Wrong key")
+                            })
+                } catch (e: Exception) {
+                    onLoginResponseError(500, "Error")
+                }
+            }.start()
         }
     }
 
