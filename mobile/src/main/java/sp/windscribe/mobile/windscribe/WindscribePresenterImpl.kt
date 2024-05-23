@@ -49,6 +49,7 @@ import sp.windscribe.mobile.connectionui.DisconnectedState
 import sp.windscribe.mobile.connectionui.FailedProtocol
 import sp.windscribe.mobile.connectionui.UnsecuredProtocol
 import sp.windscribe.mobile.listeners.ProtocolClickListener
+import sp.windscribe.mobile.sp.util.list.mgToGb
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil.getDataRemainingColor
 import sp.windscribe.mobile.windscribe.WindscribeActivity.NetworkLayoutState
@@ -156,10 +157,10 @@ class WindscribePresenterImpl @Inject constructor(
     }
 
     override fun observeUserData(windscribeActivity: WindscribeActivity) {
-        interactor.getUserRepository().user.observe(windscribeActivity) {
-            setAccountStatus(it)
-            setUserStatus(it)
-        }
+//        interactor.getUserRepository().user.observe(windscribeActivity) {
+//            setAccountStatus(it)
+//            setUserStatus(it)
+//        }
     }
 
     override suspend fun observeDecoyTrafficState() {
@@ -276,10 +277,21 @@ class WindscribePresenterImpl @Inject constructor(
         windscribeView.setNetworkNameBlur(interactor.getAppPreferenceInterface().blurNetworkName)
         addNotificationChangeListener()
         calculateFlagDimensions()
-        interactor.getUserRepository().user.value?.let {
-            setUserStatus(it)
-            setAccountStatus(it)
+
+        Data.static.getmViewModel().dataDailyLeft.observe(windscribeView.winActivity!!) { ddl ->
+            windscribeView.setupLayoutForFreeUser(
+                    mgToGb(ddl),
+                    interactor.getResourceString(R.string.get_more_data),
+                    getDataRemainingColor(ddl.toFloat(), Data.serviceStorage.getInt(
+                            "dailyQuota_service", // مقدار حجم کل محدودیت روزانه به مگ
+                            0
+                    ).toLong())
+            )
         }
+//        interactor.getUserRepository().user.value?.let {
+//            setUserStatus(it)
+//            setAccountStatus(it)
+//        }
     }
 
     override fun setAdapters() {
@@ -2321,14 +2333,12 @@ class WindscribePresenterImpl @Inject constructor(
     private fun setUserStatus(user: User) {
         logger.debug("$user")
         if (user.maxData != -1L) {
-            user.dataLeft?.let {
-                val dataRemaining = interactor.getDataLeftString(R.string.data_left, it)
-                windscribeView.setupLayoutForFreeUser(
-                        dataRemaining,
-                        interactor.getResourceString(R.string.get_more_data),
-                        getDataRemainingColor(it, user.maxData)
-                )
-            }
+//            user.dataLeft?.let {
+//                Data.static.getmViewModel().dataDailyLeft.observe(windscribeView.winActivity!!) { ddl ->
+//                    val dataRemaining = interactor.getDataLeftString(R.string.data_left, ddl.toFloat())
+//
+//                }
+//            }
         } else {
             windscribeView.setupLayoutForProUser()
         }

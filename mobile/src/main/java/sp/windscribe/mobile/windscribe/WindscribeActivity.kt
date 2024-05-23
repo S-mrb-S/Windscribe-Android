@@ -1641,9 +1641,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun setupLayoutForFreeUser(dataLeft: String, upgradeLabel: String, color: Int) {
         for (fragment in serverListFragments) {
-            Data.static.getmViewModel().dataDailyLeft.observe(this@WindscribeActivity) { ddl ->
-                fragment.showUpgradeLayout(color, upgradeLabel, mgToGb(ddl))
-            }
+            fragment.showUpgradeLayout(color, upgradeLabel, dataLeft)
         }
         serverListFragments[3].hideUpgradeLayout()
         serverListFragments[4].hideUpgradeLayout()

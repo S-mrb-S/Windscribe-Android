@@ -352,7 +352,7 @@
   <string name="add_to_mock_location_explain_android_12">پس از باز شدن قفل، به "گزینه های توسعه دهنده" در تنظیمات بروید.  در زیر مکان» Windscribe را به عنوان برنامه مکان ساختگی» انتخاب کنید.</string>
   <string name="you_r_pro_plan_expired">برنامه Pro شما منقضی شده است!</string>
   <string name="preferred_protocol_description">یک قرارداد پیش فرض برای این شبکه انتخاب کنید اگر مشکلی در اتصال دارید</string>
-  <string name="_2gb_left">2 گیگابایت باقی مانده</string>
+  <string name="_2gb_left">0 گیگابایت باقی مانده</string>
   <string name="mode">حالت</string>
   <string name="location_order_description">ترتیب لیست مکان به ترتیب صعودی الفبا، جغرافیا یا تاخیر.</string>
   <string name="i_understand">می‌فهمم</string>

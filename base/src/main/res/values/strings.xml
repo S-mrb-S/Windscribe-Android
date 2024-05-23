@@ -121,7 +121,7 @@
     <string name="play_store_updating">Play store update in process! Please try after the update is finished.</string>
     <string name="purchase_cancelled">Purchase cancelled!</string>
     <string name="purchase_successful">Purchase successful!</string>
-    <string name="_2gb_left">2GB LEFT</string>
+    <string name="_2gb_left">00.00 GB LEFT</string>
     <string name="state_connecting">Connecting</string>
     <string name="state_wait">Waiting for server reply</string>
     <string name="state_auth">Authenticating</string>
