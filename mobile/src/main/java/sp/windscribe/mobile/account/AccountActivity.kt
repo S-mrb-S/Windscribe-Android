@@ -42,7 +42,7 @@ import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.Windscribe.Companion.appContext
 import sp.windscribe.vpn.commonutils.ThemeUtils.getColor
 import sp.windscribe.vpn.sp.Data
-import sp.windscribe.vpn.sp.MmkvManager
+import java.text.DecimalFormat
 import java.util.Objects
 import javax.inject.Inject
 
@@ -152,6 +152,16 @@ class AccountActivity : BaseActivity(), AccountView, AccountFragmentCallback {
                 ?.let { tvResetDate.text = it }
 //        tvResetDateLabel.text = resetDateLabel
 //        tvResetDate.text = resetDate
+
+        // LiveData
+        Data.static.getmViewModel().dataDailyLeft.observe(this@AccountActivity) { ddl ->
+                if (ddl > 0) {
+                    val formattedData = DecimalFormat("##.00").format(ddl)
+                    this.setDataLeft("$formattedData GB")
+                } else {
+                    this.setDataLeft("0.00 GB")
+                }
+        }
     }
 
     override fun onResume() {
