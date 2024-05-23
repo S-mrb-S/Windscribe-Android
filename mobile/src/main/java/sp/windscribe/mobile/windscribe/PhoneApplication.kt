@@ -27,7 +27,6 @@ import sp.windscribe.vpn.sp.Static
 
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
-    private lateinit var data: Global
 
     override fun onCreate() {
         applicationInterface = this
@@ -35,10 +34,10 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
 
         MMKV.initialize(this@PhoneApplication)
         Static.setGlobalData(this@PhoneApplication)
-        data = Static.getGlobalData()
 
         //بازیابی
-        data.getmViewModel().retrieveDataLeft()
+        Data.static.getmViewModel().retrieveDataLeft()
+        Data.static.getmViewModel().retrieveDataDailyLeft()
 
         setTheme()
         Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
