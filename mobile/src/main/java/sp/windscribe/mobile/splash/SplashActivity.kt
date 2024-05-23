@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.sp.util.api.getAllServers
-import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.sp.Data
@@ -37,50 +35,9 @@ class SplashActivity : AppCompatActivity() {
         logger.info("OnCreate: Splash Activity")
 
         if (Data.serviceStorage.decodeBool("is_login", false)) {
-            setup()
+            navigateToHome()
         } else {
             this.navigateToLogin()
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun setup() {
-        val keyStr = Data.serviceStorage.decodeString("key_login", null)
-
-        GlobalScope.launch {
-            getAllServers(
-                    keyStr!!,
-                    {
-                        launch {
-                            setDataAndLoad(it)
-                        }
-                    },
-                    {
-                        failGetServers()
-                    }
-            )
-        }
-    }
-
-    private suspend fun setDataAndLoad(data: GetServersQuery.Data?) = coroutineScope {
-        saveDataAndFinish(data,
-                {
-                    navigateToHome()
-                },
-                {
-                    failGetServers()
-                }
-        )
-    }
-
-    private fun failGetServers() {
-        runOnUiThread {
-            Toast.makeText(
-                    this@SplashActivity,
-                    "دریافت سرور ها موفقیت امیز نبود! لطفا دوباره وارد شوید",
-                    Toast.LENGTH_LONG
-            ).show()
-            navigateToLogin()
         }
     }
 
