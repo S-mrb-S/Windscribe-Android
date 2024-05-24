@@ -8,6 +8,7 @@ project.ext {
     appBuildTool = "33.0.2"
 }
 
+// با احتیاط تغییر دهید
 buildscript {
     //Android
     ext.leanBack = "1.0.0"
@@ -67,6 +68,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }

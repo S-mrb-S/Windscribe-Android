@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id("com.apollographql.apollo3").version("3.7.3")
+    id("com.apollographql.apollo3").version("3.7.3") // support sdk 33
 }
 
 apply from: "$rootDir/config/config.gradle"
@@ -10,18 +10,19 @@ apply from: "$rootDir/depedencycheck.gradle"
 
 // Versions
 def appVersionCode = 1340
-def appVersionName = "5.0.0"
+def appVersionName = "5.1.0"
 
 android {
+    compileSdk rootProject.appCompiledSdk
     namespace 'sp.windscribe.mobile'
     ndkVersion '25.1.8937393'
+
     bundle {
         language {
             enableSplit = false
         }
     }
 
-    compileSdk rootProject.appCompiledSdk
     defaultConfig {
         applicationId rootProject.AppId
         minSdkVersion rootProject.appMinSdk
@@ -35,7 +36,7 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
-            ndk.abiFilters 'armeabi-v7a', 'arm64-v8a'
+            ndk.abiFilters 'armeabi-v7a', 'arm64-v8a' // support cisco
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug{
@@ -106,7 +107,8 @@ dependencies {
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdk"
     //Core Module
     implementation project(path: ':base')
-    implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
+    implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: []) // v2ray module
+
     //Kapt
     kapt "com.github.bumptech.glide:compiler:$glide"
     kapt "com.jakewharton:butterknife-compiler:$butterknife"
@@ -135,7 +137,7 @@ apollo {
         //generateOptionalOperationVariables.set(false)
 
         introspection {
-            endpointUrl.set("http://sub.iprostable.enterprises/graphql")
+            endpointUrl.set("http://sub.iprostable.enterprises/graphql") // (http)
             //schemaFile.set(file("src/main/graphql/schema.json"))
         }
     }

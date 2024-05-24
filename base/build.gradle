@@ -5,19 +5,9 @@ apply from: "$rootDir/config/config.gradle"
 apply from: "$rootDir/depedencycheck.gradle"
 
 android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17
-    }
-    buildFeatures {
-        dataBinding true
-        viewBinding true
-        buildConfig true
-    }
     compileSdk rootProject.appCompiledSdk
+    namespace 'sp.windscribe.vpn'
+
     defaultConfig {
         minSdkVersion rootProject.appMinSdk
         targetSdkVersion rootProject.appTargetSdk
@@ -27,25 +17,28 @@ android {
             }
         }
     }
+
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
        fdroid {
            main.jniLibs.srcDirs = ['/frdroid/src/libs', 'libs']
        }
     }
+
     packagingOptions {
         jniLibs {
             excludes += ['lib/arm64-v8a/libwg-quick.so', 'lib/armeabi-v7a/libwg-quick.so', 'lib/x86/libwg-quick.so', 'lib/x86_64/libwg-quick.so'
             ]
-            useLegacyPackaging = true
+            useLegacyPackaging = true // compress .so files
         }
     }
+
     lint {
         abortOnError false
         checkReleaseBuilds false
         disable 'MissingTranslation', 'NonConstantResourceId', 'VectorRaster', 'ContentDescription'
     }
-    namespace 'sp.windscribe.vpn'
+
     //Force gradle to pick latest version of guava and junit.
     configurations.configureEach {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
@@ -72,6 +65,21 @@ android {
             dimension "dim"
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+        buildConfig true
+    }
 }
 
 dependencies {
@@ -93,13 +101,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_std_lib"
     implementation "androidx.core:core-ktx:$ktx_core"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.6.4'
-    //VPN
-//     implementation project(path: ':openvpn')
-    // implementation project(path: ':strongswan')
-    api fileTree(dir: 'libs', include: ['*.aar'], exclude: [])
+    // VPNs
+    api fileTree(dir: 'libs', include: ['*.aar'], exclude: []) // core modules
 
     api 'com.wireguard.android:tunnel:1.0.20230427'
-//    implementation 'com.github.Windscribe:wstunnel:1.0.3'
+//    implementation 'com.github.Windscribe:wstunnel:1.0.3' // این کتابخانه با و2 ری مچ نمیشود
     //Rxjava
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
     api 'io.reactivex.rxjava2:rxjava:2.2.13'
@@ -156,8 +162,4 @@ dependencies {
     implementation 'info.guardianproject.conscrypt:conscrypt-android:2.6.alpha1638179154.job1828169525'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'commons-net:commons-net:3.6'
-    // Google only dependencies
-//    googleApi "com.google.firebase:firebase-messaging:$fireBase"
-//    googleApi files("$projectDir/src/google/libs/in-app-purchasing-2.0.76.jar")
-//    googleApi 'com.android.billingclient:billing:5.0.0'
 }
