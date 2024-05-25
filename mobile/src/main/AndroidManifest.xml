@@ -5,7 +5,6 @@
 
     <application
         android:name=".windscribe.PhoneApplication"
-        android:allowBackup="false"
         android:icon="@mipmap/ws_launcher"
         android:roundIcon="@mipmap/ws_launcher_round"
         android:supportsRtl="false"
@@ -98,6 +97,21 @@
         <activity
             android:name=".networksecurity.NetworkSecurityActivity"
             android:screenOrientation="portrait" />
+
+        <!-- =====================Tasker===================== -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+
+        </provider>
+
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

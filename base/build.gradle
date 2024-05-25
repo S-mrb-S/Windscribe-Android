@@ -83,7 +83,7 @@ android {
 }
 
 dependencies {
-//    api "sp.vpn:module"
+    api "sp.vpn:module"
     //Android
     api "androidx.appcompat:appcompat:$appCompat"
     // storngswan

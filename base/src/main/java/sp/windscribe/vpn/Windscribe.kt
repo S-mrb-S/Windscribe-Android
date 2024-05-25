@@ -53,7 +53,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
-open class Windscribe : sp.openconnect.Application() {
+abstract class Windscribe : sp.vpn.module.VpnApplication() {
     /**
      * Base Module use this interface to access activity
      * from ui modules.

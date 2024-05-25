@@ -343,10 +343,6 @@ class GeneralSettingsActivity : BaseActivity(), GeneralSettingsView {
         themeDropDown.setAdapter(localiseValues, selectedKey, keys)
     }
 
-    fun showToast(toastString: String) {
-        Toast.makeText(this, toastString, Toast.LENGTH_SHORT).show()
-    }
-
     private fun getFileName(fileUri: Uri): String? {
         val fileDocument = DocumentFile.fromSingleUri(this, fileUri)
         return fileDocument?.name
