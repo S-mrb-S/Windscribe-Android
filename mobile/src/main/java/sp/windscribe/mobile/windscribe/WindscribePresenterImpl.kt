@@ -708,15 +708,15 @@ class WindscribePresenterImpl @Inject constructor(
         windscribeView.exitSearchLayout()
         logger.debug("User clicked on city.")
         stopAll()
-        selectedLocation?.cityId?.let {
-            if (it == cityId && (interactor.getVpnConnectionStateManager()
-                            .isVPNActive() || connectingFromServerList)
-            ) { // no effect
-                return@let
-            }
+//        selectedLocation?.cityId?.let {
+//            if (it == cityId && (interactor.getVpnConnectionStateManager()
+//                            .isVPNActive() || connectingFromServerList)
+//            ) { // no effect
+//                return@let
+//            }
             connectingFromServerList = true
             connectToCity(cityId)
-        }
+//        }
     }
 
     override fun onConfigFileClicked(configFile: ConfigFile) {
@@ -1747,7 +1747,9 @@ class WindscribePresenterImpl @Inject constructor(
             if (windscribeView.winCiscoState != OpenConnectManagementThread.STATE_DISCONNECTED) {
                 windscribeView.StopCisco()
             }
-        } catch (ignore: Exception) {
+        } catch (e: Exception) {
+//            windscribeView.showToast("[A0] E")
+            logger.debug("eeeee: $e")
         }
     }
 
@@ -1815,9 +1817,14 @@ class WindscribePresenterImpl @Inject constructor(
                                                     windscribeView.ConnectToCisco(cityAndRegion.city.ovpnX509.toString())
                                                 }
                                             }
+
+                                            else -> {
+                                                logger.debug("wtf ?? not found!")
+                                            }
                                         }
                                     } else {
-                                        windscribeView.winActivity?.showToast("No server found")
+//                                        windscribeView.winActivity?.showToast("No server found")
+                                        logger.debug("not found servers............")
                                     }
                                 } else {
                                     logger.debug("User can not connect to location right now.")
