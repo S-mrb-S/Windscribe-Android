@@ -36,7 +36,7 @@ public class GpsSpoofingSettingsActivity extends BaseActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActivityModule(new ActivityModule(this, this)).inject(this);
         setContentLayout(R.layout.activity_gps_spoofing_settings, true);

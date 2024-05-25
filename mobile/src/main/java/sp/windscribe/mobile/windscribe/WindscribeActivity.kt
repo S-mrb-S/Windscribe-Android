@@ -58,11 +58,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import de.blinkt.openvpn.OpenVpnApi
-import de.blinkt.openvpn.core.VpnStatus
-import dev.dev7.lib.v2ray.V2rayController
-import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
-import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
-import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -422,8 +417,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override var networkLayoutState = NetworkLayoutState.CLOSED
         private set
 
-    private var v2rayBroadCastReceiver: BroadcastReceiver? = null
-
     override var winContext: Context? = null
     override var winActivity: WindscribeActivity? = null
 
@@ -437,79 +430,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
         winContext = this.applicationContext
         winActivity = this
-        // v2ray
-        V2rayController.init(this, R.drawable.ic_logo, "Windscribe")
-        // state
-        when (V2rayController.getConnectionState()) {
-            CONNECTION_STATES.CONNECTED -> {
-                presenter.startVpnUi()
-            }
 
-            CONNECTION_STATES.DISCONNECTED -> {
-                presenter.stopVpnUi()
-            }
-
-            CONNECTION_STATES.CONNECTING -> {
-                presenter.connectionVpnUi()
-            }
-
-            else -> {}
-        }
-        v2rayBroadCastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                runOnUiThread {
-//                    connection_time.setText(
-//                        "connection time : " + Objects.requireNonNull(intent.extras)
-//                            .getString(SERVICE_DURATION_BROADCAST_EXTRA)
-//                    )
-//                    connection_speed.setText(
-//                        "connection speed : " + intent.extras!!
-//                            .getString(SERVICE_UPLOAD_SPEED_BROADCAST_EXTRA) + " | " + intent.extras!!
-//                            .getString(SERVICE_DOWNLOAD_SPEED_BROADCAST_EXTRA)
-//                    )
-//                    connection_traffic.setText(
-//                        "connection traffic : " + intent.extras!!
-//                            .getString(SERVICE_UPLOAD_TRAFFIC_BROADCAST_EXTRA) + " | " + intent.extras!!
-//                            .getString(SERVICE_DOWNLOAD_TRAFFIC_BROADCAST_EXTRA)
-//                    )
-//                    connection_mode.setText("connection mode : " + V2rayConfigs.serviceMode.toString())
-                    when (Objects.requireNonNull(
-                            intent.extras!!
-                                    .getSerializable(SERVICE_CONNECTION_STATE_BROADCAST_EXTRA)
-                    )) {
-                        CONNECTION_STATES.CONNECTED -> {
-                            presenter.startVpnUi()
-                        }
-
-                        CONNECTION_STATES.DISCONNECTED -> {
-                            presenter.stopVpnUi()
-                        }
-
-                        CONNECTION_STATES.CONNECTING -> {
-                            presenter.connectionVpnUi()
-                        }
-
-                        else -> {}
-                    }
-                }
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT))
-        }
-
-        // openvpn
-        isServiceRunning
-        VpnStatus.initLogCache(this.cacheDir)
-
-        // Set broadcast for OpenVpn
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
-
-        // other ..
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -559,35 +480,27 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    private val isServiceRunning: Unit
-        /**
-         * Get service status
-         */
-        get() {
-            manageOpenVPNState(de.blinkt.openvpn.core.OpenVPNService.getStatus())
-        }
+    override fun sendStatusToCallBack(str: String?, err: Boolean?, errmsg: String?) {
+        super.sendStatusToCallBack(str, err, errmsg)
+        manageOpenVPNState(str)
+    }
 
-    /**
-     * Receive broadcast message (openVPN)
-     */
-    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            manageOpenVPNState(intent.getStringExtra("state"))
-//            try {
-//                var duration = intent.getStringExtra("duration")
-//                var lastPacketReceive = intent.getStringExtra("lastPacketReceive")
-//                var byteIn = intent.getStringExtra("byteIn")
-//                var byteOut = intent.getStringExtra("byteOut")
-//                if (duration == null) duration = "00:00:00"
-//                if (lastPacketReceive == null) lastPacketReceive = "0"
-//                if (byteIn == null) byteIn = " "
-//                if (byteOut == null) byteOut = " "
-//                updateConnectionStatus(duration, lastPacketReceive, byteIn, byteOut)
-//
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
+    override fun StopV2ray() {
+        stopV2ray()
+    }
+
+    override fun StartV2ray(server: String) {
+        delAndAddV2rayConfig(server)
+        fabClick()
+    }
+
+    override fun stateV2rayVpn(isRunning: Boolean) {
+        if(isRunning){
+            presenter.startVpnUi()
+        }else{
+            presenter.stopVpnUi()
         }
+        super.stateV2rayVpn(isRunning)
     }
 
     // cisco
@@ -763,9 +676,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         presenter.onDestroy()
         super.onDestroy()
-        if (v2rayBroadCastReceiver != null) {
-            unregisterReceiver(v2rayBroadCastReceiver)
-        }
     }
 
     fun adjustToolBarHeight(adjustBy: Int) {

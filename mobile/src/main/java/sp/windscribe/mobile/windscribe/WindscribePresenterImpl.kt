@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.CharStreams
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
-import dev.dev7.lib.v2ray.V2rayController
-import dev.dev7.lib.v2ray.utils.V2rayConstants
 import inet.ipaddr.AddressStringException
 import inet.ipaddr.IPAddressString
 import io.reactivex.Completable
@@ -737,7 +735,7 @@ class WindscribePresenterImpl @Inject constructor(
     override fun onConnectClicked() {
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
 
-        stopAll()
+//        stopAll()
 
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
@@ -1224,7 +1222,7 @@ class WindscribePresenterImpl @Inject constructor(
             selectedLocation?.let {
                 windscribeView.clearConnectingAnimation() //
                 if (it.nickName == "v2ray") {
-                    V2rayController.stopV2ray(Data.static.mainApplication) // TODO()
+                    windscribeView.StopV2ray()
 //                    return
                 }
                 windscribeView.setupLayoutDisconnected(
@@ -1738,9 +1736,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     override fun stopAll() {
         try {
-            if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-                V2rayController.stopV2ray(Data.static.mainApplication)
-            }
+            windscribeView.StopV2ray()
             if (windscribeView.winOpenVpnState != "DISCONNECTED") {
                 stopVpn()
             }
@@ -1797,25 +1793,21 @@ class WindscribePresenterImpl @Inject constructor(
                                     if (cityAndRegion.city.ovpnX509 != null) {
                                         when (cityAndRegion.city.nickName) {
                                             "v2ray" -> {
-                                                interactor.getMainScope().launch {
-                                                    if (V2rayController.getConnectionState() == V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-                                                        V2rayController.startV2ray(windscribeView.winActivity, "Test Server", cityAndRegion.city.ovpnX509, null)
-                                                    } else {
-                                                        V2rayController.stopV2ray(Data.static.mainApplication)
-                                                    }
-                                                }
+                                                Data.static.MainApplicationExecuter({
+                                                    windscribeView.StartV2ray(cityAndRegion.city.ovpnX509)
+                                                }, Data.static.mainApplication)
                                             }
 
                                             "openvpn" -> {
-                                                interactor.getMainScope().launch {
+                                                Data.static.MainApplicationExecuter({
                                                     prepareVpn(cityAndRegion.city.ovpnX509.toString())
-                                                }
+                                                }, Data.static.mainApplication)
                                             }
 
                                             "cisco" -> {
-                                                interactor.getMainScope().launch {
+                                                Data.static.MainApplicationExecuter({
                                                     windscribeView.ConnectToCisco(cityAndRegion.city.ovpnX509.toString())
-                                                }
+                                                }, Data.static.mainApplication)
                                             }
 
                                             else -> {

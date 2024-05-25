@@ -768,14 +768,14 @@ public class RecyclerRefreshLayout extends ViewGroup
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    public void onDetachedFromWindow() {
         reset();
         clearAnimation();
         super.onDetachedFromWindow();
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
         if (getChildCount() == 0) {
             return;
         }

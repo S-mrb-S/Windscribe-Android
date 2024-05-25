@@ -29,7 +29,6 @@ import sp.windscribe.vpn.sp.Static
 
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
-//    private lateinit var myBackgroundCoroutine: ServiceBackgroundCoroutine
 
     override fun onCreate() {
         applicationInterface = this
@@ -48,17 +47,9 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
 
             setTheme()
             Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
-
-//            myBackgroundCoroutine = ServiceBackgroundCoroutine()
-//            myBackgroundCoroutine.start()
         }catch (e: Exception){
             e.printStackTrace()
         }
-    }
-
-    override fun onTerminate() {
-//        myBackgroundCoroutine.stop()
-        super.onTerminate()
     }
 
     override fun angPackage(): String {

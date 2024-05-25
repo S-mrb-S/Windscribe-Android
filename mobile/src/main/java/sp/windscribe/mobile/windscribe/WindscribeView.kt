@@ -31,6 +31,8 @@ interface WindscribeView {
     var winCiscoState: Int?
     fun ConnectToCisco(url: String?)
     fun StopCisco()
+    fun StopV2ray()
+    fun StartV2ray(server: String)
     fun gotoLoginRegistrationActivity()
     fun handleRateView()
     fun hideProgressView()

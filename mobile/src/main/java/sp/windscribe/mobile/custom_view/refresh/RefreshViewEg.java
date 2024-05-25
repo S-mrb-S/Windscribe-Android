@@ -86,7 +86,7 @@ public class RefreshViewEg extends AppCompatImageView implements IRefreshStatus 
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void onDraw(Canvas canvas) {
         boolean vpnDisconnected = !Windscribe.getAppContext().getVpnConnectionStateManager().isVPNActive();
         boolean networkAvailable = WindUtilities.isOnline();
         if (networkAvailable && vpnDisconnected) {
