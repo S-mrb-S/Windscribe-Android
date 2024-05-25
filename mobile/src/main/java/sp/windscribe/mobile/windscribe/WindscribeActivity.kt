@@ -740,6 +740,15 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                 logger.info("Err onResume: " + e.toString())
             }
         }
+
+        Data.static.getmViewModel().isChanged.observe(this@WindscribeActivity) { ddl ->
+            if(ddl){
+                Log.d("SALAM", "DDL: " + ddl.toString())
+//                this@WindscribeActivity.runOnUiThread {
+//                    this@WindscribeActivity.recreate()
+//                }
+            }
+        }
     }
 
     override fun onStop() {
@@ -969,7 +978,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onRefreshPingsForAllServers() {
         cancelRefreshing(0)
-        presenter.onRefreshPingsForAllServers()
+//        presenter.onRefreshPingsForAllServers()
     }
 
     override fun onRefreshPingsForConfigServers() {
