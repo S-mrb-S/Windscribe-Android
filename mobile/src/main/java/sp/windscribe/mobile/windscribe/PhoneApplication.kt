@@ -35,7 +35,6 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
         super.onCreate()
 
         try{
-            MMKV.initialize(this@PhoneApplication)
             Static.setGlobalData(this@PhoneApplication)
 
             //بازیابی
