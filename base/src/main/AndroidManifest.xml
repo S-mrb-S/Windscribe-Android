@@ -85,14 +85,14 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service
-            android:name="sp.windscribe.vpn.backend.openvpn.OpenVPNWrapperService"
-            android:exported="true"
-            android:permission="android.permission.BIND_VPN_SERVICE">
-            <intent-filter>
-                <action android:name="android.net.VpnService" />
-            </intent-filter>
-        </service>
+<!--        <service-->
+<!--            android:name="sp.windscribe.vpn.backend.openvpn.OpenVPNWrapperService"-->
+<!--            android:exported="true"-->
+<!--            android:permission="android.permission.BIND_VPN_SERVICE">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.net.VpnService" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
 
         <service
             android:name="sp.windscribe.vpn.backend.ikev2.CharonVpnServiceWrapper"
