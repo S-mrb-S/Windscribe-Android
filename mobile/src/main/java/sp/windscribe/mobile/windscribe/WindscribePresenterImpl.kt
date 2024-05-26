@@ -1764,12 +1764,11 @@ class WindscribePresenterImpl @Inject constructor(
                                             }
 
                                             else -> {
-                                                logger.debug("wtf ?? not found!")
+                                                logger.debug("something is wrong")
                                             }
                                         }
                                     } else {
-//                                        windscribeView.winActivity?.showToast("No server found")
-                                        logger.debug("not found servers............")
+                                        windscribeView.winActivity?.showToast("No server found")
                                     }
                                 } else {
                                     logger.debug("User can not connect to location right now.")
