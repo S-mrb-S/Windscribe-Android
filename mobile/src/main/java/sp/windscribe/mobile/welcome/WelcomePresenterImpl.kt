@@ -199,7 +199,7 @@ class WelcomePresenterImpl @Inject constructor(
                 { navigateToHome() },
                 {
                     if (it) {
-                        onLoginResponseError(400, "Wrong key")
+                        onLoginResponseError(404, "Wrong key")
                     } else {
                         onLoginFailedWithNoError()
                     }
