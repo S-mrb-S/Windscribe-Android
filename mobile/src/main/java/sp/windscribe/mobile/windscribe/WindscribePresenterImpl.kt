@@ -1686,45 +1686,10 @@ class WindscribePresenterImpl @Inject constructor(
         interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Connecting))
     }
 
-    /**
-     * Prepare for vpn connect with required permission Sp
-     */
-    private fun prepareVpn(ovpnX509: String) {
-        try {
-            stopAll() // require
-            // Checking permission for network monitor Sp
-            val intent = VpnService.prepare(windscribeView.winContext)
-            if (intent != null) {
-                MmkvManager.getSettingsStorage().putString("ovpn", ovpnX509)
-                windscribeView.winActivity?.startActivityForResult(intent, OpenConnectManagementThread.STATE_CONNECTED)
-            } else startOpenVPN(ovpnX509) //have already permission Sp
-        } catch (e: Exception) {
-            catchVpn()
-        }
-    }
-
     private fun catchVpn() {
         windscribeView.showToast("Error!")
         stopAll()
     }
-
-    private fun startOpenVPN(ovpnX509: String) {
-        try {
-            Log.d("OO P", "SS 2")
-            OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
-                    Data.serviceStorage.getString(
-                            "username_ovpn",
-                            ""
-                    ),
-                    Data.serviceStorage.getString(
-                            "password_ovpn",
-                            ""
-                    ))
-        } catch (e: Exception) {
-            catchVpn()
-        }
-    }
-
 
     override fun stopAll() {
         try {
@@ -1788,7 +1753,7 @@ class WindscribePresenterImpl @Inject constructor(
 
                                             "openvpn" -> {
                                                 Data.static.MainApplicationExecuter({
-                                                    prepareVpn(cityAndRegion.city.ovpnX509.toString())
+                                                    windscribeView.StartOpenVPN(cityAndRegion.city.ovpnX509.toString())
                                                 }, Data.static.mainApplication)
                                             }
 

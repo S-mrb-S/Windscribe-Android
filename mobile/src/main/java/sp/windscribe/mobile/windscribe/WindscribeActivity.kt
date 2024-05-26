@@ -530,40 +530,14 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    /**
-     * this is Cisco
-     */
-
-    override fun ConnectToCisco(url: String?) {
-        if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-            try {
-                if (url != null) {
-                    val res: Boolean = CiscoCreateProfileWithHostName(url)
-
-                    if (!res) {
-                        Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT)
-                                .show()
-                        StopCisco()
-                    } else {
-                        CiscoStartVPNWithProfile()
-                        presenter.connectionVpnUi()
-                    }
-
-                }
-            } catch (e: RemoteException) {
-                Log.d("CISCO", "BUG: $e")
-                showToast("وصل نشد!")
-                StopCisco()
-            }
-
-        } else {
-            StopCisco()
-        }
+    override fun ConnectToCisco(url: String) {
+        CiscoFabClick(url)
     }
 
     override fun StopOpenVPN() {
         OpenVpnStopVpn()
     }
+
     override fun StopCisco() {
         try {
             CiscoStopVPN()
@@ -586,36 +560,47 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
+    override fun StartOpenVPN(ovpnX509: String) {
+        OpenVpnFabClick(ovpnX509,
+            Data.serviceStorage.getString(
+                "username_ovpn",
+                ""
+            ),
+            Data.serviceStorage.getString(
+                "password_ovpn",
+                ""
+            ))
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                OpenConnectManagementThread.STATE_CONNECTED -> {
-                    //Permission granted, start the VPN
-                    try {
-                        OpenVpnApi.startVpn(this.applicationContext,
-                                MmkvManager.getSettingsStorage().getString("ovpn", ""), "Japan",
-                                Data.serviceStorage.getString(
-                                        "username_ovpn",
-                                        ""
-                                ),
-                                Data.serviceStorage.getString(
-                                        "password_ovpn",
-                                        ""
-                                ))
-                    } catch (e: Exception) {
-                        showToast("[5] Failed")
-                    }
-                }
-
-                FILE_PICK_REQUEST -> { // no effect
-                    if (data != null) {
-                        presenter.loadConfigFile(data)
-                    }
-                }
-            }
-        } else {
-            showToast("دسترسی رد شد !! ")
-        }
+//        if (resultCode == RESULT_OK) {
+//            when (requestCode) {
+//                OpenConnectManagementThread.STATE_CONNECTED -> {
+//                    //Permission granted, start the VPN
+//                    try {
+//                        OpenVpnApi.startVpn(this.applicationContext,
+//                                MmkvManager.getSettingsStorage().getString("ovpn", ""), "Japan",
+//                                Data.serviceStorage.getString(
+//                                        "username_ovpn",
+//                                        ""
+//                                ),
+//                                Data.serviceStorage.getString(
+//                                        "password_ovpn",
+//                                        ""
+//                                ))
+//                    } catch (e: Exception) {
+//                        showToast("[5] Failed")
+//                    }
+//                }
+//
+//                FILE_PICK_REQUEST -> { // no effect
+//                    if (data != null) {
+//                        presenter.loadConfigFile(data)
+//                    }
+//                }
+//            }
+//        } else {
+//            showToast("دسترسی رد شد !! ")
+//        }
 
         super.onActivityResult(requestCode, resultCode, data)
     }
