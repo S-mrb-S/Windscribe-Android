@@ -480,18 +480,17 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    override fun sendStatusToCallBack(str: String?, err: Boolean?, errmsg: String?) {
-        super.sendStatusToCallBack(str, err, errmsg)
+    override fun OpenVpnStatus(str: String?, err: Boolean?, errmsg: String?) {
+        super.OpenVpnStatus(str, err, errmsg)
         manageOpenVPNState(str)
     }
 
     override fun StopV2ray() {
-        stopV2ray()
+        V2rayStop()
     }
 
     override fun StartV2ray(server: String) {
-        delAndAddV2rayConfig(server)
-        fabClick()
+        V2rayFabClick(server)
     }
 
     override fun stateV2rayVpn(isRunning: Boolean) {
@@ -562,9 +561,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
+    override fun StopOpenVPN() {
+        OpenVpnStopVpn()
+    }
     override fun StopCisco() {
         try {
-            CiscoStopForceVPN()
+            CiscoStopVPN()
         } catch (e: Exception) {
             showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
         }
@@ -635,6 +637,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             presenter.checkPendingAccountUpgrades()
 
             fixResume = true
+//            Data.static.getmViewModel().isChanged.observe(this@WindscribeActivity) { ddl ->
+//                if(ddl){
+//                    showToast("DDL: " + ddl.toString())
+//                    this@WindscribeActivity.recreate()
+//                }
+//            }
             try{
                 startBackgroundService(Data.serviceStorage.decodeString("key_login", "").toString(),
                         {
@@ -651,15 +659,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             }catch (e: Exception){
                 showToast("Err when start service")
                 logger.info("Err onResume: " + e.toString())
-            }
-        }
-
-        Data.static.getmViewModel().isChanged.observe(this@WindscribeActivity) { ddl ->
-            if(ddl){
-                Log.d("SALAM", "DDL: " + ddl.toString())
-//                this@WindscribeActivity.runOnUiThread {
-//                    this@WindscribeActivity.recreate()
-//                }
             }
         }
     }
@@ -2181,15 +2180,16 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                                     this@WindscribeActivity.exitSearchLayout()
                                     presenter.stopAll() // stop all vpn
 
-                                    saveDataAndFinish(StaticData.data, {}, {}) // set new protocol
+//                                    saveDataAndFinish(StaticData.data, {
+//                                        launch {
+//                                            delay(1000)
+//                                            this@WindscribeActivity.runOnUiThread {
+//                                                this@WindscribeActivity.recreate()
+//                                            }
+//                                        }
+//                                    }, {}) // set new protocol
                                 } finally {
-                                    activityScope { presenter.observeAllLocations() } // read new data
-                                    delay(200)
-                                    activityScope { this@WindscribeActivity.onReloadClick() } // set new data
-                                    delay(200)
-                                    onRefreshPingsForAllServers() // refresh list
-                                    delay(200)
-                                    presenter.onHotStart() // reload current selected city
+                                     // reload current selected city
 //                                    this@WindscribeActivity.runOnUiThread {
 //                                        this@WindscribeActivity.recreate()
 //                                    }

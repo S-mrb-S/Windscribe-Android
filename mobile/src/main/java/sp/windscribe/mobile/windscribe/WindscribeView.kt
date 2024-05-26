@@ -32,6 +32,7 @@ interface WindscribeView {
     fun ConnectToCisco(url: String?)
     fun StopCisco()
     fun StopV2ray()
+    fun StopOpenVPN()
     fun StartV2ray(server: String)
     fun gotoLoginRegistrationActivity()
     fun handleRateView()

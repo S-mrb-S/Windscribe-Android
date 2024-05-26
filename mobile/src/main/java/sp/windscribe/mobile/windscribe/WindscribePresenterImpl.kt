@@ -1687,14 +1687,6 @@ class WindscribePresenterImpl @Inject constructor(
     }
 
     /**
-     * Stop vpn
-     * OpenVPN, by MRB
-     */
-    private fun stopVpn() {
-        OpenVPNThread.stop()
-    }
-
-    /**
      * Prepare for vpn connect with required permission Sp
      */
     private fun prepareVpn(ovpnX509: String) {
@@ -1737,12 +1729,8 @@ class WindscribePresenterImpl @Inject constructor(
     override fun stopAll() {
         try {
             windscribeView.StopV2ray()
-            if (windscribeView.winOpenVpnState != "DISCONNECTED") {
-                stopVpn()
-            }
-            if (windscribeView.winCiscoState != OpenConnectManagementThread.STATE_DISCONNECTED) {
-                windscribeView.StopCisco()
-            }
+            windscribeView.StopOpenVPN()
+            windscribeView.StopCisco()
         } catch (e: Exception) {
 //            windscribeView.showToast("[A0] E")
             logger.debug("eeeee: $e")

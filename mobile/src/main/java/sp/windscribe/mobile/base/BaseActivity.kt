@@ -41,7 +41,7 @@ abstract class BaseActivity : sp.vpn.module.VpnActivity() {
 
     override fun stateV2rayVpn(isRunning: Boolean) {}
     override fun setTestStateLayout(content: String) {}
-    override fun sendStatusToCallBack(str: String?, err: Boolean?, errmsg: String?) {}
+    override fun OpenVpnStatus(str: String?, err: Boolean?, errmsg: String?) {}
     override fun updateConnectionStatus(
         duration: String?,
         lastPacketReceive: String?,
@@ -52,7 +52,7 @@ abstract class BaseActivity : sp.vpn.module.VpnActivity() {
     override fun CiscoUpdateUI(serviceState: OpenVpnService?) {} // skip for other activities
 
     // cisco
-    override fun CurrentUserName(): String {
+    override fun CiscoCurrentUserName(): String {
         var ul = Data.serviceStorage.getString(
                 "username_ovpn",
                 ""
@@ -61,7 +61,7 @@ abstract class BaseActivity : sp.vpn.module.VpnActivity() {
         return ul
     }
 
-    override fun CurrentPassWord(): String {
+    override fun CiscoCurrentPassWord(): String {
         var ul = Data.serviceStorage.getString(
                 "password_ovpn",
                 ""
