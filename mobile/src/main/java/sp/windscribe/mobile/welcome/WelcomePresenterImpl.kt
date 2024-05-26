@@ -200,7 +200,7 @@ class WelcomePresenterImpl @Inject constructor(
                     { if(it){
                         onLoginResponseError(400, "Wrong key") } else {
                         onLoginFailedWithNoError() }
-                    })
+                    }, true)
         }
     }
 
