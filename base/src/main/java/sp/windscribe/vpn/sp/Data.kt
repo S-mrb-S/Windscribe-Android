@@ -12,5 +12,4 @@ object Data {
     val static = Static.getGlobalData()
 
     var dataString: String? = "" // finally servers
-    var lineBusy: Boolean = false
 }// HI
