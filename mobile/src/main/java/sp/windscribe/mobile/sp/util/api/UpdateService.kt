@@ -131,13 +131,13 @@ suspend fun updateService(
 }
 
 suspend fun updateTestService(
-    licenceKey: String,
+    id: String,
+    email: String,
     finishTo: () -> Unit,
     failTo: () -> Unit
 ) = coroutineScope {
     try {
-        GetTestServersWithAndroidID().performWork(licenceKey,
-            "",
+        GetTestServersWithAndroidID().performWork(id, email,
             object : GetTestServersWithAndroidID.GetLoginCallback {
 
                 override fun onSuccess(res: GetTestServerMutation.Data?) {
@@ -169,7 +169,9 @@ suspend fun updateTestService(
                         .putString("user_name", data?.service?.name) // plan
 
                     Data.serviceStorage
-                        .encode("key_login", licenceKey) // save key for get runtime data service
+                        .encode("key_login", id) // save key for get runtime data service
+                    Data.serviceStorage
+                        .encode("email_test_login", email)
                     try {
 //                            thread {
                         if(data?.service?.type?.timeLimited == true){
