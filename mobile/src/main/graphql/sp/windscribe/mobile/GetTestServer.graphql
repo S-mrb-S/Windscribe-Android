@@ -1,0 +1,25 @@
+mutation GetTestServer($deviceId: String!, $email: String!) {
+  createService(deviceId: $deviceId, email: $email) {
+    service {
+      username
+      password
+      dailyQuota
+      type {
+        timeLimited
+        quotaLimited
+        dailyQuotaLimited
+        displayName
+        connectionLimited
+      }
+      isActive
+      isTrial
+      uuid
+      name
+      days
+      daysLeft
+      quotaSum
+      quotaLeft
+      dailyQuotaLeft
+    }
+  }
+}
