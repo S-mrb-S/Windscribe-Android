@@ -6,54 +6,61 @@ import kotlinx.coroutines.launch
 import sp.windscribe.mobile.sp.util.api.getAllServers
 import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.sp.util.api.updateService
+import sp.windscribe.mobile.sp.util.api.updateTestService
 
 // all get data here
-fun startBackgroundService(
-    licence: String,
-    navigateTo: () -> Unit,
-    failTo: (wrongKey: Boolean) -> Unit) {
-    startBackgroundService(licence,
-        { navigateTo() },
-        { failTo(it)
-        }, false)
-}
-
 fun startBackgroundService(
         licence: String,
         navigateTo: () -> Unit,
         failTo: (wrongKey: Boolean) -> Unit,
-        justUpdateService: Boolean) {
+        justUpdateService: Boolean = false,
+        test: Boolean = false,
+        email: String = "") {
     CoroutineScope(Dispatchers.Default).launch {
         try {
-            updateService(licence,
-                    {
-                        if(!justUpdateService) {
-                            launch {
-                                getAllServers(licence,
-                                    {
-                                        launch {
-                                            saveDataAndFinish(it,
-                                                {
-                                                    navigateTo()
-                                                },
-                                                {
-                                                    failTo(false)
-                                                }
-                                            )
+            fun fin(){
+                if(!justUpdateService) {
+                    launch {
+                        getAllServers(licence,
+                            {
+                                launch {
+                                    saveDataAndFinish(it,
+                                        {
+                                            navigateTo()
+                                        },
+                                        {
+                                            failTo(false)
                                         }
-                                    },
-                                    {
-                                        failTo(false)
-                                    }
-                                )
+                                    )
+                                }
+                            },
+                            {
+                                failTo(false)
                             }
-                        }else{
-                            navigateTo()
-                        }
+                        )
+                    }
+                }else{
+                    navigateTo()
+                }
+            }
+
+            if(test){
+                updateTestService(licence, email,
+                    {
+                        fin()
                     },
                     {
                         failTo(true)
                     })
+            }else{
+                updateService(licence,
+                    {
+                        fin()
+                    },
+                    {
+                        failTo(true)
+                    })
+            }
         } catch (e: Exception) {
             failTo(false)
         }
