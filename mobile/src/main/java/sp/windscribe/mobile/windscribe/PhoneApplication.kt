@@ -4,8 +4,10 @@ import android.content.Intent
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE
+import androidx.work.Configuration
 import com.tencent.mmkv.MMKV
 import de.blinkt.openvpn.core.App
+import sp.windscribe.mobile.BuildConfig
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.connectionmode.AllProtocolFailedFragment
 import sp.windscribe.mobile.connectionmode.ConnectionChangeFragment
@@ -27,14 +29,12 @@ import sp.windscribe.vpn.sp.Static
 
 
 class PhoneApplication : Windscribe(), ApplicationInterface {
-//    private lateinit var myBackgroundCoroutine: ServiceBackgroundCoroutine
 
     override fun onCreate() {
         applicationInterface = this
         super.onCreate()
 
         try{
-            MMKV.initialize(this@PhoneApplication)
             Static.setGlobalData(this@PhoneApplication)
 
             //بازیابی
@@ -42,21 +42,35 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
                     "quotaLeft_service",
                     0
             ))
+            Data.static.getmViewModel().retrieveIsChanged(false)
 
             setTheme()
             Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
-            App.setOpenVpn(this, "sp.windscribe.mobile", "spwindscribemobile", "Windscribe", false)
-
-//            myBackgroundCoroutine = ServiceBackgroundCoroutine()
-//            myBackgroundCoroutine.start()
         }catch (e: Exception){
             e.printStackTrace()
         }
     }
 
-    override fun onTerminate() {
-//        myBackgroundCoroutine.stop()
-        super.onTerminate()
+    override fun angPackage(): String {
+        return BuildConfig.APPLICATION_ID
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
+            .build()
+    }
+
+    override fun getContentTitle(): String {
+        return "Windscribe"
+    }
+
+    override fun getChannelID(): String {
+        return "sp.windscribe.mobile"
+    }
+
+    override fun getChannelIDName(): String {
+        return "spwindscribemobile"
     }
 
     override val homeIntent: Intent

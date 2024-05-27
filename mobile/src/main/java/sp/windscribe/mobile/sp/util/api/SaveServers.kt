@@ -7,24 +7,30 @@ import sp.windscribe.mobile.sp.util.list.ListCreator
 import sp.windscribe.vpn.sp.Data
 
 suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Unit, failTo: () -> Unit) = coroutineScope {
-    try {
         try {
-            if (data == null) { // data must be not null
-                Data.dataString = ""
-                failTo()
-                return@coroutineScope
-            }
-            if (StaticData.data == null) {
-                StaticData.data = data // save data for handle protocols
-            }
+            try {
+                if (data == null) { // data must be not null
+                    Data.dataString = ""
+                    failTo()
+                    return@coroutineScope
+                }
+                if (StaticData.data == null) {
+                    StaticData.data = data // save data for handle protocols
+                }
 
-            Data.dataString = ListCreator(data).createAndGet() // create and save
-        } finally {
-            navigateTo()
+                val str = ListCreator(data).createAndGet()
+//                longLog(str)
+                Data.dataString = str // create and save
+            } finally {
+                Data.static.MainApplicationExecuter({
+                    // run ViewModel on application thread
+                    Data.static.getmViewModel().saveIsChanged(true)
+                }, Data.static.mainApplication)
+                navigateTo()
+            }
+        } catch (e: Exception) {
+            failTo()
         }
-    } catch (e: Exception) {
-        failTo()
-    }
 }
 
 //fun longLog(str: String) {

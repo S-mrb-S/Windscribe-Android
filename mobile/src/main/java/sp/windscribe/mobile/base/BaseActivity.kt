@@ -31,7 +31,7 @@ import sp.windscribe.vpn.sp.MmkvManager
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseActivity : CiscoMainActivity() {
+abstract class BaseActivity : sp.vpn.module.VpnActivity("domain:ir", true) {
     val coldLoad = AtomicBoolean()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +39,20 @@ abstract class BaseActivity : CiscoMainActivity() {
         window.setFormat(PixelFormat.RGBA_8888)
     }
 
+    override fun stateV2rayVpn(isRunning: Boolean) {}
+    override fun setTestStateLayout(content: String) {}
+    override fun OpenVpnStatus(str: String?, err: Boolean?, errmsg: String?) {}
+    override fun updateConnectionStatus(
+        duration: String?,
+        lastPacketReceive: String?,
+        byteIn: String?,
+        byteOut: String?
+    ) {}
+
+    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {} // skip for other activities
+
     // cisco
-    override fun CurrentUserName(): String {
+    override fun CiscoCurrentUserName(): String {
         var ul = Data.serviceStorage.getString(
                 "username_ovpn",
                 ""
@@ -49,23 +61,13 @@ abstract class BaseActivity : CiscoMainActivity() {
         return ul
     }
 
-    override fun CurrentPassWord(): String {
+    override fun CiscoCurrentPassWord(): String {
         var ul = Data.serviceStorage.getString(
                 "password_ovpn",
                 ""
         )
         if (ul == null) ul = ""
         return ul
-    }
-
-    override fun isEnableDialog(): Boolean {
-        return false
-    }
-
-    override fun CiscoUpdateUI(serviceState: OpenVpnService?) {} // skip for other activities
-
-    override fun skipCertWarning(): Boolean {
-        return true
     }
 
     override fun onAttachedToWindow() {

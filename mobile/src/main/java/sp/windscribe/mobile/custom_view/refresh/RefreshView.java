@@ -98,19 +98,19 @@ public class RefreshView extends View implements IRefreshStatus {
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    public void onDetachedFromWindow() {
         resetAnimator();
         super.onDetachedFromWindow();
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawArc(canvas);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    public void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         float radius = Math.min(w, h) / 2.0f;
         float centerX = w / 2.0f;

@@ -38,7 +38,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class WelcomePresenterImpl @Inject constructor(
-        private val welcomeView: WelcomeView, private val interactor: ActivityInteractor
+    private val welcomeView: WelcomeView, private val interactor: ActivityInteractor
 ) : WelcomePresenter {
 
     private val logger = LoggerFactory.getLogger("login-p")
@@ -65,13 +65,13 @@ class WelcomePresenterImpl @Inject constructor(
     }
 
     override fun startAccountClaim(
-            username: String, password: String, email: String, ignoreEmptyEmail: Boolean
+        username: String, password: String, email: String, ignoreEmptyEmail: Boolean
     ) {
         welcomeView.hideSoftKeyboard()
         if (validateLoginInputs(username, password, email, false)) {
             if (ignoreEmptyEmail.not() && email.isEmpty()) {
                 val proUser =
-                        (interactor.getAppPreferenceInterface().userStatus == USER_STATUS_PREMIUM)
+                    (interactor.getAppPreferenceInterface().userStatus == USER_STATUS_PREMIUM)
                 welcomeView.showNoEmailAttentionFragment(username, password, true, proUser)
                 return
             }
@@ -83,36 +83,36 @@ class WelcomePresenterImpl @Inject constructor(
                 loginMap[NetworkKeyConstants.ADD_EMAIL_KEY] = email
             }
             interactor.getCompositeDisposable().add(interactor.getApiCallManager()
-                    .claimAccount(loginMap)
-                    .doOnSubscribe { welcomeView.updateCurrentProcess("Signing up") }
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :
-                            DisposableSingleObserver<GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>>() {
-                        override fun onError(e: Throwable) {
-                            logger.debug("User SignUp error..." + e.message)
-                            onSignUpFailedWithNoError()
-                        }
+                .claimAccount(loginMap)
+                .doOnSubscribe { welcomeView.updateCurrentProcess("Signing up") }
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :
+                    DisposableSingleObserver<GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>>() {
+                    override fun onError(e: Throwable) {
+                        logger.debug("User SignUp error..." + e.message)
+                        onSignUpFailedWithNoError()
+                    }
 
-                        override fun onSuccess(genericLoginResponse: GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>) {
-                            when (val result =
-                                    genericLoginResponse.callResult<ClaimAccountResponse>()) {
-                                is CallResult.Error -> {
-                                    if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                        onSignUpFailedWithNoError()
-                                    } else {
-                                        logger.info("Account claim Error ${result.errorMessage}")
-                                        onLoginResponseError(result.code, result.errorMessage)
-                                    }
-                                }
-
-                                is CallResult.Success -> {
-                                    logger.info("Account claimed successfully...")
-                                    welcomeView.updateCurrentProcess("SignUp successful...")
-                                    onAccountClaimSuccess(username)
+                    override fun onSuccess(genericLoginResponse: GenericResponseClass<ClaimAccountResponse?, ApiErrorResponse?>) {
+                        when (val result =
+                            genericLoginResponse.callResult<ClaimAccountResponse>()) {
+                            is CallResult.Error -> {
+                                if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                    onSignUpFailedWithNoError()
+                                } else {
+                                    logger.info("Account claim Error ${result.errorMessage}")
+                                    onLoginResponseError(result.code, result.errorMessage)
                                 }
                             }
+
+                            is CallResult.Success -> {
+                                logger.info("Account claimed successfully...")
+                                welcomeView.updateCurrentProcess("SignUp successful...")
+                                onAccountClaimSuccess(username)
+                            }
                         }
-                    })
+                    }
+                })
             )
         }
     }
@@ -121,70 +121,69 @@ class WelcomePresenterImpl @Inject constructor(
         welcomeView.prepareUiForApiCallStart()
         welcomeView.updateCurrentProcess("Signing In")
         interactor.getCompositeDisposable().add(
-                interactor.getApiCallManager().getReg(null)
-                        .flatMap(Function<GenericResponseClass<RegToken?, ApiErrorResponse?>, SingleSource<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>> label@{ regToken: GenericResponseClass<RegToken?, ApiErrorResponse?> ->
-                            when (val result = regToken.callResult<RegToken>()) {
-                                is CallResult.Error -> {
-                                    if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                        throw Exception("Unknown Error")
-                                    } else {
-                                        throw Exception(result.errorMessage)
-                                    }
-                                }
-
-                                is CallResult.Success -> {
-                                    val ghostModeMap = createGhostModeMap(result.data.token)
-                                    return@label interactor.getApiCallManager().signUserIn(ghostModeMap)
-                                }
+            interactor.getApiCallManager().getReg(null)
+                .flatMap(Function<GenericResponseClass<RegToken?, ApiErrorResponse?>, SingleSource<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>> label@{ regToken: GenericResponseClass<RegToken?, ApiErrorResponse?> ->
+                    when (val result = regToken.callResult<RegToken>()) {
+                        is CallResult.Error -> {
+                            if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                throw Exception("Unknown Error")
+                            } else {
+                                throw Exception(result.errorMessage)
                             }
-                        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(object :
-                                DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
-                            override fun onError(e: Throwable) {
+                        }
+
+                        is CallResult.Success -> {
+                            val ghostModeMap = createGhostModeMap(result.data.token)
+                            return@label interactor.getApiCallManager().signUserIn(ghostModeMap)
+                        }
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :
+                    DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
+                    override fun onError(e: Throwable) {
+                        welcomeView.prepareUiForApiCallFinished()
+                        if (e is IOException) {
+                            welcomeView.showError("Unable to reach server. Check your network connection.")
+                        } else {
+                            logger.debug(e.message)
+                            welcomeView.goToSignUp()
+                        }
+                    }
+
+                    override fun onSuccess(
+                        regResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
+                    ) {
+                        when (val result = regResponse.callResult<UserRegistrationResponse>()) {
+                            is CallResult.Error -> {
                                 welcomeView.prepareUiForApiCallFinished()
-                                if (e is IOException) {
-                                    welcomeView.showError("Unable to reach server. Check your network connection.")
-                                } else {
-                                    logger.debug(e.message)
+                                if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                    logger.debug(result.errorMessage)
                                     welcomeView.goToSignUp()
                                 }
                             }
 
-                            override fun onSuccess(
-                                    regResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
-                            ) {
-                                when (val result = regResponse.callResult<UserRegistrationResponse>()) {
-                                    is CallResult.Error -> {
-                                        welcomeView.prepareUiForApiCallFinished()
-                                        if (result.code != NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                            logger.debug(result.errorMessage)
-                                            welcomeView.goToSignUp()
-                                        }
-                                    }
-
-                                    is CallResult.Success -> {
-                                        interactor.getAppPreferenceInterface().sessionHash =
-                                                result.data.sessionAuthHash
-                                        interactor.getFireBaseManager().getFirebaseToken { session ->
-                                            prepareLoginRegistrationDashboard(session)
-                                        }
-                                    }
+                            is CallResult.Success -> {
+                                interactor.getAppPreferenceInterface().sessionHash =
+                                    result.data.sessionAuthHash
+                                interactor.getFireBaseManager().getFirebaseToken { session ->
+                                    prepareLoginRegistrationDashboard(session)
                                 }
                             }
-                        })
+                        }
+                    }
+                })
         )
     }
 
     private fun navigateToHome() {
         try {
-            try {
-                interactor.getWorkManager().onAppStart()
-                interactor.getWorkManager().onAppMovedToForeground()
-                interactor.getWorkManager().updateNodeLatencies()
-                welcomeView.gotoHomeActivity(true)
-            } finally {
-                Data.serviceStorage.encode("is_login", true)
-            }
+            welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_server_credentials))
+            Data.serviceStorage.encode("is_login", true)
+
+            interactor.getWorkManager().onAppStart()
+            interactor.getWorkManager().onAppMovedToForeground()
+            interactor.getWorkManager().updateNodeLatencies()
+            welcomeView.gotoHomeActivity(true)
         } catch (e: Exception) {
             onLoginFailedWithNoError()
         }
@@ -195,27 +194,33 @@ class WelcomePresenterImpl @Inject constructor(
         if (validateLoginInputs(username, password, "", true)) {
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
+            welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_session))
             startBackgroundService(username,
-                    { navigateToHome() },
-                    { if(it){
-                        onLoginResponseError(400, "Wrong key") } else {
-                        onLoginFailedWithNoError() }
-                    })
+                { navigateToHome() },
+                {
+                    if (it) {
+                        onLoginResponseError(404, "Wrong key")
+                    } else {
+                        onLoginFailedWithNoError()
+                    }
+                }, false
+            )
+
         }
     }
 
     override fun startSignUpProcess(
-            username: String,
-            password: String,
-            email: String,
-            referralUsername: String,
-            ignoreEmptyEmail: Boolean
+        username: String,
+        password: String,
+        email: String,
+        referralUsername: String,
+        ignoreEmptyEmail: Boolean
     ) {
         welcomeView.hideSoftKeyboard()
         if (validateLoginInputs(username, password, email, false)) {
             if (!ignoreEmptyEmail && email.isEmpty()) {
                 welcomeView.showNoEmailAttentionFragment(
-                        username, password, accountClaim = false, pro = false
+                    username, password, accountClaim = false, pro = false
                 )
                 return
             }
@@ -229,42 +234,42 @@ class WelcomePresenterImpl @Inject constructor(
                 registrationMap[NetworkKeyConstants.REFERRING_USERNAME] = referralUsername
             }
             interactor.getCompositeDisposable().add(interactor.getApiCallManager()
-                    .signUserIn(registrationMap)
-                    .doOnSubscribe { welcomeView.updateCurrentProcess("Signing up") }
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(object :
-                            DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
-                        override fun onError(e: Throwable) {
-                            logger.debug("User SignUp error..." + e.message)
-                            onSignUpFailedWithNoError()
-                        }
+                .signUserIn(registrationMap)
+                .doOnSubscribe { welcomeView.updateCurrentProcess("Signing up") }
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object :
+                    DisposableSingleObserver<GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>>() {
+                    override fun onError(e: Throwable) {
+                        logger.debug("User SignUp error..." + e.message)
+                        onSignUpFailedWithNoError()
+                    }
 
-                        override fun onSuccess(
-                                genericLoginResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
-                        ) {
-                            when (val result =
-                                    genericLoginResponse.callResult<UserRegistrationResponse>()) {
-                                is CallResult.Error -> {
-                                    logger.info("SignUp...$result")
-                                    if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
-                                        onSignUpFailedWithNoError()
-                                    } else {
-                                        onLoginResponseError(result.code, result.errorMessage)
-                                    }
+                    override fun onSuccess(
+                        genericLoginResponse: GenericResponseClass<UserRegistrationResponse?, ApiErrorResponse?>
+                    ) {
+                        when (val result =
+                            genericLoginResponse.callResult<UserRegistrationResponse>()) {
+                            is CallResult.Error -> {
+                                logger.info("SignUp...$result")
+                                if (result.code == NetworkErrorCodes.ERROR_UNEXPECTED_API_DATA) {
+                                    onSignUpFailedWithNoError()
+                                } else {
+                                    onLoginResponseError(result.code, result.errorMessage)
                                 }
+                            }
 
-                                is CallResult.Success -> {
-                                    logger.info("Sign up user successfully...")
-                                    welcomeView.updateCurrentProcess("SignUp successful...")
-                                    interactor.getAppPreferenceInterface().sessionHash =
-                                            result.data.sessionAuthHash
-                                    interactor.getFireBaseManager().getFirebaseToken { session ->
-                                        prepareLoginRegistrationDashboard(session)
-                                    }
+                            is CallResult.Success -> {
+                                logger.info("Sign up user successfully...")
+                                welcomeView.updateCurrentProcess("SignUp successful...")
+                                interactor.getAppPreferenceInterface().sessionHash =
+                                    result.data.sessionAuthHash
+                                interactor.getFireBaseManager().getFirebaseToken { session ->
+                                    prepareLoginRegistrationDashboard(session)
                                 }
                             }
                         }
-                    })
+                    }
+                })
             )
         }
     }
@@ -277,27 +282,27 @@ class WelcomePresenterImpl @Inject constructor(
     private fun onAccountClaimSuccess(username: String) {
         welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_session))
         interactor.getCompositeDisposable().add(
-                interactor.getApiCallManager().getSessionGeneric(null)
-                        .flatMapCompletable { sessionResponse: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?> ->
-                            Completable.fromSingle(Single.fromCallable {
-                                interactor.getUserRepository().reload(sessionResponse.dataClass, null)
-                                true
-                            })
-                        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(object : DisposableCompletableObserver() {
-                            override fun onComplete() {
-                                welcomeView.gotoHomeActivity(true)
-                            }
+            interactor.getApiCallManager().getSessionGeneric(null)
+                .flatMapCompletable { sessionResponse: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?> ->
+                    Completable.fromSingle(Single.fromCallable {
+                        interactor.getUserRepository().reload(sessionResponse.dataClass, null)
+                        true
+                    })
+                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                        welcomeView.gotoHomeActivity(true)
+                    }
 
-                            override fun onError(e: Throwable) {
-                                welcomeView.prepareUiForApiCallFinished()
-                                welcomeView.showError("Unable to auto login. Log in using new credentials.")
-                                logger.debug(
-                                        "Error getting session"
-                                                + WindError.instance.convertThrowableToString(e)
-                                )
-                            }
-                        })
+                    override fun onError(e: Throwable) {
+                        welcomeView.prepareUiForApiCallFinished()
+                        welcomeView.showError("Unable to auto login. Log in using new credentials.")
+                        logger.debug(
+                            "Error getting session"
+                                    + WindError.instance.convertThrowableToString(e)
+                        )
+                    }
+                })
         )
     }
 
@@ -338,62 +343,62 @@ class WelcomePresenterImpl @Inject constructor(
     private fun prepareLoginRegistrationDashboard(sessionMap: Map<String, String>) {
         welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_session))
         interactor.getCompositeDisposable()
-                .add(interactor.getApiCallManager().getSessionGeneric(sessionMap)
-                        .flatMapCompletable { sessionResponse: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?> ->
-                            Completable.fromSingle(Single.fromCallable {
-                                when (val result = sessionResponse.callResult<UserSessionResponse>()) {
-                                    is CallResult.Error -> {}
-                                    is CallResult.Success -> {
-                                        if (interactor.getAppPreferenceInterface()
-                                                        .getDeviceUUID(result.data.userName) == null
-                                        ) {
-                                            logger.debug("No device id is found for the current user, generating and saving UUID")
-                                            interactor.getAppPreferenceInterface().setDeviceUUID(
-                                                    result.data.userName, UUID.randomUUID().toString()
-                                            )
-                                        }
-                                    }
+            .add(interactor.getApiCallManager().getSessionGeneric(sessionMap)
+                .flatMapCompletable { sessionResponse: GenericResponseClass<UserSessionResponse?, ApiErrorResponse?> ->
+                    Completable.fromSingle(Single.fromCallable {
+                        when (val result = sessionResponse.callResult<UserSessionResponse>()) {
+                            is CallResult.Error -> {}
+                            is CallResult.Success -> {
+                                if (interactor.getAppPreferenceInterface()
+                                        .getDeviceUUID(result.data.userName) == null
+                                ) {
+                                    logger.debug("No device id is found for the current user, generating and saving UUID")
+                                    interactor.getAppPreferenceInterface().setDeviceUUID(
+                                        result.data.userName, UUID.randomUUID().toString()
+                                    )
                                 }
-                                interactor.getUserRepository().reload(sessionResponse.dataClass, null)
-                                true
-                            })
-                        }.andThen(updateStaticIps())
-                        .doOnComplete { welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_server_credentials)) }
-                        .andThen(interactor.getConnectionDataUpdater().update())
-                        .doOnComplete { welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_server_list)) }
-                        .andThen(interactor.getServerListUpdater().update())
-                        .andThen(Completable.fromAction {
-                            interactor.getPreferenceChangeObserver().postCityServerChange()
-                        }).andThen(interactor.updateUserData()).onErrorResumeNext { throwable: Throwable ->
-                            logger.info(
-                                    "*****Preparing dashboard failed: ${
-                                        WindError.instance.rxErrorToString(
-                                                throwable as Exception
-                                        )
-                                    } Use reload button in server list in home activity."
+                            }
+                        }
+                        interactor.getUserRepository().reload(sessionResponse.dataClass, null)
+                        true
+                    })
+                }.andThen(updateStaticIps())
+                .doOnComplete { welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_server_credentials)) }
+                .andThen(interactor.getConnectionDataUpdater().update())
+                .doOnComplete { welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_server_list)) }
+                .andThen(interactor.getServerListUpdater().update())
+                .andThen(Completable.fromAction {
+                    interactor.getPreferenceChangeObserver().postCityServerChange()
+                }).andThen(interactor.updateUserData()).onErrorResumeNext { throwable: Throwable ->
+                    logger.info(
+                        "*****Preparing dashboard failed: ${
+                            WindError.instance.rxErrorToString(
+                                throwable as Exception
                             )
-                            Completable.fromAction {
-                                interactor.getPreferenceChangeObserver().postCityServerChange()
-                            }.andThen(interactor.updateUserData())
-                        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(object : DisposableCompletableObserver() {
-                            override fun onComplete() {
-                                interactor.getWorkManager().onAppStart()
-                                interactor.getWorkManager().onAppMovedToForeground()
-                                interactor.getWorkManager().updateNodeLatencies()
-                                welcomeView.gotoHomeActivity(true)
-                            }
+                        } Use reload button in server list in home activity."
+                    )
+                    Completable.fromAction {
+                        interactor.getPreferenceChangeObserver().postCityServerChange()
+                    }.andThen(interactor.updateUserData())
+                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                        interactor.getWorkManager().onAppStart()
+                        interactor.getWorkManager().onAppMovedToForeground()
+                        interactor.getWorkManager().updateNodeLatencies()
+                        welcomeView.gotoHomeActivity(true)
+                    }
 
-                            override fun onError(e: Throwable) {
-                                welcomeView.prepareUiForApiCallFinished()
-                                logger.debug(
-                                        "Error while updating server status to local db. StackTrace: " + WindError.instance.convertThrowableToString(
-                                                e
-                                        )
-                                )
-                            }
-                        })
-                )
+                    override fun onError(e: Throwable) {
+                        welcomeView.prepareUiForApiCallFinished()
+                        logger.debug(
+                            "Error while updating server status to local db. StackTrace: " + WindError.instance.convertThrowableToString(
+                                e
+                            )
+                        )
+                    }
+                })
+            )
     }
 
     private fun updateStaticIps(): Completable {
@@ -406,8 +411,8 @@ class WelcomePresenterImpl @Inject constructor(
     }
 
     private fun validateLoginInputs(
-            username: String, password: String, email: String,
-            isLogin: Boolean
+        username: String, password: String, email: String,
+        isLogin: Boolean
     ): Boolean {
         logger.info("Validating login credentials")
         welcomeView.clearInputErrors()

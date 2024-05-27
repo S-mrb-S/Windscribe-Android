@@ -1,5 +1,6 @@
 package sp.windscribe.mobile.sp.util.list
 
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import okhttp3.internal.toImmutableList
@@ -64,7 +65,7 @@ class ListCreator(var data: GetServersQuery.Data) {
 
     // better
     private fun crGCList(): List<Server> {
-        return when (Data.defaultItemDialog) {
+        when (Data.defaultItemDialog) {
             0 -> { // v2ray
                 var numChild = 1
                 var numGroup = 1
@@ -85,11 +86,12 @@ class ListCreator(var data: GetServersQuery.Data) {
                         val currentFlag = servers.firstOrNull()?.flag.toString()
 
                         for (server in currentData) {
+                            Log.d("IM M", server.url.toString())
                             childServer.add(
                                     Group(
                                             numChild,
                                             server.name.toString(),
-                                            "vpn",
+                                            "v2ray", // don't change this
                                             0,
                                             "44.46,-63.61",
                                             "America/Halifax",
@@ -144,8 +146,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                     }
                 }
 
-                // return
-                gHead.toImmutableList()
+                 return gHead.toImmutableList()
             }
 
             1 -> { // openvpn
@@ -168,14 +169,16 @@ class ListCreator(var data: GetServersQuery.Data) {
                         val currentFlag = servers.firstOrNull()?.flag.toString()
 
                         for (server in currentData) {
+                            Log.d("IM M 2", server.url.toString())
                                 val configContent = fetchOvpnConfig(server.url.toString())
 
                                 configContent?.let {
+                                    Log.d("IM M 22", it.toString())
                                     childServer.add(
                                             Group(
                                                     numChild,
                                                     server.name.toString(),
-                                                    "vpn",
+                                                    "openvpn", // don't change this
                                                     0,
                                                     "44.46,-63.61",
                                                     "America/Halifax",
@@ -208,6 +211,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                                     )
                                 } ?: run {
                                     // no content
+                                    Log.d("IM M 22.", " no content ??")
                                 }
                             ++numChild
                         }
@@ -233,8 +237,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                     }
                 }
 
-                // return
-                gHead.toImmutableList()
+                 return gHead.toImmutableList()
             }
 
             else -> { // cisco (2)
@@ -257,11 +260,13 @@ class ListCreator(var data: GetServersQuery.Data) {
                         val currentFlag = servers.firstOrNull()?.flag.toString()
 
                         for (server in currentData) {
+                            Log.d("IM M", server.url.toString())
+
                             childServer.add(
                                     Group(
                                             numChild,
                                             server.name.toString(),
-                                            "vpn",
+                                            "cisco", // don't change this
                                             0,
                                             "44.46,-63.61",
                                             "America/Halifax",
@@ -316,8 +321,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                     }
                 }
 
-                // return
-                gHead.toImmutableList()
+                 return gHead.toImmutableList()
             }
         }
     }

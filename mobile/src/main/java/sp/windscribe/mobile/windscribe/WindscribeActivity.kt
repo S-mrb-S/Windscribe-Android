@@ -58,12 +58,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import de.blinkt.openvpn.OpenVpnApi
-import de.blinkt.openvpn.core.VpnStatus
-import dev.dev7.lib.v2ray.V2rayController
-import dev.dev7.lib.v2ray.utils.V2rayConstants.CONNECTION_STATES
-import dev.dev7.lib.v2ray.utils.V2rayConstants.SERVICE_CONNECTION_STATE_BROADCAST_EXTRA
-import dev.dev7.lib.v2ray.utils.V2rayConstants.V2RAY_SERVICE_STATICS_BROADCAST_INTENT
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -107,8 +104,10 @@ import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.sp.util.list.mgToGb
 import sp.windscribe.mobile.sp.util.startBackgroundService
+import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
+import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.commonutils.ThemeUtils
 import sp.windscribe.vpn.commonutils.WindUtilities
@@ -422,8 +421,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override var networkLayoutState = NetworkLayoutState.CLOSED
         private set
 
-    private var v2rayBroadCastReceiver: BroadcastReceiver? = null
-
     override var winContext: Context? = null
     override var winActivity: WindscribeActivity? = null
 
@@ -437,79 +434,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
         winContext = this.applicationContext
         winActivity = this
-        // v2ray
-        V2rayController.init(this, R.drawable.ic_logo, "Windscribe")
-        // state
-        when (V2rayController.getConnectionState()) {
-            CONNECTION_STATES.CONNECTED -> {
-                presenter.startVpnUi()
-            }
 
-            CONNECTION_STATES.DISCONNECTED -> {
-                presenter.stopVpnUi()
-            }
-
-            CONNECTION_STATES.CONNECTING -> {
-                presenter.connectionVpnUi()
-            }
-
-            else -> {}
-        }
-        v2rayBroadCastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                runOnUiThread {
-//                    connection_time.setText(
-//                        "connection time : " + Objects.requireNonNull(intent.extras)
-//                            .getString(SERVICE_DURATION_BROADCAST_EXTRA)
-//                    )
-//                    connection_speed.setText(
-//                        "connection speed : " + intent.extras!!
-//                            .getString(SERVICE_UPLOAD_SPEED_BROADCAST_EXTRA) + " | " + intent.extras!!
-//                            .getString(SERVICE_DOWNLOAD_SPEED_BROADCAST_EXTRA)
-//                    )
-//                    connection_traffic.setText(
-//                        "connection traffic : " + intent.extras!!
-//                            .getString(SERVICE_UPLOAD_TRAFFIC_BROADCAST_EXTRA) + " | " + intent.extras!!
-//                            .getString(SERVICE_DOWNLOAD_TRAFFIC_BROADCAST_EXTRA)
-//                    )
-//                    connection_mode.setText("connection mode : " + V2rayConfigs.serviceMode.toString())
-                    when (Objects.requireNonNull(
-                            intent.extras!!
-                                    .getSerializable(SERVICE_CONNECTION_STATE_BROADCAST_EXTRA)
-                    )) {
-                        CONNECTION_STATES.CONNECTED -> {
-                            presenter.startVpnUi()
-                        }
-
-                        CONNECTION_STATES.DISCONNECTED -> {
-                            presenter.stopVpnUi()
-                        }
-
-                        CONNECTION_STATES.CONNECTING -> {
-                            presenter.connectionVpnUi()
-                        }
-
-                        else -> {}
-                    }
-                }
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT), RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(v2rayBroadCastReceiver, IntentFilter(V2RAY_SERVICE_STATICS_BROADCAST_INTENT))
-        }
-
-        // openvpn
-        isServiceRunning
-        VpnStatus.initLogCache(this.cacheDir)
-
-        // Set broadcast for OpenVpn
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
-
-        // other ..
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -559,35 +484,34 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    private val isServiceRunning: Unit
-        /**
-         * Get service status
-         */
-        get() {
-            manageOpenVPNState(de.blinkt.openvpn.core.OpenVPNService.getStatus())
-        }
+    override fun OpenVpnStatus(str: String?, err: Boolean?, errmsg: String?) {
+        super.OpenVpnStatus(str, err, errmsg)
+        manageOpenVPNState(str)
+    }
 
-    /**
-     * Receive broadcast message (openVPN)
-     */
-    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            manageOpenVPNState(intent.getStringExtra("state"))
-//            try {
-//                var duration = intent.getStringExtra("duration")
-//                var lastPacketReceive = intent.getStringExtra("lastPacketReceive")
-//                var byteIn = intent.getStringExtra("byteIn")
-//                var byteOut = intent.getStringExtra("byteOut")
-//                if (duration == null) duration = "00:00:00"
-//                if (lastPacketReceive == null) lastPacketReceive = "0"
-//                if (byteIn == null) byteIn = " "
-//                if (byteOut == null) byteOut = " "
-//                updateConnectionStatus(duration, lastPacketReceive, byteIn, byteOut)
-//
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
+    override fun StopV2ray() {
+        V2rayStop()
+    }
+
+    override fun StartV2ray(server: String) {
+        presenter.connectionVpnUi()
+        V2rayFabClick(server)
+    }
+
+    override fun setTestStateLayout(content: String) {
+        super.setTestStateLayout(content)
+
+        showToast("v2ray: " + content)
+    }
+    override fun stateV2rayVpn(isRunning: Boolean) {
+        if(isRunning){
+            presenter.startVpnUi()
+
+            layoutTestClick()
+        }else{
+            presenter.stopVpnUi()
         }
+        super.stateV2rayVpn(isRunning)
     }
 
     // cisco
@@ -618,40 +542,17 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    /**
-     * this is Cisco
-     */
+    override fun ConnectToCisco(url: String) {
+        CiscoFabClick(url)
+    }
 
-    override fun ConnectToCisco(url: String?) {
-        if (winCiscoState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-            try {
-                if (url != null) {
-                    val res: Boolean = CiscoCreateProfileWithHostName(url)
-
-                    if (!res) {
-                        Toast.makeText(this, "مشکلی در ساخت پروفایل پیش امد!", Toast.LENGTH_SHORT)
-                                .show()
-                        StopCisco()
-                    } else {
-                        CiscoStartVPNWithProfile()
-                        presenter.connectionVpnUi()
-                    }
-
-                }
-            } catch (e: RemoteException) {
-                Log.d("CISCO", "BUG: $e")
-                showToast("وصل نشد!")
-                StopCisco()
-            }
-
-        } else {
-            StopCisco()
-        }
+    override fun StopOpenVPN() {
+        OpenVpnStopVpn()
     }
 
     override fun StopCisco() {
         try {
-            CiscoStopForceVPN()
+            CiscoStopVPN()
         } catch (e: Exception) {
             showToast("مشکلی در قطع اتصال سیسکو پیش امد!")
         }
@@ -659,50 +560,28 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onStart() {
         super.onStart()
-        if (presenter.userHasAccess()) {
-            presenter.onStart()
-            if (intent != null && intent.action != null && (intent.action == NotificationConstants.DISCONNECT_VPN_INTENT)) {
-                logger.info("Disconnect intent received...")
-                presenter.onDisconnectIntentReceived()
-            }
-            deviceStateManager.addListener(this)
-        } else {
-            presenter.logoutFromCurrentSession()
-        }
+//        if (presenter.userHasAccess()) {
+//            presenter.onStart()
+//            if (intent != null && intent.action != null && (intent.action == NotificationConstants.DISCONNECT_VPN_INTENT)) {
+//                logger.info("Disconnect intent received...")
+//                presenter.onDisconnectIntentReceived()
+//            }
+//            deviceStateManager.addListener(this)
+//        } else {
+//            presenter.logoutFromCurrentSession()
+//        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                OpenConnectManagementThread.STATE_CONNECTED -> {
-                    //Permission granted, start the VPN
-                    try {
-                        OpenVpnApi.startVpn(this.applicationContext,
-                                MmkvManager.getSettingsStorage().getString("ovpn", ""), "Japan",
-                                Data.serviceStorage.getString(
-                                        "username_ovpn",
-                                        ""
-                                ),
-                                Data.serviceStorage.getString(
-                                        "password_ovpn",
-                                        ""
-                                ))
-                    } catch (e: Exception) {
-                        showToast("[5] Failed")
-                    }
-                }
-
-                FILE_PICK_REQUEST -> { // no effect
-                    if (data != null) {
-                        presenter.loadConfigFile(data)
-                    }
-                }
-            }
-        } else {
-            showToast("دسترسی رد شد !! ")
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun StartOpenVPN(ovpnX509: String) {
+        OpenVpnFabClick(ovpnX509,
+            Data.serviceStorage.getString(
+                "username_ovpn",
+                ""
+            ),
+            Data.serviceStorage.getString(
+                "password_ovpn",
+                ""
+            ))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -722,22 +601,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             presenter.checkPendingAccountUpgrades()
 
             fixResume = true
-            try{
-                startBackgroundService(Data.serviceStorage.decodeString("key_login", "").toString(),
-                        {
-                            // نمایش سرور ها در اینجا
-                            if (StaticData.data != null) {
-                                onReloadClick()
-                            }else{
-                                showToast("Servers doesn't loaded")
-                            }
-                        },
-                        {
-                            showToast("Servers doesn't loaded")
-                        })
-            }catch (e: Exception){
-                showToast("Err when start service")
-                logger.info("Err onResume: " + e.toString())
+            onReloadClick()
+        }
+
+        if (fixResume) {
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(3000)
+                startBackgroundService(Data.serviceStorage.decodeString("key_login", null).toString(), {}, {}, true)
             }
         }
     }
@@ -754,9 +624,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
         presenter.onDestroy()
         super.onDestroy()
-        if (v2rayBroadCastReceiver != null) {
-            unregisterReceiver(v2rayBroadCastReceiver)
-        }
     }
 
     fun adjustToolBarHeight(adjustBy: Int) {
@@ -969,7 +836,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onRefreshPingsForAllServers() {
         cancelRefreshing(0)
-        presenter.onRefreshPingsForAllServers()
+//        presenter.onRefreshPingsForAllServers()
     }
 
     override fun onRefreshPingsForConfigServers() {
@@ -1083,7 +950,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         val pickIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         pickIntent.type = "*/*"
         if (pickIntent.resolveActivity(packageManager) != null) {
-            startActivityForResult(pickIntent, FILE_PICK_REQUEST)
+//            startActivityForResult(pickIntent, FILE_PICK_REQUEST)
         } else {
             Toast.makeText(this, "Unable to access shared storage.", Toast.LENGTH_SHORT).show()
         }
@@ -1867,7 +1734,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun showToast(toastMessage: String) {
-        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
+        Data.static.showToast(toastMessage)
     }
 
     override fun startVpnConnectedAnimation(state: ConnectedAnimationState) {
@@ -2158,7 +2025,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     private fun setServerListView(reload: Boolean) {
-        Toast.makeText(this, "Set list", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Set list", Toast.LENGTH_SHORT).show()
         val pagerAdapter = ServerListFragmentPager(
                 supportFragmentManager, serverListFragments
         )
@@ -2258,23 +2125,25 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                             Data.settingsStorage.putInt("default_connection_type", which)
                             Data.defaultItemDialog = which // 0 --> V2ray, 1 --> OpenVpn, 2 --> cisco
                             GlobalScope.launch {
-                                try {
                                     this@WindscribeActivity.exitSearchLayout()
-                                    presenter.stopAll() // stop all vpn
 
-                                    saveDataAndFinish(StaticData.data, {}, {}) // set new protocol
-                                } finally {
-                                    activityScope { presenter.observeAllLocations() } // read new data
-                                    delay(200)
-                                    activityScope { this@WindscribeActivity.onReloadClick() } // set new data
-                                    delay(200)
-                                    onRefreshPingsForAllServers() // refresh list
-                                    delay(200)
-                                    presenter.onHotStart() // reload current selected city
-//                                    this@WindscribeActivity.runOnUiThread {
-//                                        this@WindscribeActivity.recreate()
-//                                    }
-                                }
+                                    saveDataAndFinish(StaticData.data, {
+                                        try{
+                                            // save new to localdatabse
+                                            activityScope { presenter.observeAllLocations() }
+                                        }finally {
+                                            launch {
+                                                delay(200)
+                                                onReloadClick() // save 2
+                                                Data.static.MainApplicationExecuter({
+                                                    // refresh ui
+                                                    setServerListView(false)
+                                                    activityScope { presenter.observerSelectedLocation() }
+                                                    activityScope { presenter.observeLatency() }
+                                                }, Data.static.mainApplication)
+                                            }
+                                        }
+                                    }, {}) // set new protocol
                             }
                         }
                     } finally {

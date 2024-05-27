@@ -9,31 +9,46 @@ import sp.windscribe.mobile.sp.util.api.updateService
 
 // all get data here
 fun startBackgroundService(
+    licence: String,
+    navigateTo: () -> Unit,
+    failTo: (wrongKey: Boolean) -> Unit) {
+    startBackgroundService(licence,
+        { navigateTo() },
+        { failTo(it)
+        }, false)
+}
+
+fun startBackgroundService(
         licence: String,
         navigateTo: () -> Unit,
-        failTo: (wrongKey: Boolean) -> Unit) {
+        failTo: (wrongKey: Boolean) -> Unit,
+        justUpdateService: Boolean) {
     CoroutineScope(Dispatchers.Default).launch {
         try {
             updateService(licence,
                     {
-                        launch {
-                            getAllServers(licence,
+                        if(!justUpdateService) {
+                            launch {
+                                getAllServers(licence,
                                     {
                                         launch {
                                             saveDataAndFinish(it,
-                                                    {
-                                                        navigateTo()
-                                                    },
-                                                    {
-                                                        failTo(false)
-                                                    }
+                                                {
+                                                    navigateTo()
+                                                },
+                                                {
+                                                    failTo(false)
+                                                }
                                             )
                                         }
                                     },
                                     {
                                         failTo(false)
                                     }
-                            )
+                                )
+                            }
+                        }else{
+                            navigateTo()
                         }
                     },
                     {

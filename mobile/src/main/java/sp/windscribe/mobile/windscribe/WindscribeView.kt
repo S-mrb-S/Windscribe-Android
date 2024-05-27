@@ -29,8 +29,12 @@ interface WindscribeView {
     var winContext: Context?
     var winOpenVpnState: String?
     var winCiscoState: Int?
-    fun ConnectToCisco(url: String?)
+    fun ConnectToCisco(url: String)
     fun StopCisco()
+    fun StopV2ray()
+    fun StopOpenVPN()
+    fun StartV2ray(server: String)
+    fun StartOpenVPN(ovpnX509: String)
     fun gotoLoginRegistrationActivity()
     fun handleRateView()
     fun hideProgressView()

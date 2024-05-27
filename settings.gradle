@@ -2,3 +2,9 @@
 // include ':strongswan'
 include ':base'
 include ':mobile'
+includeBuild("../vpn-module/vpn-module") {
+    name = ":vpn-core"
+    dependencySubstitution {
+        substitute module("sp.vpn:module") using project(":core")
+    }
+}

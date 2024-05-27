@@ -14,11 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.CharStreams
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
-import dev.dev7.lib.v2ray.V2rayController
-import dev.dev7.lib.v2ray.utils.V2rayConstants
 import inet.ipaddr.AddressStringException
 import inet.ipaddr.IPAddressString
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -66,6 +65,7 @@ import sp.windscribe.vpn.backend.openvpn.OpenVPNConfigParser
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 import sp.windscribe.vpn.backend.utils.ProtocolConfig
 import sp.windscribe.vpn.backend.utils.SelectedLocationType
+import sp.windscribe.vpn.commonutils.Ext.result
 import sp.windscribe.vpn.commonutils.FlagIconResource
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.NetworkKeyConstants
@@ -445,7 +445,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     private fun loadServerList(regions: MutableList<RegionAndCities>) {
         logger.info("Loading server list from disk.")
-        windscribeView.showToast("geter")
+//        windscribeView.showToast("geter")
         windscribeView.showRecyclerViewProgressBar()
         val serverListData = ServerListData()
         val oneTimeCompositeDisposable = CompositeDisposable()
@@ -708,15 +708,15 @@ class WindscribePresenterImpl @Inject constructor(
         windscribeView.exitSearchLayout()
         logger.debug("User clicked on city.")
         stopAll()
-        selectedLocation?.cityId?.let {
-            if (it == cityId && (interactor.getVpnConnectionStateManager()
-                            .isVPNActive() || connectingFromServerList)
-            ) { // no effect
-                return@let
-            }
+//        selectedLocation?.cityId?.let {
+//            if (it == cityId && (interactor.getVpnConnectionStateManager()
+//                            .isVPNActive() || connectingFromServerList)
+//            ) { // no effect
+//                return@let
+//            }
             connectingFromServerList = true
             connectToCity(cityId)
-        }
+//        }
     }
 
     override fun onConfigFileClicked(configFile: ConfigFile) {
@@ -737,8 +737,6 @@ class WindscribePresenterImpl @Inject constructor(
     override fun onConnectClicked() {
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
 
-        stopAll()
-
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
             is ConnectingState -> {
@@ -753,9 +751,9 @@ class WindscribePresenterImpl @Inject constructor(
             is ConnectingAnimationState -> {}
             is FailedProtocol -> {
                 logger.debug("Stopping protocol switch service.")
-                interactor.getMainScope().launch {
-                    interactor.getVPNController().disconnectAsync()
-                }
+//                interactor.getMainScope().launch {
+//                    interactor.getVPNController().disconnectAsync()
+//                }
             }
 
             is UnsecuredProtocol -> {
@@ -823,7 +821,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     override fun onHotStart() {
         // setConnectionLayout();
-        checkLoginStatus()
+//        checkLoginStatus()
 
         // Update Notification count
         updateNotificationCount()
@@ -1223,10 +1221,10 @@ class WindscribePresenterImpl @Inject constructor(
             logger.debug("Changing UI state to Disconnected")
             selectedLocation?.let {
                 windscribeView.clearConnectingAnimation() //
-                if (it.nickName == "v2ray") {
-                    V2rayController.stopV2ray(Data.static.mainApplication) // TODO()
-//                    return
-                }
+//                if (it.nickName == "v2ray") {
+//                    windscribeView.StopV2ray() TODO()
+////                    return
+//                }
                 windscribeView.setupLayoutDisconnected(
                         DisconnectedState(
                                 it, connectionOptions, appContext
@@ -1688,66 +1686,19 @@ class WindscribePresenterImpl @Inject constructor(
         interactor.getVpnConnectionStateManager().setState(VPNState(status = VPNState.Status.Connecting))
     }
 
-    /**
-     * Stop vpn
-     * OpenVPN, by MRB
-     */
-    private fun stopVpn() {
-        OpenVPNThread.stop()
-    }
-
-    /**
-     * Prepare for vpn connect with required permission Sp
-     */
-    private fun prepareVpn(ovpnX509: String) {
-        try {
-            stopAll() // require
-            // Checking permission for network monitor Sp
-            val intent = VpnService.prepare(windscribeView.winContext)
-            if (intent != null) {
-                MmkvManager.getSettingsStorage().putString("ovpn", ovpnX509)
-                windscribeView.winActivity?.startActivityForResult(intent, OpenConnectManagementThread.STATE_CONNECTED)
-            } else startOpenVPN(ovpnX509) //have already permission Sp
-        } catch (e: Exception) {
-            catchVpn()
-        }
-    }
-
     private fun catchVpn() {
         windscribeView.showToast("Error!")
         stopAll()
     }
 
-    private fun startOpenVPN(ovpnX509: String) {
-        try {
-            Log.d("OO P", "SS 2")
-            OpenVpnApi.startVpn(windscribeView.winContext, ovpnX509, "Japan",
-                    Data.serviceStorage.getString(
-                            "username_ovpn",
-                            ""
-                    ),
-                    Data.serviceStorage.getString(
-                            "password_ovpn",
-                            ""
-                    ))
-        } catch (e: Exception) {
-            catchVpn()
-        }
-    }
-
-
     override fun stopAll() {
         try {
-            if (V2rayController.getConnectionState() != V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-                V2rayController.stopV2ray(Data.static.mainApplication)
-            }
-            if (windscribeView.winOpenVpnState != "DISCONNECTED") {
-                stopVpn()
-            }
-            if (windscribeView.winCiscoState != OpenConnectManagementThread.STATE_DISCONNECTED) {
-                windscribeView.StopCisco()
-            }
-        } catch (ignore: Exception) {
+            windscribeView.StopV2ray()
+            windscribeView.StopOpenVPN()
+            windscribeView.StopCisco()
+        } catch (e: Exception) {
+//            windscribeView.showToast("[A0] E")
+            logger.debug("eeeee: $e")
         }
     }
 
@@ -1795,25 +1746,25 @@ class WindscribePresenterImpl @Inject constructor(
                                     if (cityAndRegion.city.ovpnX509 != null) {
                                         when (cityAndRegion.city.nickName) {
                                             "v2ray" -> {
-                                                interactor.getMainScope().launch {
-                                                    if (V2rayController.getConnectionState() == V2rayConstants.CONNECTION_STATES.DISCONNECTED) {
-                                                        V2rayController.startV2ray(windscribeView.winActivity, "Test Server", cityAndRegion.city.ovpnX509, null)
-                                                    } else {
-                                                        V2rayController.stopV2ray(Data.static.mainApplication)
-                                                    }
-                                                }
+                                                Data.static.MainApplicationExecuter({
+                                                    windscribeView.StartV2ray(cityAndRegion.city.ovpnX509)
+                                                }, Data.static.mainApplication)
                                             }
 
                                             "openvpn" -> {
-                                                interactor.getMainScope().launch {
-                                                    prepareVpn(cityAndRegion.city.ovpnX509.toString())
-                                                }
+                                                Data.static.MainApplicationExecuter({
+                                                    windscribeView.StartOpenVPN(cityAndRegion.city.ovpnX509.toString())
+                                                }, Data.static.mainApplication)
                                             }
 
                                             "cisco" -> {
-                                                interactor.getMainScope().launch {
+                                                Data.static.MainApplicationExecuter({
                                                     windscribeView.ConnectToCisco(cityAndRegion.city.ovpnX509.toString())
-                                                }
+                                                }, Data.static.mainApplication)
+                                            }
+
+                                            else -> {
+                                                logger.debug("something is wrong")
                                             }
                                         }
                                     } else {
@@ -2221,11 +2172,12 @@ class WindscribePresenterImpl @Inject constructor(
     var disconnectJob: Job? = null
     private fun stopVpnFromUI() {
         logger.debug("Disconnecting using connect button.")
+        stopAll()
         disconnectJob = interactor.getMainScope().launch {
             interactor.getAppPreferenceInterface().whitelistOverride = false
             interactor.getAppPreferenceInterface().globalUserConnectionPreference = false
             interactor.getAppPreferenceInterface().isReconnecting = false
-            interactor.getVPNController().disconnectAsync()
+//            interactor.getVPNController().disconnectAsync()
         }
     }
 

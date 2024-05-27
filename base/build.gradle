@@ -20,7 +20,7 @@ android {
 
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
-       fdroid {
+       sp {
            main.jniLibs.srcDirs = ['/frdroid/src/libs', 'libs']
        }
     }
@@ -61,7 +61,7 @@ android {
 
     flavorDimensions = ["dim"]
     productFlavors {
-        fdroid {
+        sp {
             dimension "dim"
         }
     }
@@ -83,6 +83,7 @@ android {
 }
 
 dependencies {
+    api "sp.vpn:module"
     //Android
     api "androidx.appcompat:appcompat:$appCompat"
     // storngswan

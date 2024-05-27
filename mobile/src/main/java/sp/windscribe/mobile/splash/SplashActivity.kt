@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
+import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.sp.Data
@@ -35,7 +36,12 @@ class SplashActivity : AppCompatActivity() {
         logger.info("OnCreate: Splash Activity")
 
         if (Data.serviceStorage.decodeBool("is_login", false)) {
-            navigateToHome()
+            startBackgroundService(Data.serviceStorage.decodeString("key_login", null).toString(),
+                { navigateToHome() },
+                { if(it){
+                    failGetServers(true) } else {
+                    failGetServers(false) }
+                }, false)
         } else {
             this.navigateToLogin()
         }
@@ -50,6 +56,27 @@ class SplashActivity : AppCompatActivity() {
         }
         startActivity(homeIntent)
         finish()
+    }
+
+    private fun failGetServers(w: Boolean) {
+        runOnUiThread {
+            if(w){
+                Toast.makeText(
+                    this@SplashActivity,
+                    "ورود موفق امیز نبود! لطفا دوباره وارد شوید",
+                    Toast.LENGTH_LONG
+                ).show()
+                Data.serviceStorage.encode("is_login", false)
+                navigateToLogin()
+            }else{
+                Toast.makeText(
+                    this@SplashActivity,
+                    "دریافت اطلاعات موفق امیز نبود! اینترنت خود را بررسی کنید",
+                    Toast.LENGTH_LONG
+                ).show()
+                navigateToHome()
+            }
+        }
     }
 
     private fun navigateToLogin() {
