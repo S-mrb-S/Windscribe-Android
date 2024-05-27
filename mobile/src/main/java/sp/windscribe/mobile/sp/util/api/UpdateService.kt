@@ -34,7 +34,7 @@ suspend fun updateService(
                                 }else{
                                     Data.static.getmViewModel().saveDataLeft(99999) // ~
                                 }
-                                Data.static.showToast("runtime no e")
+//                                Data.static.showToast("runtime no e")
                             }, Data.static.mainApplication)
                         } catch (e: Exception) {
                             Data.static.showToast("runtime err: ")

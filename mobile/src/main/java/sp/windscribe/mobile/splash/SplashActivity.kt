@@ -41,7 +41,7 @@ class SplashActivity : AppCompatActivity() {
                 { if(it){
                     failGetServers(true) } else {
                     failGetServers(false) }
-                }, true)
+                }, false)
         } else {
             this.navigateToLogin()
         }

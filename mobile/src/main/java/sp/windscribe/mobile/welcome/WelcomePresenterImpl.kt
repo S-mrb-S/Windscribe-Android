@@ -203,7 +203,7 @@ class WelcomePresenterImpl @Inject constructor(
                     } else {
                         onLoginFailedWithNoError()
                     }
-                }, true
+                }, false
             )
 
         }

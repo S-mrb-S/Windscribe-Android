@@ -17,6 +17,7 @@ import de.blinkt.openvpn.core.OpenVPNThread
 import inet.ipaddr.AddressStringException
 import inet.ipaddr.IPAddressString
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -64,6 +65,7 @@ import sp.windscribe.vpn.backend.openvpn.OpenVPNConfigParser
 import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 import sp.windscribe.vpn.backend.utils.ProtocolConfig
 import sp.windscribe.vpn.backend.utils.SelectedLocationType
+import sp.windscribe.vpn.commonutils.Ext.result
 import sp.windscribe.vpn.commonutils.FlagIconResource
 import sp.windscribe.vpn.commonutils.WindUtilities
 import sp.windscribe.vpn.constants.NetworkKeyConstants
@@ -443,7 +445,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     private fun loadServerList(regions: MutableList<RegionAndCities>) {
         logger.info("Loading server list from disk.")
-        windscribeView.showToast("geter")
+//        windscribeView.showToast("geter")
         windscribeView.showRecyclerViewProgressBar()
         val serverListData = ServerListData()
         val oneTimeCompositeDisposable = CompositeDisposable()
@@ -735,8 +737,6 @@ class WindscribePresenterImpl @Inject constructor(
     override fun onConnectClicked() {
         logger.debug("Connection UI State: ${windscribeView.uiConnectionState?.javaClass?.simpleName} Last connection State: $lastVPNState")
 
-//        stopAll()
-
         interactor.getAutoConnectionManager().stop()
         when (windscribeView.uiConnectionState) {
             is ConnectingState -> {
@@ -751,9 +751,9 @@ class WindscribePresenterImpl @Inject constructor(
             is ConnectingAnimationState -> {}
             is FailedProtocol -> {
                 logger.debug("Stopping protocol switch service.")
-                interactor.getMainScope().launch {
-                    interactor.getVPNController().disconnectAsync()
-                }
+//                interactor.getMainScope().launch {
+//                    interactor.getVPNController().disconnectAsync()
+//                }
             }
 
             is UnsecuredProtocol -> {
@@ -821,7 +821,7 @@ class WindscribePresenterImpl @Inject constructor(
 
     override fun onHotStart() {
         // setConnectionLayout();
-        checkLoginStatus()
+//        checkLoginStatus()
 
         // Update Notification count
         updateNotificationCount()
@@ -1221,10 +1221,10 @@ class WindscribePresenterImpl @Inject constructor(
             logger.debug("Changing UI state to Disconnected")
             selectedLocation?.let {
                 windscribeView.clearConnectingAnimation() //
-                if (it.nickName == "v2ray") {
-                    windscribeView.StopV2ray()
-//                    return
-                }
+//                if (it.nickName == "v2ray") {
+//                    windscribeView.StopV2ray() TODO()
+////                    return
+//                }
                 windscribeView.setupLayoutDisconnected(
                         DisconnectedState(
                                 it, connectionOptions, appContext
@@ -2172,11 +2172,12 @@ class WindscribePresenterImpl @Inject constructor(
     var disconnectJob: Job? = null
     private fun stopVpnFromUI() {
         logger.debug("Disconnecting using connect button.")
+        stopAll()
         disconnectJob = interactor.getMainScope().launch {
             interactor.getAppPreferenceInterface().whitelistOverride = false
             interactor.getAppPreferenceInterface().globalUserConnectionPreference = false
             interactor.getAppPreferenceInterface().isReconnecting = false
-            interactor.getVPNController().disconnectAsync()
+//            interactor.getVPNController().disconnectAsync()
         }
     }
 
