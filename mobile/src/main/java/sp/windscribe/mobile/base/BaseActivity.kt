@@ -31,7 +31,7 @@ import sp.windscribe.vpn.sp.MmkvManager
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseActivity : sp.vpn.module.VpnActivity() {
+abstract class BaseActivity : sp.vpn.module.VpnActivity("domain:ir", true) {
     val coldLoad = AtomicBoolean()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
