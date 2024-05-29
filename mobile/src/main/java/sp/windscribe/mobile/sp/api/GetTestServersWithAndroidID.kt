@@ -15,8 +15,7 @@ class GetTestServersWithAndroidID {
         suspend fun performWork(id: String, email: String, callback: GetLoginCallback) {
             try {
                 val apolloClient = ApolloClient.Builder()
-                    .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Data.static.myApi)
+                    .serverUrl(Data.static.myApi)
                     .build()
 
                 val response = apolloClient.mutation(GetTestServerMutation(deviceId = id, email = email))

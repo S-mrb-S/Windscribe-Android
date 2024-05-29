@@ -18,8 +18,7 @@ class GetLoginWithKeyQuery {
     suspend fun performWork(key: String, callback: GetLoginCallback) {
         try {
             val apolloClient = ApolloClient.Builder()
-                    .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Data.static.myApi)
+                    .serverUrl(Data.static.myApi)
                     .build()
 
             val response = apolloClient.query(GetLoginQuery(key = key))

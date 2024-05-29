@@ -17,8 +17,7 @@ class GetServersWithKeyQuery {
     suspend fun performWork(key: String, callback: GetServersCallback) {
         try {
             val apolloClient = ApolloClient.Builder()
-                    .httpMethod(HttpMethod.Get)
-                    .httpServerUrl(Data.static.myApi)
+                    .serverUrl(Data.static.myApi)
                     .build()
 
             val response = apolloClient.query(GetServersQuery(key = key))
