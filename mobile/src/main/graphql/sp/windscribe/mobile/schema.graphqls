@@ -80,7 +80,7 @@ type NetworkInfo {
 }
 
 type Mutation {
-  createService(deviceId: String!, email: String!): ServiceMutation
+  createService(deviceId: String!, email: String): ServiceMutation
 
   """
   Obtain JSON Web Token mutation
