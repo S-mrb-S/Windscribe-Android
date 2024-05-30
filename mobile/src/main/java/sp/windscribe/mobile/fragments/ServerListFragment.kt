@@ -269,11 +269,16 @@ class ServerListFragment : Fragment() {
     }
 
     fun setLoadRetry(message: String?) {
+        setLoadRetry(message, noReload = false)
+    }
+    fun setLoadRetry(message: String?, noReload: Boolean) {
         clearErrors()
         textViewAdapterLoadError?.visibility = View.VISIBLE
         textViewAdapterLoadError?.text = message
-        reloadViewButton?.text = resources.getString(R.string.retry)
-        reloadViewButton?.visibility = View.VISIBLE
+        if(!noReload){
+            reloadViewButton?.text = resources.getString(R.string.retry)
+            reloadViewButton?.visibility = View.VISIBLE
+        }
     }
 
     fun setRefreshingLayout(refreshing: Boolean) {
