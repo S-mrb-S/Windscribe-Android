@@ -1,6 +1,7 @@
 package sp.windscribe.mobile.dialogs
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.databinding.EmailRequestTestBinding
+import sp.windscribe.mobile.sp.util.StaticData.requestDialogCallback
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.sp.Data
 
@@ -17,12 +19,7 @@ interface EmergencyDialogCallback {
 }
 
 class EmergencyAccountRequestDialog : FullScreenDialog() {
-    private var requestDialogCallback: EmergencyDialogCallback? = null
     private var binding: EmailRequestTestBinding? = null
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        requestDialogCallback = context as? EmergencyDialogCallback
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
