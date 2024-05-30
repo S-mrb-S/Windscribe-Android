@@ -12,6 +12,7 @@ query GetLoginQuery($key: String!) {
       }
       isActive
       isTrial
+      licenseKey
       uuid
       name
       days

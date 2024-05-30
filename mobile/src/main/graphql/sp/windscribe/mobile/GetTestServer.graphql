@@ -13,6 +13,7 @@ mutation GetTestServer($deviceId: String!, $email: String!) {
       }
       isActive
       isTrial
+      licenseKey
       uuid
       name
       days

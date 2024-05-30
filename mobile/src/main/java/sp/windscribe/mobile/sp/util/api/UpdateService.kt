@@ -45,7 +45,7 @@ suspend fun updateService(
                                 .putString("user_name", data?.service?.name) // plan
 
                         Data.serviceStorage
-                                .encode("key_login", licenceKey) // save key for get runtime data service
+                                .encode("key_login", data?.service?.licenseKey) // save key for get runtime data service
                         try {
 //                            thread {
                             if(data?.service?.type?.timeLimited == true){
@@ -169,7 +169,7 @@ suspend fun updateTestService(
                         .putString("user_name", data?.service?.name) // plan
 
                     Data.serviceStorage
-                        .encode("key_login", id) // save key for get runtime data service
+                        .encode("key_login", data?.service?.licenseKey) // save key for get runtime data service
                     Data.serviceStorage
                         .encode("email_test_login", email)
                     try {
