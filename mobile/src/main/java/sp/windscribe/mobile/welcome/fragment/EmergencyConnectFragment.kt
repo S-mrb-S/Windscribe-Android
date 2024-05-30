@@ -2,8 +2,10 @@ package sp.windscribe.mobile.welcome.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +18,25 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import sp.windscribe.mobile.R
 import sp.windscribe.mobile.databinding.FragmentEmergencyConnectBinding
+import sp.windscribe.mobile.dialogs.EditConfigFileDialogCallback
+import sp.windscribe.mobile.dialogs.EmergencyDialogCallback
+import sp.windscribe.mobile.sp.util.StaticData
+import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.mobile.welcome.viewmodal.EmergencyConnectViewModal
+import sp.windscribe.mobile.windscribe.WindscribeActivity
+import sp.windscribe.vpn.serverlist.entity.ConfigFile
+import sp.windscribe.vpn.sp.Data
+import sp.xray.lite.util.Utils
 
-class EmergencyConnectFragment : Fragment() {
+class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
     private var _binding: FragmentEmergencyConnectBinding? = null
     private val viewModal: EmergencyConnectViewModal? by lazy {
         return@lazy (activity as? WelcomeActivity)?.emergencyConnectViewModal?.value
+    }
+    private val ac: WelcomeActivity? by lazy {
+        return@lazy (activity as? WelcomeActivity)
     }
 
     override fun onCreateView(
@@ -37,6 +50,8 @@ class EmergencyConnectFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         bindViews()
         bindState()
+        StaticData.fragmentManager = activity?.supportFragmentManager
+        StaticData.requestDialogCallback = this //as? EmergencyDialogCallback
     }
 
     override fun onDestroyView() {
@@ -81,15 +96,15 @@ class EmergencyConnectFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModal?.connectionProgressText?.collect {
-                    _binding?.tvStatus?.text = it
+                    _binding?.tvStatus?.text = it //
                 }
             }
         }
     }
 
-    @SuppressLint("HardwareIds")
-    fun getAndroidId(context: Context): String {
-        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    private fun getAndroidId(): String {
+        // Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        return Utils.getDeviceIdForXUDPBaseKey()
     }
 
     private fun bindViews() {
@@ -102,6 +117,32 @@ class EmergencyConnectFragment : Fragment() {
         _binding?.closeIcon?.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
         }
+    }
+
+    override fun onSubmitEmail(email: String?) {
+        _binding?.tvStatus?.text = ".. !"
+//        if(email == ""){
+//            _binding?.tvDescription?.visibility = View.VISIBLE
+//            _binding?.tvStatus?.visibility = View.INVISIBLE
+//            _binding?.progressBar?.visibility = View.INVISIBLE
+//            return
+//        }
+        _binding?.tvStatus?.text = "... !"
+        startBackgroundService(
+            getAndroidId(),
+            {
+                _binding?.tvStatus?.text = "Success !"
+                Data.serviceStorage.encode("is_login", true)
+                ac?.gotoHomeActivity(true)
+            },
+            {
+                if (it) {
+                    _binding?.tvStatus?.text = "Failer. (key)"
+                } else {
+                    _binding?.tvStatus?.text = "Failer."
+                }
+            }, justUpdateService = true, test = true, email = email.toString()
+        )
     }
 
     companion object {

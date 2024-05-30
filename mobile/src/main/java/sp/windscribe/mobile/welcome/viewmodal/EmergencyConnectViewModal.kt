@@ -1,15 +1,21 @@
 package sp.windscribe.mobile.welcome.viewmodal
 
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import sp.windscribe.mobile.dialogs.EmergencyAccountRequestDialog
+import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
+import sp.windscribe.mobile.sp.util.StaticData
+import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.vpn.backend.VPNState.Status.Connected
 import sp.windscribe.vpn.backend.VPNState.Status.Connecting
@@ -17,6 +23,7 @@ import sp.windscribe.vpn.backend.VPNState.Status.Disconnected
 import sp.windscribe.vpn.backend.VPNState.Status.Disconnecting
 import sp.windscribe.vpn.backend.VPNState.Status.RequiresUserInput
 import sp.windscribe.vpn.backend.utils.WindVpnController
+import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.state.VPNConnectionStateManager
 
 class EmergencyConnectViewModal(
@@ -54,11 +61,11 @@ class EmergencyConnectViewModal(
 
     fun connectButtonClick() {
         logger.debug("User clicked connect button with current state: ${uiState.value}")
-        if (uiState.value == EmergencyConnectUIState.Connected || uiState.value == EmergencyConnectUIState.Connecting) {
-            disconnect()
-        } else {
-            connect()
-        }
+//        if (uiState.value == EmergencyConnectUIState.Connected || uiState.value == EmergencyConnectUIState.Connecting) {
+//            disconnect()
+//        } else {
+        connect()
+//        }
     }
 
     fun disconnect() {
@@ -68,17 +75,23 @@ class EmergencyConnectViewModal(
         }
     }
 
+    // get servers from api
     private fun connect() {
         connectingJob = scope.launch {
             _uiState.emit(EmergencyConnectUIState.Connecting)
-            windVpnController.connectUsingEmergencyProfile { progress ->
-                _connectionProgressText.value = progress
-            }.onSuccess {
-                logger.debug("Successfully connected to emergency server.")
-            }.onFailure {
-                logger.debug("Failure to connect using emergency vpn profiles: $it")
+            if(StaticData.fragmentManager != null){
+                EmergencyAccountRequestDialog.show(StaticData.fragmentManager!!)
+            }else{
                 _uiState.emit(EmergencyConnectUIState.Disconnected)
             }
+//            windVpnController.connectUsingEmergencyProfile { progress ->
+//                _connectionProgressText.value = progress
+//            }.onSuccess {
+//                logger.debug("Successfully connected to emergency server.")
+//            }.onFailure {
+//                logger.debug("Failure to connect using emergency vpn profiles: $it")
+//                _uiState.emit(EmergencyConnectUIState.Disconnected)
+//            }
         }
     }
 
