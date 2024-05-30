@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.coroutineScope
 import okhttp3.internal.toImmutableList
 import sp.windscribe.mobile.GetServersQuery
+import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.vpn.sp.Data
 
 // fake data
@@ -74,6 +75,8 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val groupedServers = data.servers
                         ?.filter { it?.serverType == "V2Ray" } // Filter servers with serverType
                         ?.groupBy { it?.flag }
+
+                StaticData.noServer = groupedServers.isNullOrEmpty()
 
                 val gHead = mutableListOf<Server>()
 
@@ -157,6 +160,8 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val groupedServers = data.servers
                         ?.filter { it?.serverType == "OpenVPN" } // Filter servers with serverType
                         ?.groupBy { it?.flag }
+
+                StaticData.noServer = groupedServers.isNullOrEmpty()
 
                 val gHead = mutableListOf<Server>()
 
@@ -248,6 +253,8 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val groupedServers = data.servers
                         ?.filter { it?.serverType == "Cisco" } // Filter servers with serverType
                         ?.groupBy { it?.flag }
+
+                StaticData.noServer = groupedServers.isNullOrEmpty()
 
                 val gHead = mutableListOf<Server>()
 
