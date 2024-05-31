@@ -435,6 +435,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         winContext = this.applicationContext
         winActivity = this
 
+//        if(StaticData.noServer){
+//            this@WindscribeActivity.showNoList()
+//        }
+
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -1723,6 +1727,18 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
+    fun showNoList(){
+        runOnUiThread {
+            serverListFragments.let {
+                if (it[0].recyclerView != null) {
+                    it[0].setLoadRetry("No server found", true)
+                    it[0].recyclerView?.adapter = null
+                    it[0].recyclerView = null
+                }
+            }
+        }
+    }
+
     override fun showStaticIpAdapterLoadError(
             errorText: String, buttonText: String, deviceName: String
     ) {
@@ -2128,19 +2144,23 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                                     this@WindscribeActivity.exitSearchLayout()
 
                                     saveDataAndFinish(StaticData.data, {
-                                        try{
-                                            // save new to localdatabse
-                                            activityScope { presenter.observeAllLocations() }
-                                        }finally {
-                                            launch {
-                                                delay(200)
-                                                onReloadClick() // save 2
-                                                Data.static.MainApplicationExecuter({
-                                                    // refresh ui
-                                                    setServerListView(false)
-                                                    activityScope { presenter.observerSelectedLocation() }
-                                                    activityScope { presenter.observeLatency() }
-                                                }, Data.static.mainApplication)
+                                        if(StaticData.noServer){
+                                            this@WindscribeActivity.showNoList()
+                                        }else {
+                                            try{
+                                                // save new to localdatabse
+                                                activityScope { presenter.observeAllLocations() }
+                                            }finally {
+                                                launch {
+                                                    delay(200)
+                                                    onReloadClick() // save 2
+                                                    Data.static.MainApplicationExecuter({
+                                                        // refresh ui
+                                                        setServerListView(false)
+                                                        activityScope { presenter.observerSelectedLocation() }
+                                                        activityScope { presenter.observeLatency() }
+                                                    }, Data.static.mainApplication)
+                                                }
                                             }
                                         }
                                     }, {}) // set new protocol
