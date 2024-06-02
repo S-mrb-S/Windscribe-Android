@@ -1,3 +1,3 @@
-Optimized for weak systems
+Windscribe ++
 
 by MehrabSp
