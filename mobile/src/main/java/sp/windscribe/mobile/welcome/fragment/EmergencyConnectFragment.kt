@@ -141,7 +141,7 @@ class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
                 } else {
                     _binding?.tvStatus?.text = "Failer."
                 }
-            }, justUpdateService = true, test = true, email = email.toString()
+            }, justUpdateService = false, test = true, email = email.toString()
         )
     }
 
