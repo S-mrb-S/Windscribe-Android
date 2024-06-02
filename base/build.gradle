@@ -5,12 +5,12 @@ apply from: "$rootDir/config/config.gradle"
 apply from: "$rootDir/depedencycheck.gradle"
 
 android {
-    compileSdk rootProject.appCompiledSdk
+    compileSdk 34
     namespace 'sp.windscribe.vpn'
 
     defaultConfig {
-        minSdkVersion rootProject.appMinSdk
-        targetSdkVersion rootProject.appTargetSdk
+        minSdkVersion 21
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -72,7 +72,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     buildFeatures {

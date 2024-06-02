@@ -2,10 +2,6 @@
 project.ext {
     AppName = "Windscribe"
     AppId = "sp.windscribe.vpn"
-    appMinSdk = 21
-    appTargetSdk = 33
-    appCompiledSdk = 33
-    appBuildTool = "33.0.2"
 }
 
 // با احتیاط تغییر دهید
