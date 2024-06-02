@@ -15,7 +15,7 @@ def appVersionName = "5.1.0"
 android {
     compileSdk rootProject.appCompiledSdk
     namespace 'sp.windscribe.mobile'
-    ndkVersion '25.1.8937393'
+    ndkVersion '26.1.10909125'
 
     bundle {
         language {
