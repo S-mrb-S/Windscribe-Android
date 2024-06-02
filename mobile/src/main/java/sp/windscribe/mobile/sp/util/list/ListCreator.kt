@@ -55,6 +55,7 @@ class ListCreator(var data: GetServersQuery.Data) {
 
     suspend fun createAndGet(): String = coroutineScope {
         try {
+            Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)
             val res: List<Server>? = crGCList()
 
             val gson = Gson()
