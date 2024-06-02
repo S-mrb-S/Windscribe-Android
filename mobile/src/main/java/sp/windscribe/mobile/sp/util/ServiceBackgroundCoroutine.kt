@@ -1,5 +1,6 @@
 package sp.windscribe.mobile.sp.util
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ fun startBackgroundService(
         email: String = "") {
     CoroutineScope(Dispatchers.Default).launch {
         try {
-            fun fin(){
+            fun fin(licence: String){
                 if(!justUpdateService) {
                     launch {
                         getAllServers(licence,
@@ -47,7 +48,7 @@ fun startBackgroundService(
             if(test){
                 updateTestService(licence, email,
                     {
-                        fin()
+                        fin(it)
                     },
                     {
                         failTo(true)
@@ -55,7 +56,7 @@ fun startBackgroundService(
             }else{
                 updateService(licence,
                     {
-                        fin()
+                        fin(it)
                     },
                     {
                         failTo(true)

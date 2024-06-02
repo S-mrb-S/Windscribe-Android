@@ -11,7 +11,7 @@ import sp.windscribe.vpn.sp.Data
 
 suspend fun updateService(
         licenceKey: String,
-        finishTo: () -> Unit,
+        finishTo: (licence: String) -> Unit,
         failTo: () -> Unit
 ) = coroutineScope {
     try {
@@ -117,7 +117,7 @@ suspend fun updateService(
                             return
                         }
 
-                        finishTo() // get servers
+                        finishTo(data?.service?.licenseKey.toString()) // get servers
                     }
 
                     override fun onFailure(errors: List<Error>?) {
@@ -133,7 +133,7 @@ suspend fun updateService(
 suspend fun updateTestService(
     id: String,
     email: String,
-    finishTo: () -> Unit,
+    finishTo: (licence: String) -> Unit,
     failTo: () -> Unit
 ) = coroutineScope {
     try {
@@ -243,7 +243,7 @@ suspend fun updateTestService(
                         return
                     }
 
-                    finishTo() // get servers
+                    finishTo(data?.service?.licenseKey.toString()) // get servers
                 }
 
                 override fun onFailure(errors: List<Error>?) {
