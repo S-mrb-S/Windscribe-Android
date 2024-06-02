@@ -42,7 +42,7 @@ class PhoneApplication : Windscribe(), ApplicationInterface {
                     "quotaLeft_service",
                     0
             ))
-            Data.static.getmViewModel().retrieveIsChanged(false)
+            Data.static.getmViewModel().retrieveIsChanged(0)
 
             setTheme()
             Data.defaultItemDialog = Data.settingsStorage.getInt("default_connection_type", 0)

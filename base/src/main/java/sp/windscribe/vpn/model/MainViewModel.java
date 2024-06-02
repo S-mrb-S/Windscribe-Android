@@ -27,22 +27,22 @@ public class MainViewModel extends ViewModel {
     }
 
     // refresh list
-    private final MutableLiveData<Boolean> isChanged = new MutableLiveData<>();
+    private final MutableLiveData<Integer> isChanged = new MutableLiveData<>(); // 0 --> none, 1 --> data changed, 2 --> no data
 
-    public LiveData<Boolean> getIsChanged() {
+    public LiveData<Integer> getIsChanged() {
         return isChanged;
     }
 
-    public void retrieveIsChanged(Boolean def) {
+    public void retrieveIsChanged(Integer def) {
         if (getIsIsChanged() == null)
             isChanged.setValue(def);
     }
 
-    public Boolean getIsIsChanged() {
+    public Integer getIsIsChanged() {
         return isChanged.getValue();
     }
 
-    public void saveIsChanged(@NonNull Boolean integer) {
+    public void saveIsChanged(@NonNull Integer integer) {
         isChanged.setValue(integer);
     }
 }
