@@ -1,5 +1,6 @@
 package sp.windscribe.vpn.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.reactivex.Completable
@@ -17,6 +18,7 @@ import sp.windscribe.vpn.localdatabase.LocalDbInterface
 import sp.windscribe.vpn.serverlist.entity.City
 import sp.windscribe.vpn.serverlist.entity.Region
 import sp.windscribe.vpn.serverlist.entity.RegionAndCities
+import sp.windscribe.vpn.sp.Data
 import sp.windscribe.vpn.state.AppLifeCycleObserver
 import sp.windscribe.vpn.state.PreferenceChangeObserver
 import sp.windscribe.vpn.workers.WindScribeWorkManager
@@ -65,8 +67,45 @@ class ServerListRepository @Inject constructor(
     fun update(): Completable {
         logger.debug("Starting server list update")
         var str = sp.windscribe.vpn.sp.Data.dataString
-        if (str.isNullOrEmpty()) {
-            str = "{}"
+        if (str.isNullOrBlank() || str.toString() == "null") {
+            str = """
+[
+  {
+    "id": 1,
+    "name": "None",
+    "country_code": "ZZ",
+    "status": 1,
+    "premium_only": 0,
+    "short_name": "None",
+    "p2p": 1,
+    "tz": "",
+    "tz_offset": "-5,EST",
+    "loc_type": "normal",
+    "dns_hostname": "ca.windscribe.com",
+    "groups": [
+      {
+        "id": 386,
+        "city": "",
+        "nick": "",
+        "pro": 1,
+        "gps": "44.46,-63.61",
+        "tz": "",
+        "wg_pubkey": "w262TI0UyIg9pFunMiekVURYUuT/z4qXRor2Z7VcOn4=",
+        "wg_endpoint": "yhz-386-wg.whiskergalaxy.com",
+        "ovpn_x509": "yhz-386.windscribe.com",
+        "ping_ip": "23.191.80.2",
+        "ping_host": "https://ca-021.whiskergalaxy.com:6363/latency",
+        "link_speed": "1000"
+      }
+    ]
+  }
+]
+            """.trimIndent()
+
+            Data.static.MainApplicationExecuter({
+                // run ViewModel on application thread
+                Data.static.getmViewModel().saveIsChanged(2)
+            }, Data.static.mainApplication)
         }
         val list: List<Region> = Gson().fromJson<List<Region>>(
                 str.trimIndent(),
@@ -74,6 +113,14 @@ class ServerListRepository @Inject constructor(
         )
 
         return addToDatabase(list)
+    }
+
+    fun cleanDatabase(): Completable {
+        logger.debug("Cleaning server list to database")
+        return localDbInterface.rmRegions()
+            .andThen(localDbInterface.rmCities())
+//            .andThen(Completable.fromAction { preferenceChangeObserver.postCityServerChange() })
+            .doOnError { logger.debug("Error cleaning server list to database") }
     }
 
     private fun addToDatabase(regions: List<Region>): Completable {
