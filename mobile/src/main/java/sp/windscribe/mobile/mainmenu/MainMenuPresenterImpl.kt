@@ -2,9 +2,12 @@ package sp.windscribe.mobile.mainmenu
 
 import android.content.Context
 import android.view.View
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
@@ -49,6 +52,20 @@ class MainMenuPresenterImpl @Inject constructor(
 
     override fun onAboutClicked() {
         mainMenuView.gotoAboutActivity()
+    }
+
+    override fun cleanDataBase() {
+        interactor.getCompositeDisposable().add(
+            interactor.getServerListUpdater().cleanDatabase()
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+                })
+        )
     }
 
     override fun onAccountSetUpClicked() {

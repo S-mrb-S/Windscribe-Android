@@ -26,6 +26,10 @@ abstract public class CityDao {
         return deleteAll().andThen(addAll(cities));
     }
 
+    public Completable rmCities() {
+        return deleteAll();
+    }
+
     @Query("Delete from City")
     public abstract Completable deleteAll();
 

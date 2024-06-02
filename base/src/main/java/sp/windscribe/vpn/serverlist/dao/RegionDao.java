@@ -27,6 +27,10 @@ abstract public class RegionDao {
         return deleteAll().andThen(addAll(regions));
     }
 
+    public Completable rmRegions() {
+        return deleteAll();
+    }
+
     @Query("Delete from Region")
     abstract public Completable deleteAll();
 

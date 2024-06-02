@@ -156,6 +156,7 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
         logoutView.onClick {
             performHapticFeedback(it)
             // presenter.onSignOutClicked()
+            presenter.cleanDataBase()
             Data.serviceStorage.encode("is_login", false)
 
             logger.info("Navigating to login activity...")

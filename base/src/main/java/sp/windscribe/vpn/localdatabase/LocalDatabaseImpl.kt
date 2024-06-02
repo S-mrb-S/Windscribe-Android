@@ -68,6 +68,14 @@ class LocalDatabaseImpl @Inject constructor(
         return cityDao.addCities(cities)
     }
 
+    override fun rmCities(): Completable {
+        return cityDao.rmCities()
+    }
+
+    override fun rmRegions(): Completable {
+        return regionDao.rmRegions()
+    }
+
     override fun addToFavourites(favourite: Favourite): Single<Long> {
         return favouriteDao.addToFavourites(favourite)
     }

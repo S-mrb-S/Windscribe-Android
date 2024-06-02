@@ -6,6 +6,7 @@ interface MainMenuPresenter {
     fun continueWithLogoutClicked()
     fun savedLocale(): String
     fun isHapticFeedbackEnabled(): Boolean
+    fun cleanDataBase()
     fun onAboutClicked()
     fun onAccountSetUpClicked()
     fun onAddEmailClicked()

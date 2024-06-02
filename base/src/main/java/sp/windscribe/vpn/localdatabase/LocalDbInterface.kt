@@ -24,6 +24,8 @@ interface LocalDbInterface {
     fun addPing(pingTime: PingTime): Completable
     fun addStaticRegions(staticRegions: List<StaticRegion>): Completable
     fun addToCities(cities: List<City>): Completable
+    fun rmCities(): Completable
+    fun rmRegions(): Completable
     fun addToFavourites(favourite: Favourite): Single<Long>
     fun addToPopupNotification(popupNotificationTable: PopupNotificationTable)
     fun addToRegions(regions: List<Region>): Completable
