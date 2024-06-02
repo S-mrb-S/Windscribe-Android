@@ -107,6 +107,7 @@ import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
+import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.commonutils.ThemeUtils
@@ -435,10 +436,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         winContext = this.applicationContext
         winActivity = this
 
-//        if(StaticData.noServer){
-//            this@WindscribeActivity.showNoList()
-//        }
-
         presenter.setMainCustomConstraints()
         setServerListView(false)
         permissionManager.register(this)
@@ -455,6 +452,27 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         presenter.registerNetworkInfoListener()
         presenter.handlePushNotification(intent.extras)
         presenter.observeUserData(this)
+
+        Log.d("MM", "<<")
+        Data.static.getmViewModel().isChanged.observe(this) { ddl ->
+            if(ddl == 2 && StaticData.noServer){
+                this@WindscribeActivity.showNoList()
+            }else if (ddl == 1 && fixResume) {
+                try {
+                    Log.d("MM", "<< <<")
+                    // save new to localdatabse
+                    activityScope { presenter.observeAllLocations() }
+                } finally {
+                    onReloadClick() // save 2
+                    Data.static.MainApplicationExecuter({
+                        // refresh ui
+                        setServerListView(false)
+                        activityScope { presenter.observerSelectedLocation() }
+                        activityScope { presenter.observeLatency() }
+                    }, Data.static.mainApplication)
+                }
+            }
+        }
     }
 
     // openvpn state
@@ -604,15 +622,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             presenter.checkForWgIpChange()
             presenter.checkPendingAccountUpgrades()
 
+            Log.d("MM", "SUCKK")
             fixResume = true
             onReloadClick()
-        }
 
-        if (fixResume) {
-            CoroutineScope(Dispatchers.Default).launch {
-                delay(3000)
-                startBackgroundService(Data.serviceStorage.decodeString("key_login", null).toString(), {}, {}, true)
-            }
+            setAllServerData()
         }
     }
 
@@ -2124,6 +2138,14 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     @OptIn(DelicateCoroutinesApi::class)
+    fun setAllServerData() {
+        GlobalScope.launch {
+            this@WindscribeActivity.exitSearchLayout()
+
+            saveDataAndFinish(StaticData.data, {}, {}) // set new protocol
+        }
+    }
+
     @OnClick(R.id.img_protocol_change_arrow)
     fun onProtocolChangeClick() {
         if (uiConnectionState?.decoyTrafficBadgeVisibility != VISIBLE && uiConnectionState is ConnectedState) {
@@ -2140,31 +2162,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                         if (which != Data.defaultItemDialog) {
                             Data.settingsStorage.putInt("default_connection_type", which)
                             Data.defaultItemDialog = which // 0 --> V2ray, 1 --> OpenVpn, 2 --> cisco
-                            GlobalScope.launch {
-                                    this@WindscribeActivity.exitSearchLayout()
-
-                                    saveDataAndFinish(StaticData.data, {
-                                        if(StaticData.noServer){
-                                            this@WindscribeActivity.showNoList()
-                                        }else {
-                                            try{
-                                                // save new to localdatabse
-                                                activityScope { presenter.observeAllLocations() }
-                                            }finally {
-                                                launch {
-                                                    delay(200)
-                                                    onReloadClick() // save 2
-                                                    Data.static.MainApplicationExecuter({
-                                                        // refresh ui
-                                                        setServerListView(false)
-                                                        activityScope { presenter.observerSelectedLocation() }
-                                                        activityScope { presenter.observeLatency() }
-                                                    }, Data.static.mainApplication)
-                                                }
-                                            }
-                                        }
-                                    }, {}) // set new protocol
-                            }
+                            setAllServerData()
                         }
                     } finally {
                         Handler().postDelayed(dialog::dismiss, 100)
