@@ -85,7 +85,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val gHead = mutableListOf<Server>()
 
                 // Iterate over grouped servers
-                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                groupedServers.forEach { (_, servers) -> // Group servers by flag
                     try {
                         // Create a list to hold grouped servers
                         val childServer = mutableListOf<Group>()
@@ -173,7 +173,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val gHead = mutableListOf<Server>()
 
                 // Iterate over grouped servers
-                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                groupedServers.forEach { (_, servers) -> // Group servers by flag
                     try {
                         // Create a list to hold grouped servers
                         val childServer = mutableListOf<Group>()
@@ -269,7 +269,7 @@ class ListCreator(var data: GetServersQuery.Data) {
                 val gHead = mutableListOf<Server>()
 
                 // Iterate over grouped servers
-                groupedServers?.forEach { (_, servers) -> // Group servers by flag
+                groupedServers.forEach { (_, servers) -> // Group servers by flag
                     try {
                         // Create a list to hold grouped servers
                         val childServer = mutableListOf<Group>()
