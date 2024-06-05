@@ -24,7 +24,7 @@ android {
     }
 
     defaultConfig {
-        applicationId rootProject.AppId
+        applicationId "sp.windscribe.vpn"
         minSdkVersion 21
         targetSdkVersion 34
         versionName appVersionName
