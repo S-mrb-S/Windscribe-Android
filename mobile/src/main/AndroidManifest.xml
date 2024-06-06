@@ -112,6 +112,11 @@
 
         </provider>
 
+        <!-- AdMob app ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9597526652962835~9570533299"/>
+
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

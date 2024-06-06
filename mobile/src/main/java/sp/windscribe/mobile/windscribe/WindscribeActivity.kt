@@ -56,6 +56,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.gms.ads.MobileAds
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import de.blinkt.openvpn.OpenVpnApi
 import kotlinx.coroutines.CoroutineScope
@@ -473,6 +474,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                 }
             }
         }
+
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@WindscribeActivity) {}
+        }
+
     }
 
     // openvpn state

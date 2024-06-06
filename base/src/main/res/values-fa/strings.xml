@@ -288,7 +288,8 @@
   <string name="knowledge_base">پایگاه دانش</string>
   <string name="email_description">برای بازیابی رمز عبور، به روز رسانی و فقط تبلیغی. بدون هرزنامه</string>
   <string name="add_email">افزودن ایمیل</string>
-  <string name="emergency_connect">اتصال اضطراری</string>
+  <string name="em_login">ورود ازمایشی</string>
+  <string name="emergency_connect">ساخت حساب ازمایشی</string>
   <string name="share_app_description">٪s از شما دعوت میکند تا به Windscribe بپیوندید. نام کاربری خود را در ثبت نام ارائه دهید و هر دو 1 گیگابایت داده رایگان به حساب های خود اضافه خواهید کرد. اگر شما حرفه ای شوید، انها نیز حرفه ای خواهند شد!</string>
   <string name="geography">جغرافیا</string>
   <string name="xpress_login">ورود به سیستم Lazy</string>

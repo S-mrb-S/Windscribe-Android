@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
+import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
@@ -37,7 +38,7 @@ class WelcomeFragment : Fragment(), OnPageChangeListener {
     lateinit var logo: ImageView
 
     @BindView(R.id.emergencyConnectButton)
-    lateinit var emergencyConnectButton: ImageView
+    lateinit var emergencyConnectButton: Button
 
     @BindView(R.id.feature_pager)
     lateinit var mViewPager: ViewPager
@@ -75,15 +76,15 @@ class WelcomeFragment : Fragment(), OnPageChangeListener {
         setGif()
         setPagerAdapter()
         setUpAutoPaging()
-        lifecycleScope.launch {
-            viewModal?.uiState?.collectLatest { state ->
-                if (state != EmergencyConnectUIState.Connected) {
-                    emergencyConnectButton.setImageResource(R.drawable.emergency_icon)
-                } else {
-                    emergencyConnectButton.setImageResource(R.drawable.emergency_icon_blue)
-                }
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModal?.uiState?.collectLatest { state ->
+//                if (state != EmergencyConnectUIState.Connected) {
+//                    emergencyConnectButton.setImageResource(R.drawable.emergency_icon)
+//                } else {
+//                    emergencyConnectButton.setImageResource(R.drawable.emergency_icon_blue)
+//                }
+//            }
+//        }
     }
 
     override fun onDestroyView() {

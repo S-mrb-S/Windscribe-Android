@@ -78,7 +78,7 @@
     <Button
         android:id="@+id/loginButton"
         style="@style/NextButton"
-        android:layout_marginBottom="@dimen/reg_32dp"
+        android:layout_marginBottom="@dimen/reg_24dp"
         android:layout_marginEnd="@dimen/margin_48"
         android:layout_marginStart="@dimen/margin_48"
         android:enabled="true"
@@ -89,28 +89,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-<!--    <Button-->
-<!--        android:id="@+id/loginButton"-->
-<!--        style="@style/NoBackgroundButtonBold"-->
-<!--        android:layout_marginBottom="@dimen/margin_24"-->
-<!--        android:text="@string/login"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/emergencyConnectButton"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-    <ImageView
+    <Button
         android:id="@+id/emergencyConnectButton"
-        android:layout_height="@dimen/reg_32dp"
-        android:layout_width="@dimen/reg_32dp"
+        style="@style/NoBackgroundButtonBold"
+        android:layout_marginBottom="@dimen/margin_24"
+        android:text="@string/em_login"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/emergency_icon"
-        android:layout_marginBottom="@dimen/margin_48"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:background="@drawable/ripple_round"
-        android:contentDescription="@string/image_description"
-        android:focusable="true" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+<!--    <ImageView-->
+<!--        android:id="@+id/"-->
+<!--        android:layout_height="@dimen/reg_32dp"-->
+<!--        android:layout_width="@dimen/reg_32dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:src="@drawable/emergency_icon"-->
+<!--        android:layout_marginBottom="@dimen/margin_48"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:clickable="true"-->
+<!--        android:background="@drawable/ripple_round"-->
+<!--        android:contentDescription="@string/image_description"-->
+<!--        android:focusable="true" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
