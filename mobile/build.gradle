@@ -109,14 +109,14 @@ android {
 
 dependencies {
     //Android
-    implementation "androidx.appcompat:appcompat:$appCompat"
-    implementation "com.google.android.material:material:$material"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycle"
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "com.google.android.material:material:1.12.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
     //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_std_lib"
-    implementation "androidx.core:core-ktx:$ktx_core"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.23"
+    implementation "androidx.core:core-ktx:1.13.1"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdk"
     //Core Module
@@ -124,11 +124,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'], exclude: []) // v2ray module
 
     //Kapt
-    kapt "com.github.bumptech.glide:compiler:$glide"
-    kapt "com.jakewharton:butterknife-compiler:$butterknife"
-    kapt "androidx.room:room-compiler:$room"
-    kapt "com.google.dagger:dagger-compiler:$dagger"
-    kaptAndroidTest("com.google.dagger:dagger-compiler:$dagger")
+    kapt "com.github.bumptech.glide:compiler:4.16.0"
+    kapt "com.jakewharton:butterknife-compiler:10.2.3"
+    kapt "androidx.room:room-compiler:2.6.1"
+    kapt "com.google.dagger:dagger-compiler:2.34"
+    kaptAndroidTest("com.google.dagger:dagger-compiler:2.34")
 
     // optional: if you want to use the normalized cache
     implementation "com.apollographql.apollo3:apollo-normalized-cache-sqlite:3.8.0"
@@ -139,9 +139,9 @@ dependencies {
     
     //Shared test module
     //androidTestImplementation project(path: ':test')
-    androidTestImplementation "androidx.work:work-testing:$work_manager"
+    androidTestImplementation "androidx.work:work-testing:2.8.1"
     implementation "androidx.test.espresso:espresso-intents:3.5.1"
-    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    implementation 'androidx.test.uiautomator:uiautomator:2.3.0'
     implementation "androidx.core:core-splashscreen:1.0.1"
 }
 

@@ -45,7 +45,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.4.1'
         classpath 'org.owasp:dependency-check-gradle:6.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23"
         classpath "com.apollographql.apollo3:apollo-gradle-plugin:3.8.0"
     }
 }
