@@ -164,4 +164,8 @@ dependencies {
     implementation 'info.guardianproject.conscrypt:conscrypt-android:2.6.alpha1638179154.job1828169525'
     implementation 'commons-io:commons-io:2.13.0'
     implementation 'commons-net:commons-net:3.6'
+    // Google only dependencies
+    api "com.google.firebase:firebase-messaging:24.0.0"
+    api files("$projectDir/src/google/libs/in-app-purchasing-2.0.76.jar")
+    api 'com.android.billingclient:billing:7.0.0'
 }

@@ -2,6 +2,7 @@ package sp.windscribe.vpn.sp
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -23,27 +24,28 @@ class Ads {
     fun create(activity: Activity) {
         try {
             busy = true
-                activity.runOnUiThread {
-                    val adRequest = AdRequest.Builder().build()
-                    RewardedAd.load(
-                        activity,
-                        "ca-app-pub-9597526652962835/9570533299",
-                        adRequest,
-                        object : RewardedAdLoadCallback() {
-                            override fun onAdFailedToLoad(adError: LoadAdError) {
-                                Log.d(TAG, adError.toString())
-                                rewardedAd = null
-                            }
+            activity.runOnUiThread {
+                val adRequest = AdRequest.Builder().build()
+                RewardedAd.load(
+                    activity,
+                    "ca-app-pub-9597526652962835/9570533299",
+                    adRequest,
+                    object : RewardedAdLoadCallback() {
+                        override fun onAdFailedToLoad(adError: LoadAdError) {
+                            Log.d(TAG, adError.toString())
+                            rewardedAd = null
+                            Toast.makeText(activity, "Ads failer!", Toast.LENGTH_SHORT).show()
+                        }
 
-                            override fun onAdLoaded(ad: RewardedAd) {
-                                Log.d(TAG, "Ad was loaded.")
-                                rewardedAd = ad
+                        override fun onAdLoaded(ad: RewardedAd) {
+                            Log.d(TAG, "Ad was loaded.")
+                            rewardedAd = ad
 
-                                setFullScreen()
-                                busy = false
-                            }
-                        })
-                }
+                            setFullScreen()
+                            busy = false
+                        }
+                    })
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
