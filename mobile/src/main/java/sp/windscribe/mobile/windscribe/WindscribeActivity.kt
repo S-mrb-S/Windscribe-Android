@@ -1499,20 +1499,20 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         Glide.with(this).load(path).skipMemoryCache(true)
                 .listener(object : RequestListener<Drawable?> {
                     override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            isFirstResource: Boolean
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable?>,
+                        isFirstResource: Boolean
                     ): Boolean {
                         return false
                     }
 
                     override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable?>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
                     ): Boolean {
                         if (resource != null) {
                             flagView?.layoutParams?.height = flagDimensionsGuideView?.measuredHeight
@@ -1521,15 +1521,15 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                         constraintSetMain.setVisibility(R.id.top_gradient, ConstraintSet.INVISIBLE)
                         findViewById<View>(R.id.top_gradient).visibility = View.INVISIBLE
                         constraintSetMain.setVisibility(
-                                R.id.top_gradient_custom, ConstraintSet.VISIBLE
+                            R.id.top_gradient_custom, ConstraintSet.VISIBLE
                         )
                         findViewById<View>(R.id.top_gradient_custom).visibility = View.VISIBLE
                         constraintSetMain.setVerticalBias(R.id.cl_flag, 0.0f)
                         constraintSetMain.connect(
-                                R.id.connection_gradient,
-                                ConstraintSet.BOTTOM,
-                                R.id.toolbar_windscribe,
-                                ConstraintSet.BOTTOM
+                            R.id.connection_gradient,
+                            ConstraintSet.BOTTOM,
+                            R.id.toolbar_windscribe,
+                            ConstraintSet.BOTTOM
                         )
                         constraintSetMain.applyTo(constraintLayoutMain)
                         return false
