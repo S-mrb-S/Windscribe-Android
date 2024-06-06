@@ -85,11 +85,11 @@ android {
 dependencies {
     api "sp.vpn:module"
     //Android
-    api "androidx.appcompat:appcompat:$appCompat"
+    api "androidx.appcompat:appcompat:1.7.0"
     // storngswan
     implementation 'androidx.preference:preference-ktx:1.2.1'
     // Android
-    api "com.google.android.material:material:$material"
+    api "com.google.android.material:material:1.12.0"
     api 'androidx.vectordrawable:vectordrawable:1.2.0'
     api 'androidx.transition:transition:1.5.0'
     api 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -99,7 +99,7 @@ dependencies {
     api "androidx.lifecycle:lifecycle-common-java8:2.8.1"
     runtimeOnly "androidx.lifecycle:lifecycle-runtime-ktx:2.8.1"
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.23"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10" // support dagger
     implementation "androidx.core:core-ktx:1.13.1"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.8.0'
     // VPNs
@@ -111,9 +111,9 @@ dependencies {
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
     api 'io.reactivex.rxjava2:rxjava:2.2.13'
     //Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$retrofit"
-    api "com.squareup.retrofit2:converter-gson:$retrofit"
-    implementation "com.squareup.retrofit2:converter-scalars:$retrofit"
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    api "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     //Okhttp
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
@@ -123,22 +123,22 @@ dependencies {
     api 'org.slf4j:slf4j-api:1.7.36'
     api 'com.github.tony19:logback-android:2.0.0'
     //Room
-    api "androidx.room:room-rxjava2:2.6.1"
-    api "androidx.room:room-runtime:2.6.1"
-    kapt "androidx.room:room-compiler:2.6.1"
-    implementation "androidx.room:room-testing:2.6.1"
+    api "androidx.room:room-rxjava2:2.5.1"
+    api "androidx.room:room-runtime:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-testing:2.5.1"
     // Work manager
     api "androidx.work:work-runtime:2.8.1"
     api "androidx.work:work-rxjava2:2.8.1"
     implementation "androidx.work:work-runtime-ktx:2.8.1"
     androidTestImplementation "androidx.work:work-testing:2.8.1"
-    androidTestImplementation "androidx.room:room-testing:2.6.1"
+    androidTestImplementation "androidx.room:room-testing:2.5.1"
     // Dagger
-    kapt "com.google.dagger:dagger-compiler:$dagger"
-    api "com.google.dagger:dagger:$dagger"
+    kapt "com.google.dagger:dagger-compiler:2.34"
+    api "com.google.dagger:dagger:2.34"
     // Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
     // Supporting libraries
     api 'org.javatuples:javatuples:1.2'
     api 'com.github.seancfoley:ipaddress:5.3.1'
@@ -151,12 +151,15 @@ dependencies {
     api 'com.google.guava:guava:32.1.3-android'
     api 'net.grandcentrix.tray:tray:0.12.0'
 
+//    implementation 'com.google.dagger:hilt-android:2.34'
+//    kapt 'com.google.dagger:hilt-compiler:2.34'
+
     // new
     api 'com.tencent:mmkv-static:1.3.4'
 
     implementation 'org.isomorphism:token-bucket:1.6'
     // Test
-    testImplementation "junit:junit:$JUnit"
+    testImplementation "junit:junit:4.13.2"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // ECH Conscrypt
