@@ -1,7 +1,6 @@
 package sp.windscribe.vpn.sp
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -16,13 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class Ads(private val activity: Activity) {
+class Ads {
     private var rewardedAd: RewardedAd? = null
     private final var TAG = "Ads"
     private var busy = false
     val backgroundScope = CoroutineScope(Dispatchers.IO)
 
-    fun create() {
+    fun create(activity: Activity) {
         try {
             busy = true
             backgroundScope.launch {
@@ -94,7 +93,7 @@ class Ads(private val activity: Activity) {
 
     }
 
-    fun showTheAd() {
+    fun showTheAd(activity: Activity) {
         if(busy){
             rewardedAd?.let { ad ->
                 ad.show(activity, OnUserEarnedRewardListener { rewardItem ->
@@ -109,7 +108,7 @@ class Ads(private val activity: Activity) {
         }else{
             backgroundScope.launch {
                 delay(500)
-                showTheAd()
+                showTheAd(activity)
             }
         }
 
