@@ -19,21 +19,15 @@ class Ads {
     private var rewardedAd: RewardedAd? = null
     private final var TAG = "Ads"
     private var busy = false
-    val backgroundScope = CoroutineScope(Dispatchers.IO)
 
     fun create(activity: Activity) {
         try {
             busy = true
-            backgroundScope.launch {
-                // Initialize the Google Mobile Ads SDK on a background thread.
-                MobileAds.initialize(activity) {}
-
-                delay(500)
                 activity.runOnUiThread {
                     val adRequest = AdRequest.Builder().build()
                     RewardedAd.load(
                         activity,
-                        "ca-app-pub-9597526652962835~9570533299",
+                        "ca-app-pub-9597526652962835/9570533299",
                         adRequest,
                         object : RewardedAdLoadCallback() {
                             override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -45,16 +39,11 @@ class Ads {
                                 Log.d(TAG, "Ad was loaded.")
                                 rewardedAd = ad
 
-                                this@launch.launch {
-                                    delay(500)
-                                    setFullScreen()
-                                    delay(100)
-                                    busy = false
-                                }
+                                setFullScreen()
+                                busy = false
                             }
                         })
                 }
-            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -94,24 +83,16 @@ class Ads {
     }
 
     fun showTheAd(activity: Activity) {
-        if(busy){
-            rewardedAd?.let { ad ->
-                ad.show(activity, OnUserEarnedRewardListener { rewardItem ->
-                    // Handle the reward.
-                    val rewardAmount = rewardItem.amount
-                    val rewardType = rewardItem.type
-                    Log.d(TAG, "User earned the reward. --> $rewardType, $rewardAmount")
-                })
-            } ?: run {
-                Log.d(TAG, "The rewarded ad wasn't ready yet.")
-            }
-        }else{
-            backgroundScope.launch {
-                delay(500)
-                showTheAd(activity)
-            }
+        rewardedAd?.let { ad ->
+            ad.show(activity, OnUserEarnedRewardListener { rewardItem ->
+                // Handle the reward.
+                val rewardAmount = rewardItem.amount
+                val rewardType = rewardItem.type
+                Log.d(TAG, "User earned the reward. --> $rewardType, $rewardAmount")
+            })
+        } ?: run {
+            Log.d(TAG, "The rewarded ad wasn't ready yet.")
         }
-
     }
 
 }

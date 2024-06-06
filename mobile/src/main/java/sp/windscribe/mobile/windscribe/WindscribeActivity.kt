@@ -127,6 +127,7 @@ import sp.windscribe.vpn.repository.ServerListRepository
 import sp.windscribe.vpn.serverlist.entity.ConfigFile
 import sp.windscribe.vpn.serverlist.entity.ServerListData
 import sp.windscribe.vpn.serverlist.interfaces.ListViewClickListener
+import sp.windscribe.vpn.sp.Ads
 import sp.windscribe.vpn.state.DeviceStateManager
 import sp.windscribe.vpn.state.DeviceStateManager.DeviceStateListener
 import sp.windscribe.vpn.state.PreferenceChangeObserver

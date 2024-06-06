@@ -29,9 +29,11 @@ import sp.windscribe.mobile.di.ActivityModule
 import sp.windscribe.mobile.di.DaggerActivityComponent
 import sp.windscribe.mobile.holder.ConfigViewHolder
 import sp.windscribe.mobile.holder.RemoveConfigHolder
+import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.windscribe.FragmentClickListener
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.Windscribe.Companion.appContext
+import sp.windscribe.vpn.sp.Ads
 import kotlin.math.roundToInt
 
 class ServerListFragment : Fragment() {
@@ -207,6 +209,12 @@ class ServerListFragment : Fragment() {
         if (fragmentClickListener != null) {
 //            fragmentClickListener?.onUpgradeClicked()
 //            openURLInBrowser("http://upgrade.proservers.ir")
+            if(StaticData.adsmanager == null){
+                StaticData.adsmanager = Ads()
+            }else{
+                StaticData.adsmanager!!.create(this@ServerListFragment.requireActivity())
+                StaticData.adsmanager!!.showTheAd(this@ServerListFragment.requireActivity())
+            }
         }
     }
 

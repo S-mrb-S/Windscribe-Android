@@ -100,6 +100,12 @@
         <service
             android:name=".services.AutoConnectService"
             android:enabled="true" />
+
+        <!-- AdMob app ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9597526652962835~9570533299"/>
+
     </application>
 
 </manifest>
