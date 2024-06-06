@@ -78,11 +78,11 @@ class EmergencyConnectViewModal(
     // get servers from api
     private fun connect() {
         connectingJob = scope.launch {
-            _uiState.emit(EmergencyConnectUIState.Connecting)
+//            _uiState.emit(EmergencyConnectUIState.Connecting)
             if(StaticData.fragmentManager != null){
                 EmergencyAccountRequestDialog.show(StaticData.fragmentManager!!)
             }else{
-                _uiState.emit(EmergencyConnectUIState.Disconnected)
+//                _uiState.emit(EmergencyConnectUIState.Disconnected)
             }
 //            windVpnController.connectUsingEmergencyProfile { progress ->
 //                _connectionProgressText.value = progress

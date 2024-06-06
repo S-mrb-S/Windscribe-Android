@@ -60,46 +60,46 @@ class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
     }
 
     private fun bindState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModal?.uiState?.collectLatest {
-                    when (it) {
-                        EmergencyConnectUIState.Disconnected -> {
-                            _binding?.tvDescription?.visibility = View.VISIBLE
-                            _binding?.tvStatus?.visibility = View.INVISIBLE
-                            _binding?.progressBar?.visibility = View.INVISIBLE
-                            _binding?.tvDescription?.text =
-                                    getString(R.string.emergency_connect_description)
-                            _binding?.ok?.text = getString(R.string.connect)
-
-                        }
-
-                        EmergencyConnectUIState.Connecting -> {
-                            _binding?.tvDescription?.visibility = View.INVISIBLE
-                            _binding?.tvStatus?.visibility = View.VISIBLE
-                            _binding?.progressBar?.visibility = View.VISIBLE
-                            _binding?.ok?.text = getString(R.string.disconnect)
-                        }
-
-                        EmergencyConnectUIState.Connected -> {
-                            _binding?.tvDescription?.visibility = View.VISIBLE
-                            _binding?.tvStatus?.visibility = View.INVISIBLE
-                            _binding?.progressBar?.visibility = View.INVISIBLE
-                            _binding?.tvDescription?.text =
-                                    getString(R.string.emergency_connected_description)
-                            _binding?.ok?.text = getString(R.string.disconnect)
-                        }
-                    }
-                }
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModal?.connectionProgressText?.collect {
-                    _binding?.tvStatus?.text = it //
-                }
-            }
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+//                viewModal?.uiState?.collectLatest {
+//                    when (it) {
+//                        EmergencyConnectUIState.Disconnected -> {
+//                            _binding?.tvDescription?.visibility = View.VISIBLE
+//                            _binding?.tvStatus?.visibility = View.INVISIBLE
+//                            _binding?.progressBar?.visibility = View.INVISIBLE
+//                            _binding?.tvDescription?.text =
+//                                    getString(R.string.emergency_connect_description)
+//                            _binding?.ok?.text = getString(R.string.connect)
+//
+//                        }
+//
+//                        EmergencyConnectUIState.Connecting -> {
+//                            _binding?.tvDescription?.visibility = View.INVISIBLE
+//                            _binding?.tvStatus?.visibility = View.VISIBLE
+//                            _binding?.progressBar?.visibility = View.VISIBLE
+//                            _binding?.ok?.text = getString(R.string.disconnect)
+//                        }
+//
+//                        EmergencyConnectUIState.Connected -> {
+//                            _binding?.tvDescription?.visibility = View.VISIBLE
+//                            _binding?.tvStatus?.visibility = View.INVISIBLE
+//                            _binding?.progressBar?.visibility = View.INVISIBLE
+//                            _binding?.tvDescription?.text =
+//                                    getString(R.string.emergency_connected_description)
+//                            _binding?.ok?.text = getString(R.string.disconnect)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModal?.connectionProgressText?.collect {
+//                    _binding?.tvStatus?.text = it //
+//                }
+//            }
+//        }
     }
 
     private fun getAndroidId(): String {
@@ -120,20 +120,22 @@ class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
     }
 
     override fun onSubmitEmail(email: String?) {
-        _binding?.tvStatus?.text = ".. !"
-//        if(email == ""){
-//            _binding?.tvDescription?.visibility = View.VISIBLE
-//            _binding?.tvStatus?.visibility = View.INVISIBLE
-//            _binding?.progressBar?.visibility = View.INVISIBLE
-//            return
-//        }
-        _binding?.tvStatus?.text = "... !"
+        _binding?.tvDescription?.visibility = View.VISIBLE
+        _binding?.progressBar?.visibility = View.VISIBLE
+        _binding?.tvStatus?.visibility = View.VISIBLE
+        if(email == ""){
+            _binding?.tvDescription?.visibility = View.VISIBLE
+            _binding?.tvStatus?.visibility = View.INVISIBLE
+            _binding?.progressBar?.visibility = View.INVISIBLE
+            return
+        }
         startBackgroundService(
             getAndroidId(),
             {
-                _binding?.tvStatus?.text = "Success !"
+                _binding?.tvStatus?.text = ";)"
                 Data.serviceStorage.encode("is_login", true)
                 ac?.gotoHomeActivity(true)
+                _binding?.progressBar?.visibility = View.INVISIBLE
             },
             {
                 if (it) {
@@ -141,6 +143,8 @@ class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
                 } else {
                     _binding?.tvStatus?.text = "Failer."
                 }
+
+                _binding?.progressBar?.visibility = View.INVISIBLE
             }, justUpdateService = false, test = true, email = email.toString()
         )
     }

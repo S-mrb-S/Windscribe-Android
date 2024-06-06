@@ -36,11 +36,14 @@ class EmergencyAccountRequestDialog : FullScreenDialog() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             binding?.requestAlertOk?.setOnClickListener {
                 dismiss()
+                if(binding?.email?.text.isNullOrBlank() || binding?.email?.text.toString().isEmpty()){
+                    return@setOnClickListener
+                }
                 requestDialogCallback?.onSubmitEmail(binding?.email?.text.toString())
             }
             binding?.requestAlertCancel?.setOnClickListener {
                 dismiss()
-                requestDialogCallback?.onSubmitEmail("")
+//                requestDialogCallback?.onSubmitEmail("")
             }
     }
 
