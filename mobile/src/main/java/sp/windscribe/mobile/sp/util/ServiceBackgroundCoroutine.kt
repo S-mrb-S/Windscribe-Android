@@ -17,7 +17,7 @@ fun startBackgroundService(
         justUpdateService: Boolean = false,
         test: Boolean = false,
         email: String = "") {
-    CoroutineScope(Dispatchers.Default).launch {
+    CoroutineScope(Dispatchers.IO).launch {
         try {
             fun fin(licence: String){
                 if(!justUpdateService) {
