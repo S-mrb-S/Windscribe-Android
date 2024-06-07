@@ -824,10 +824,12 @@ class WindscribePresenterImpl @Inject constructor(
 //        checkLoginStatus()
 
         // Update Notification count
-        updateNotificationCount()
+//        updateNotificationCount()
 
         // Open rate dialog
-        handleRateDialog()
+//        handleRateDialog()
+        Log.d("MRBO", "START")
+        onUserSessionResponse() // TODO()
         interactor.getPreferenceChangeObserver().postConfigListChange()
     }
 
@@ -2007,7 +2009,7 @@ class WindscribePresenterImpl @Inject constructor(
                 if (days >= RateDialogConstants.MINIMUM_DAYS_TO_SHOW_AGAIN) {
                     interactor.saveRateAppPreference(RateDialogConstants.STATUS_ALREADY_ASKED)
                     windscribeView.handleRateView()
-                    logger.debug("Rate dialog is being shown and user's last choice was ask me later 90+ days ago.")
+                    logger.debug("Rate dialog is being shown and user's last choice was ask me later 2+ days ago.")
                 }
             }
 
