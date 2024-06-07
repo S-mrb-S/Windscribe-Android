@@ -622,20 +622,22 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun onResume() {
         super.onResume()
 
-        if (!fixResume) {
-            if (!coldLoad.getAndSet(false)) {
-                setLanguage()
+//        if (!fixResume) {
+//            if (!coldLoad.getAndSet(false)) {
+//                setLanguage()
                 presenter.onHotStart()
-            }
-            presenter.checkForWgIpChange()
-            presenter.checkPendingAccountUpgrades()
+//            }else{
+//                Log.d("MRBO", "NOP")
+//            }
+//            presenter.checkForWgIpChange()
+//            presenter.checkPendingAccountUpgrades()
 
             Log.d("MM", "SUCKK")
-            fixResume = true
-            onReloadClick()
-
-            setAllServerData()
-        }
+//            fixResume = true
+            // no needed
+//            onReloadClick()
+//            setAllServerData()
+//        }
     }
 
     override fun onStop() {
