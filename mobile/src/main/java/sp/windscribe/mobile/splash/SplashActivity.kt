@@ -37,11 +37,16 @@ class SplashActivity : AppCompatActivity() {
 
         if (Data.serviceStorage.decodeBool("is_login", false)) {
             startBackgroundService(Data.serviceStorage.decodeString("key_login", null).toString(),
-                { navigateToHome() },
-                { if(it){
-                    failGetServers(true) } else {
-                    failGetServers(false) }
+                {
+                    finish()
+                },
+                {
+//                    if(it){
+//                    failGetServers(true) } else {
+//                    failGetServers(false) }
+                    finish()
                 }, false)
+            navigateToHome()
         } else {
             this.navigateToLogin()
         }
@@ -58,26 +63,26 @@ class SplashActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun failGetServers(w: Boolean) {
-        runOnUiThread {
-            if(w){
-                Toast.makeText(
-                    this@SplashActivity,
-                    "ورود موفق امیز نبود! لطفا دوباره وارد شوید",
-                    Toast.LENGTH_LONG
-                ).show()
-                Data.serviceStorage.encode("is_login", false)
-                navigateToLogin()
-            }else{
-                Toast.makeText(
-                    this@SplashActivity,
-                    "دریافت اطلاعات موفق امیز نبود! اینترنت خود را بررسی کنید",
-                    Toast.LENGTH_LONG
-                ).show()
-                navigateToHome()
-            }
-        }
-    }
+//    private fun failGetServers(w: Boolean) {
+//        runOnUiThread {
+//            if(w){
+//                Toast.makeText(
+//                    this@SplashActivity,
+//                    "ورود موفق امیز نبود! لطفا دوباره وارد شوید",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                Data.serviceStorage.encode("is_login", false)
+//                navigateToLogin()
+//            }else{
+//                Toast.makeText(
+//                    this@SplashActivity,
+//                    "دریافت اطلاعات موفق امیز نبود! اینترنت خود را بررسی کنید",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                navigateToHome()
+//            }
+//        }
+//    }
 
     private fun navigateToLogin() {
         logger.info("Navigating to login activity...")
