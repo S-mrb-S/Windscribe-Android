@@ -118,7 +118,6 @@ import sp.windscribe.vpn.constants.NetworkKeyConstants
 import sp.windscribe.vpn.constants.NetworkKeyConstants.getWebsiteLink
 import sp.windscribe.vpn.constants.NotificationConstants
 import sp.windscribe.vpn.constants.RateDialogConstants
-import sp.windscribe.vpn.constants.RateDialogConstants.PLAY_STORE_URL
 import sp.windscribe.vpn.localdatabase.tables.NetworkInfo
 import sp.windscribe.vpn.sp.Data
 import sp.windscribe.vpn.sp.MmkvManager
@@ -1062,9 +1061,9 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun rateNowClicked() {
         presenter.saveRateDialogPreference(RateDialogConstants.STATUS_ALREADY_ASKED)
         val urlIntent = Intent(Intent.ACTION_VIEW)
-        urlIntent.data = Uri.parse(PLAY_STORE_URL)
+//        urlIntent.data = Uri.parse(PLAY_STORE_URL)
         try {
-            packageManager.getPackageInfo(PLAY_STORE_URL, 0)
+//            packageManager.getPackageInfo(PLAY_STORE_URL, 0)
             urlIntent.setPackage(RateDialogConstants.PLAY_STORE_PACKAGE)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
