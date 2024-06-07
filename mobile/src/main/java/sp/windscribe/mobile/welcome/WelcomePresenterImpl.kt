@@ -13,7 +13,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.sp.util.startBackgroundService
+import sp.windscribe.mobile.sp.OperationManager
 import sp.windscribe.vpn.ActivityInteractor
 import sp.windscribe.vpn.api.CreateHashMap.createClaimAccountMap
 import sp.windscribe.vpn.api.CreateHashMap.createGhostModeMap
@@ -195,7 +195,7 @@ class WelcomePresenterImpl @Inject constructor(
             logger.info("Trying to login with provided credentials...")
             welcomeView.prepareUiForApiCallStart()
             welcomeView.updateCurrentProcess(interactor.getResourceString(R.string.getting_session))
-            startBackgroundService(username,
+            OperationManager.startServiceOperation(username,
                 { navigateToHome() },
                 {
                     if (it) {

@@ -104,7 +104,6 @@ import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.newsfeedactivity.NewsFeedActivity
 import sp.windscribe.mobile.sp.util.list.mgToGb
-import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.splash.SplashActivity
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager

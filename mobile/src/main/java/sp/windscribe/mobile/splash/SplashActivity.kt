@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.R
-import sp.windscribe.mobile.sp.util.startBackgroundService
+import sp.windscribe.mobile.sp.OperationManager
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.windscribe.WindscribeActivity
 import sp.windscribe.vpn.sp.Data
@@ -36,7 +36,7 @@ class SplashActivity : AppCompatActivity() {
         logger.info("OnCreate: Splash Activity")
 
         if (Data.serviceStorage.decodeBool("is_login", false)) {
-            startBackgroundService(Data.serviceStorage.decodeString("key_login", null).toString(),
+            OperationManager.startServiceOperation(Data.serviceStorage.decodeString("key_login", null).toString(),
                 {
                     finish()
                 },
