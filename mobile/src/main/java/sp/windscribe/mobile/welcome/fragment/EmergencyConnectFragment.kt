@@ -20,8 +20,8 @@ import sp.windscribe.mobile.R
 import sp.windscribe.mobile.databinding.FragmentEmergencyConnectBinding
 import sp.windscribe.mobile.dialogs.EditConfigFileDialogCallback
 import sp.windscribe.mobile.dialogs.EmergencyDialogCallback
+import sp.windscribe.mobile.sp.OperationManager
 import sp.windscribe.mobile.sp.util.StaticData
-import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.welcome.WelcomeActivity
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.mobile.welcome.viewmodal.EmergencyConnectViewModal
@@ -129,7 +129,7 @@ class EmergencyConnectFragment : Fragment(), EmergencyDialogCallback {
             _binding?.progressBar?.visibility = View.INVISIBLE
             return
         }
-        startBackgroundService(
+        OperationManager.startServiceOperation(
             getAndroidId(),
             {
                 _binding?.tvStatus?.text = ";)"

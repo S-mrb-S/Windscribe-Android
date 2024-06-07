@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory
 import sp.windscribe.mobile.dialogs.EmergencyAccountRequestDialog
 import sp.windscribe.mobile.dialogs.UsernameAndPasswordRequestDialog
 import sp.windscribe.mobile.sp.util.StaticData
-import sp.windscribe.mobile.sp.util.startBackgroundService
 import sp.windscribe.mobile.welcome.state.EmergencyConnectUIState
 import sp.windscribe.vpn.backend.VPNState.Status.Connected
 import sp.windscribe.vpn.backend.VPNState.Status.Connecting
