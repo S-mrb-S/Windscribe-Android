@@ -621,7 +621,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun onResume() {
         super.onResume()
 
-//        if (!fixResume) {
+        if (!fixResume) {
 //            if (!coldLoad.getAndSet(false)) {
 //                setLanguage()
                 presenter.onHotStart()
@@ -631,12 +631,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //            presenter.checkForWgIpChange()
 //            presenter.checkPendingAccountUpgrades()
 
-            Log.d("MM", "SUCKK")
-//            fixResume = true
-            // no needed
-//            onReloadClick()
-//            setAllServerData()
-//        }
+            fixResume = true
+            onReloadClick()
+            setAllServerData()
+        }
     }
 
     override fun onStop() {
