@@ -109,6 +109,8 @@ import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.PermissionManager
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
+import sp.windscribe.vpn.backend.Util
+import sp.windscribe.vpn.backend.utils.LastSelectedLocation
 import sp.windscribe.vpn.backend.utils.WindVpnController
 import sp.windscribe.vpn.commonutils.ThemeUtils
 import sp.windscribe.vpn.commonutils.WindUtilities
@@ -524,7 +526,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun StartV2ray(server: String) {
         presenter.connectionVpnUi()
-        V2rayFabClick(server)
+        V2rayFabClick(server, fastClick = true)
     }
 
     override fun setTestStateLayout(content: String) {
@@ -634,6 +636,10 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
             fixResume = true
             onReloadClick()
             setAllServerData()
+//            presenter.onLocationSettingsChanged()
+//            preferenceChangeObserver.addLocationSettingsChangeObserver(this) {
+//                presenter.onLocationSettingsChanged()
+//            }
         }
     }
 
