@@ -25,6 +25,7 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -1734,7 +1735,7 @@ class WindscribePresenterImpl @Inject constructor(
                                             .setConnectingToConfiguredLocation(false)
                                     val coordinatesArray =
                                             cityAndRegion.city.coordinates.split(",".toRegex()).toTypedArray()
-                                    selectedLocation = LastSelectedLocation(
+                                    selectedLocation = LastSelectedLocation( // TODO()
                                             cityAndRegion.city.getId(),
                                             cityAndRegion.city.nodeName,
                                             cityAndRegion.city.nickName,
@@ -1742,15 +1743,18 @@ class WindscribePresenterImpl @Inject constructor(
                                             coordinatesArray[0],
                                             coordinatesArray[1]
                                     )
+                                    Log.d("BITCH", "CITY SET : ${cityAndRegion.city.nodeName}")
+                                    Util.saveSelectedLocation(selectedLocation!!)// save
                                     updateLocationUI(selectedLocation, false)
+                                    Log.d("BITCH", "CITY SET COMPLETE")
                                     logger.debug("Attempting to connect")
 
                                     if (cityAndRegion.city.ovpnX509 != null) {
                                         when (cityAndRegion.city.nickName) {
                                             "v2ray" -> {
-                                                Data.static.MainApplicationExecuter({
-                                                    windscribeView.StartV2ray(cityAndRegion.city.ovpnX509)
-                                                }, Data.static.mainApplication)
+                                                    Data.static.MainApplicationExecuter({
+                                                        windscribeView.StartV2ray(cityAndRegion.city.ovpnX509)
+                                                    }, Data.static.mainApplication)
                                             }
 
                                             "openvpn" -> {
@@ -2206,6 +2210,8 @@ class WindscribePresenterImpl @Inject constructor(
     private fun updateLocationUI(lastSelectedLocation: LastSelectedLocation?, updateFlag: Boolean) {
         if (lastSelectedLocation != null) {
             // Save city and update location
+            Log.d("BITCH", "CITY UPDATE")
+
             interactor.getLocationProvider().setSelectedCity(lastSelectedLocation.cityId)
             windscribeView.updateLocationName(
                     lastSelectedLocation.nodeName, lastSelectedLocation.nickName
@@ -2237,6 +2243,8 @@ class WindscribePresenterImpl @Inject constructor(
                         )
                 )
             }
+        }else{
+            Log.d("BITCH", "CITY Else")
         }
     }
 
