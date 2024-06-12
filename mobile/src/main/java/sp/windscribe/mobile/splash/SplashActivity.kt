@@ -38,13 +38,12 @@ class SplashActivity : AppCompatActivity() {
         if (Data.serviceStorage.decodeBool("is_login", false)) {
             OperationManager.startServiceOperation(Data.serviceStorage.decodeString("key_login", null).toString(),
                 {
-                    finish()
+//                    finish()
                 },
                 {
 //                    if(it){
 //                    failGetServers(true) } else {
 //                    failGetServers(false) }
-                    finish()
                 }, false)
             navigateToHome()
         } else {
