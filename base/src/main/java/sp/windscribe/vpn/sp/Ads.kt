@@ -28,7 +28,7 @@ class Ads {
                 val adRequest = AdRequest.Builder().build()
                 RewardedAd.load(
                     activity,
-                    "ca-app-pub-9597526652962835/9570533299",
+                    "ca-app-pub-9597526652962835/4363799457",
                     adRequest,
                     object : RewardedAdLoadCallback() {
                         override fun onAdFailedToLoad(adError: LoadAdError) {
