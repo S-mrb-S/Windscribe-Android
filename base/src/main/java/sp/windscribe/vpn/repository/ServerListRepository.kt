@@ -66,9 +66,9 @@ class ServerListRepository @Inject constructor(
 
     fun update(): Completable {
         logger.debug("Starting server list update")
-        var str = sp.windscribe.vpn.sp.Data.dataString
-        if (str.isNullOrBlank() || str.toString() == "null") {
-            str = """
+        var str = Data.dataString
+        if (str.isNullOrBlank() || str.toString() == "null" || str.isEmpty()) {
+            Data.dataString = """
 [
   {
     "id": 1,
@@ -106,9 +106,11 @@ class ServerListRepository @Inject constructor(
                 // run ViewModel on application thread
                 Data.static.getmViewModel().saveIsChanged(2)
             }, Data.static.mainApplication)
+        }else{
+            Data.settingsStorage.putString("server_cache", Data.dataString!!.trimIndent())
         }
         val list: List<Region> = Gson().fromJson<List<Region>>(
-                str.trimIndent(),
+                Data.dataString!!.trimIndent(),
                 object : TypeToken<ArrayList<Region?>?>() {}.type
         )
 
@@ -117,6 +119,7 @@ class ServerListRepository @Inject constructor(
 
     fun cleanDatabase(): Completable {
         logger.debug("Cleaning server list to database")
+        Data.settingsStorage.putString("server_cache", null)
         return localDbInterface.rmRegions()
             .andThen(localDbInterface.rmCities())
 //            .andThen(Completable.fromAction { preferenceChangeObserver.postCityServerChange() })
