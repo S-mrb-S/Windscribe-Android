@@ -11,5 +11,6 @@ object StaticData {
     var requestDialogCallback: EmergencyDialogCallback? = null
     var noServer: Boolean = false
 
-    var adsmanager: Ads? = null
+   // var adsmanager: Ads? = null
+    var canReload: Boolean = true
 }

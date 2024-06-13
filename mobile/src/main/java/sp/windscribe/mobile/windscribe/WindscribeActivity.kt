@@ -457,10 +457,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
         Log.d("MM", "<<")
         Data.static.getmViewModel().isChanged.observe(this) { ddl ->
+            Log.d("MRBF", "CHANghE ${ddl}")
+
             if(ddl == 2 && StaticData.noServer){
                 this@WindscribeActivity.showNoList()
             }else if (ddl == 1 && fixResume) {
                 try {
+                    onReloadClick()
                     Log.d("MM", "<< <<")
                     // save new to localdatabse
                     activityScope { presenter.observeAllLocations() }
@@ -474,12 +477,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
                     }, Data.static.mainApplication)
                 }
             }
-        }
-
-        val backgroundScope = CoroutineScope(Dispatchers.IO)
-        backgroundScope.launch {
-            // Initialize the Google Mobile Ads SDK on a background thread.
-            MobileAds.initialize(this@WindscribeActivity) {}
         }
 
     }
@@ -537,7 +534,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     override fun stateV2rayVpn(isRunning: Boolean) {
         if(isRunning){
             presenter.startVpnUi()
-
+ // TODO()
             layoutTestClick()
         }else{
             presenter.stopVpnUi()
@@ -589,20 +586,6 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-//        if (presenter.userHasAccess()) {
-//            presenter.onStart()
-//            if (intent != null && intent.action != null && (intent.action == NotificationConstants.DISCONNECT_VPN_INTENT)) {
-//                logger.info("Disconnect intent received...")
-//                presenter.onDisconnectIntentReceived()
-//            }
-//            deviceStateManager.addListener(this)
-//        } else {
-//            presenter.logoutFromCurrentSession()
-//        }
-    }
-
     override fun StartOpenVPN(ovpnX509: String) {
         OpenVpnFabClick(ovpnX509,
             Data.serviceStorage.getString(
@@ -622,6 +605,7 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
     override fun onResume() {
         super.onResume()
+        Log.d("MRBF", "RESUME")
 
         if (!fixResume) {
 //            if (!coldLoad.getAndSet(false)) {
@@ -634,8 +618,12 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //            presenter.checkPendingAccountUpgrades()
 
             fixResume = true
-            onReloadClick()
-            setAllServerData()
+            if(StaticData.canReload) {
+                onReloadClick()
+            }else{
+                Log.d("MRBB", "RETURN :D")
+            }
+//            setAllServerData()
 //            presenter.onLocationSettingsChanged()
 //            preferenceChangeObserver.addLocationSettingsChangeObserver(this) {
 //                presenter.onLocationSettingsChanged()

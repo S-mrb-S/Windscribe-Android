@@ -6,6 +6,7 @@ package sp.windscribe.vpn.backend
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import com.wireguard.config.BadConfigException
 import com.wireguard.config.Config
 import inet.ipaddr.AddressStringException
@@ -82,6 +83,7 @@ object Util {
     }
 
     fun saveSelectedLocation(selectedLocation: LastSelectedLocation) {
+//        Log.d("BITCH", "SAVE: ${selectedLocation.nodeName}")
         val vpnFile = ObjectOutputStream(
                 Windscribe.appContext.openFileOutput(
                         LAST_SELECTED_LOCATION,

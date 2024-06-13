@@ -28,6 +28,7 @@ import sp.windscribe.mobile.email.AddEmailActivity
 import sp.windscribe.mobile.generalsettings.GeneralSettingsActivity
 import sp.windscribe.mobile.help.HelpActivity
 import sp.windscribe.mobile.robert.RobertSettingsActivity
+import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.upgradeactivity.UpgradeActivity
 import sp.windscribe.mobile.utils.UiUtil
 import sp.windscribe.mobile.welcome.WelcomeActivity
@@ -163,6 +164,8 @@ class MainMenuActivity : BaseActivity(), MainMenuView {
             val loginIntent = Intent(this, WelcomeActivity::class.java)
             loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(loginIntent)
+
+            StaticData.canReload = true
             finishAffinity()
         }
         referForDataView.onClick {
