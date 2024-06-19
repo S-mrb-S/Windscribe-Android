@@ -13,4 +13,5 @@ object StaticData {
 
    // var adsmanager: Ads? = null
     var canReload: Boolean = true
+    var waiterForceReload: Boolean = false
 }

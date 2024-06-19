@@ -1,6 +1,8 @@
 package sp.windscribe.mobile.sp
 
+import android.util.Log
 import kotlinx.coroutines.*
+import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.sp.util.api.getAllServers
 import sp.windscribe.mobile.sp.util.api.saveDataAndFinish
 import sp.windscribe.mobile.sp.util.api.updateService
@@ -24,6 +26,8 @@ class OperationManager {
                 try {
                     fun fin(licence: String) {
                         if (!justUpdateService) {
+                            StaticData.waiterForceReload = true
+
                             launch {
                                 getAllServers(licence,
                                     {
@@ -33,12 +37,14 @@ class OperationManager {
                                                     navigateTo()
                                                 },
                                                 {
+                                                    Log.d("EX_OP", "e3")
                                                     failTo(false)
                                                 }
                                             )
                                         }
                                     },
                                     {
+                                        Log.d("EX_OP", "e2")
                                         failTo(false)
                                     }
                                 )
@@ -66,6 +72,7 @@ class OperationManager {
                             })
                     }
                 } catch (e: Exception) {
+                    Log.d("EX_OP", "e: ${e}")
                     failTo(false)
                 }
             }

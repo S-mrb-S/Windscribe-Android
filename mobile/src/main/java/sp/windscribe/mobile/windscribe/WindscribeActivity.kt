@@ -461,22 +461,43 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 
             if(ddl == 2 && StaticData.noServer){
                 this@WindscribeActivity.showNoList()
-            }else if (ddl == 1 && fixResume) {
-                try {
-                    onReloadClick()
-                    Log.d("MM", "<< <<")
-                    // save new to localdatabse
-                    activityScope { presenter.observeAllLocations() }
-                } finally {
-                    onReloadClick() // save 2
-                    Data.static.MainApplicationExecuter({
-                        // refresh ui
-                        setServerListView(false)
-                        activityScope { presenter.observerSelectedLocation() }
-                        activityScope { presenter.observeLatency() }
-                    }, Data.static.mainApplication)
+            }else if (ddl == 1) {
+                fun reload() {
+                    try {
+//                    onReloadClick()
+                        Log.d("MM", "<< <<")
+                        // save new to localdatabse
+                        activityScope { presenter.observeAllLocations() }
+                    } finally {
+                        onReloadClick() // save 2
+                        Data.static.MainApplicationExecuter({
+                            // refresh ui
+                            setServerListView(false)
+                            activityScope { presenter.observerSelectedLocation() }
+                            activityScope { presenter.observeLatency() }
+                        }, Data.static.mainApplication)
+                    }
                 }
+
+                fun checker(){
+                    if (fixResume){
+                        reload()
+                    }else if(StaticData.waiterForceReload){
+                        GlobalScope.launch {
+                            delay(200)
+
+                            Log.d("MRB", "IM IN")
+                            checker()
+                        }
+                    }else{
+                        Log.d("MRB", "IM ELSE")
+                    }
+                }
+                checker()
+                Log.d("MRB", "IM OUT")
             }
+
+            StaticData.waiterForceReload = false
         }
 
     }
@@ -617,12 +638,13 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
 //            presenter.checkForWgIpChange()
 //            presenter.checkPendingAccountUpgrades()
 
-            fixResume = true
             if(StaticData.canReload) {
                 onReloadClick()
             }else{
                 Log.d("MRBB", "RETURN :D")
             }
+
+            fixResume = true
 //            setAllServerData()
 //            presenter.onLocationSettingsChanged()
 //            preferenceChangeObserver.addLocationSettingsChangeObserver(this) {

@@ -1,7 +1,11 @@
 package sp.windscribe.mobile.sp.util.api
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sp.windscribe.mobile.GetServersQuery
 import sp.windscribe.mobile.sp.util.StaticData
 import sp.windscribe.mobile.sp.util.list.ListCreator
@@ -14,7 +18,10 @@ suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Uni
             try {
                 if (data == null) { // data must be not null
                     Data.dataString = null
-                    failTo()
+                    Log.d("EX_OP", "null")
+                    withContext(Dispatchers.Main) {
+                        failTo()
+                    }
                     return@coroutineScope
                 }
                 StaticData.data = data // save data for handle protocols
@@ -22,6 +29,7 @@ suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Uni
                 val str = ListCreator(data).createAndGet()
                 state = if(str.isEmpty() || str.toString() == "null"){
                     Data.dataString = null
+                    Data.settingsStorage.putString("server_cache", null)
                     2
                 }else{
                     1
@@ -30,33 +38,41 @@ suspend fun saveDataAndFinish(data: GetServersQuery.Data?, navigateTo: () -> Uni
                 Data.dataString = str // create and save
                 var canSend = true
 
-                Data.static.MainApplicationExecuter({
-                    // run ViewModel on application
+                try{
                     val cache: String = Data.settingsStorage.getString("server_cache", null).toString()
                     if(state == 1 && cache.isNotEmpty() && cache.isNotBlank()){
                         if(str.trimIndent().length == cache.trimIndent().length){
-                            Log.d("MRBB", "RETURN")
                             canSend = false
                             StaticData.canReload = false
-                        }else{
-                            Log.d("MRBB", "not same")
-                            longLog(str.trimIndent())
-                            Log.d("MRBB", "yeap")
-                            longLog(cache)
-                        }
-                    }else{
-                        Log.d("MRBB", "skipped")
-                    }
+                            Log.d("MRB", "CANT!")
 
-                    if(canSend){
+                            Log.d("MRB", "CACHE: ")
+                            longLog(cache)
+
+                            Log.d("MRB", "str: ")
+                            longLog(str)
+                        }
+                    }
+                }catch (e: Exception){
+                    Log.d("EX_OP", "e5 : ${e}")
+                }
+
+                // Move the view update to main thread context
+                withContext(Dispatchers.Main) {
+                    if (canSend) {
                         Data.static.getmViewModel().saveIsChanged(state)
                     }
-                }, Data.static.mainApplication)
+                }
             } finally {
-                navigateTo()
+                withContext(Dispatchers.Main) {
+                    navigateTo()
+                }
             }
         } catch (e: Exception) {
-            failTo()
+            Log.d("EX_OP", "e4 : ${e}")
+            withContext(Dispatchers.Main) {
+                failTo()
+            }
         }
 }
 

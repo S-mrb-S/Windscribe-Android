@@ -66,7 +66,7 @@ class SplashActivity : AppCompatActivity() {
             override fun run() {
                 try {
                     while (!this.isInterrupted) {
-                        sleep(1000) // ui refresh
+                        sleep(2000) // ui refresh
                         if (isThread) {
                             break
                         }
