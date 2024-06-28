@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id "com.apollographql.apollo3" // support sdk 33
+    id "com.apollographql.apollo3"
 }
 
 apply from: "$rootDir/config/config.gradle"
@@ -10,12 +10,12 @@ apply from: "$rootDir/depedencycheck.gradle"
 
 // Versions
 def appVersionCode = 1340
-def appVersionName = "5.1.0"
+def appVersionName = "6.0.1"
 
 android {
     compileSdk 34
     namespace 'sp.windscribe.mobile'
-    ndkVersion '26.1.10909125'
+    ndkVersion '26.3.11579264'
 
     bundle {
         language {
