@@ -59,6 +59,7 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.gms.ads.MobileAds
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import de.blinkt.openvpn.OpenVpnApi
+import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -455,6 +456,11 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
         presenter.handlePushNotification(intent.extras)
         presenter.observeUserData(this)
 
+        VpnStatus.initLogCache(applicationContext.cacheDir);
+        VpnStatus.addLogListener {
+            Log.d("OpenVPNY", it.getString(this));
+        }
+
         Log.d("MM", "<<")
         Data.static.getmViewModel().isChanged.observe(this) { ddl ->
             Log.d("MRBF", "CHANghE ${ddl}")
@@ -608,15 +614,76 @@ class WindscribeActivity : BaseActivity(), WindscribeView, OnPageChangeListener,
     }
 
     override fun StartOpenVPN(ovpnX509: String) {
-        OpenVpnFabClick(ovpnX509,
-            Data.serviceStorage.getString(
-                "username_ovpn",
-                ""
-            ),
-            Data.serviceStorage.getString(
-                "password_ovpn",
-                ""
-            ))
+        val str = """client
+dev tun
+proto tcp
+remote 91.236.169.227 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+verb 3
+auth SHA1
+cipher BF-CBC
+auth-user-pass
+data-ciphers-fallback BF-CBC
+<ca>
+-----BEGIN CERTIFICATE-----
+MIIB5TCCAU6gAwIBAgIIELHmFJ83SzQwDQYJKoZIhvcNAQELBQAwEzERMA8GA1UE
+AwwIbmFiaWMuaXIwHhcNMjMwMzI4MTkzMDMwWhcNMzMwMzI1MTkzMDMwWjATMREw
+DwYDVQQDDAhuYWJpYy5pcjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAwTiY
+UQv98cqsdnTRbiLDEhIzq06iop74XDo0WzijySQJmSHW7sYB2F6JEu0L0BcvQbrU
+kqHgrAAGraN6XGlpxFume2nQnkMrHSgujGa0jAi8odfljyYUPUsxSOeus5XE+bC/
+FvsYjRUGsHK5N7JoviwRVZdpcDKjg+EzdPi0wfkCAwEAAaNCMEAwDwYDVR0TAQH/
+BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYEFKAQF7+LQzsEz6n9f+bF
+cEJiQReDMA0GCSqGSIb3DQEBCwUAA4GBAI7tajQNUMlTndaQwq+EnMjHelkaAgN5
+BjIPIXTZIVeKk1R1bukQuW/l36IqACV3eRXKtUJERiQEtDOUT3xoOMdvuThkat/j
+UEvvxyD/G/JTAh48B6aE63fJyW+o6eL00DYDBkPGqbqVLLeSt/9kbnIgfpRMXqof
+GkqS+/NorMgz
+-----END CERTIFICATE-----
+</ca>
+<cert>
+-----BEGIN CERTIFICATE-----
+MIICBDCCAW2gAwIBAgIIcv22RArW908wDQYJKoZIhvcNAQELBQAwEzERMA8GA1UE
+AwwIbmFiaWMuaXIwHhcNMjMwMzI4MTkzMDQ1WhcNMzMwMzI1MTkzMDQ1WjAdMRsw
+GQYDVQQDDBJjbGllbnQucmFtdGlpaW4uaXIwgZ8wDQYJKoZIhvcNAQEBBQADgY0A
+MIGJAoGBANBUj8C0Kku+dLbpPCZwlzv2fb9q/wPbTksTXD7URVUHue+ehVMZPDpa
+TkV7vQv3ScrwlGuLJTmtd/L27i3GIJZf5AD0/tYm109Nn0AeTp1ZzI/TcYnk6NQ8
+IYKbLmAAT2ESfyfiQ0Iczl88zJKRTUw/PG3Rc8dH+6HRyx6lctGNAgMBAAGjVzBV
+MBMGA1UdJQQMMAoGCCsGAQUFBwMCMB0GA1UdDgQWBBSr9Jdt4aeu96DH+OSfAsUv
+F0erRjAfBgNVHSMEGDAWgBSgEBe/i0M7BM+p/X/mxXBCYkEXgzANBgkqhkiG9w0B
+AQsFAAOBgQC6CthnN5zGUQ3BBW9xx8V8T3k+NElH70tOqC91fNL02aP7dca9rJnB
+EXCmSkSoXxgq34B0ybuFW7FVv9tWLBzGdDRnm/PKH53vMjjYFpdx3TM+gI7WO9Da
+AKs3jcFLOqumzgch4wtbvkGFOY3pyFotfp1nRBMwlFZGVP0PeR059w==
+-----END CERTIFICATE-----
+</cert>
+<key>
+-----BEGIN RSA PRIVATE KEY-----
+MIICXAIBAAKBgQDQVI/AtCpLvnS26TwmcJc79n2/av8D205LE1w+1EVVB7nvnoVT
+GTw6Wk5Fe70L90nK8JRriyU5rXfy9u4txiCWX+QA9P7WJtdPTZ9AHk6dWcyP03GJ
+5OjUPCGCmy5gAE9hEn8n4kNCHM5fPMySkU1MPzxt0XPHR/uh0csepXLRjQIDAQAB
+AoGAJ8rfImnHYmxgksd+C8GZwYRVhIiFaVEsZT6vcfjNvW4aX+ChirvZOzQgmzkF
+ZRG48KB/WQNc+uVdcfUkjW24r2goRCAsSV4B4Pv/JMZitlNlbGhajFljZgNj71lj
+R01FkhrSE/TQ9lYwm6rSAZRaFH+lx8rRYWYUuzDW5Ux51OkCQQDra5IdFy+fRwTn
+Amu0SdrCN46jww209ShuKSLWuEGg30VTOxGsa4C7aGrJzrd4YRAC4mYjNYWoiZgR
+hhZeOPaHAkEA4orAOkN7nkd3ZQPNjWiVzZ4WtG1QtfLydy3bjEqV9NTxPi2oNX8u
+UUOPWnUn++5NybM/K9OU8wtunzhEs7aoSwJBAMAaKUK/tsZ8B04SNZ0KXw34k9ah
+xb+SBYnO23TnKfaB+mnuW3+cwZErpWhD3IbIfW49HCdC92wNyx8RkZMVXGUCQF04
+aSmNCkIDHsgpZoCpJfOHs5Mgk+riX1y6mNR0zkUgChdLY16sB8JCPilb0CUcnx9X
+xB8XjaMJxeOmzLz1uA0CQAfm1dyMLJYjXgFV1mlneMppMKgo2qf1lBoH4b4ELojV
+MoJxDrFPD7KcPSuY2pRxiPVuPLODT5cK8tVMMbpHY/U=
+-----END RSA PRIVATE KEY-----
+</key>
+"""
+        try{
+            Log.d("FUCKY", "START")
+            OpenVpnFabClick(str,
+                "My",
+                "My")
+        }catch(e: Exception) {
+            Log.d("FUCKY", "ANERR: $e")
+        }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
